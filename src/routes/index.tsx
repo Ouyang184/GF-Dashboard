@@ -850,12 +850,12 @@ function Legend({ tone, label }: { tone: Status; label: string }) {
 
 function NotesCard({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-[var(--shadow-card)]">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{title}</div>
+    <div className="rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
+      <div className="text-xs uppercase tracking-wider font-bold text-primary">{title}</div>
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2 text-sm">
-            <span className="mt-1.5 size-1.5 rounded-full bg-accent shrink-0" />
+            <span className="mt-1.5 size-1.5 rounded-full bg-primary shrink-0" />
             <span>{item}</span>
           </li>
         ))}
