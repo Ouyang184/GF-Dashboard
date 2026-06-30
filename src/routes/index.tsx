@@ -674,6 +674,94 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   );
 }
 
+function IntouchFloor() {
+  const { snapshot, imageUrl, busy, error, ingest, reset } = useIntouchSnapshot();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const ago = snapshot
+    ? (() => {
+        const s = Math.round((Date.now() - snapshot.sampledAt) / 1000);
+        if (s < 60) return `${s}s ago`;
+        const m = Math.round(s / 60);
+        if (m < 60) return `${m} min ago`;
+        const h = Math.round(m / 60);
+        return `${h}h ago`;
+      })()
+    : null;
+
+  const matched = snapshot
+    ? Object.values(snapshot.results).filter((r) => r.status !== "unknown").length
+    : 0;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            Floor Layout
+          </h3>
+          {snapshot ? (
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground rounded-full border border-border/60 px-2 py-0.5">
+              <span className="size-1.5 rounded-full bg-success animate-pulse" />
+              InTouch · synced {ago} · {matched}/{Object.keys(snapshot.results).length} tiles
+            </span>
+          ) : (
+            <span className="text-[11px] text-muted-foreground">
+              No InTouch snapshot yet — upload one to colour live tiles.
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void ingest(f);
+              e.target.value = "";
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+            className="text-xs rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary px-3 py-1.5 transition disabled:opacity-50"
+          >
+            {busy ? "Reading…" : snapshot ? "Re-sync" : "Upload InTouch screenshot"}
+          </button>
+          {snapshot && (
+            <button
+              type="button"
+              onClick={reset}
+              className="text-xs rounded-md border border-border/60 bg-transparent hover:bg-secondary/40 px-3 py-1.5 transition"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+      {error && (
+        <p className="text-xs text-danger mb-3">{error}</p>
+      )}
+      <FloorMap ocr={snapshot} />
+      {imageUrl && (
+        <details className="mt-4">
+          <summary className="text-[11px] uppercase tracking-wider text-muted-foreground cursor-pointer">
+            Source snapshot
+          </summary>
+          <img
+            src={imageUrl}
+            alt="InTouch snapshot"
+            className="mt-2 max-h-72 rounded border border-border/60"
+          />
+        </details>
+      )}
+    </div>
+  );
+}
+
 function PillarDetailOverlay({
   pillar,
   detail,
