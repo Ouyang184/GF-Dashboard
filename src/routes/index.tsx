@@ -509,7 +509,6 @@ function PillarCard({
 }
 
 function FloorMap() {
-function FloorMap() {
   // Deterministic status per machine id
   const statusFor = (id: string): Status => {
     let h = 0;
