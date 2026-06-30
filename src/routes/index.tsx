@@ -747,30 +747,9 @@ function PillarDetailOverlay({
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {pillar.key === "P" && (
               <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                    Floor Layout — Current Position
-                  </h3>
-                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-sm border border-border/60 bg-secondary/60" />
-                      Machine
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-sm border border-accent bg-accent/20 shadow-[0_0_8px_var(--accent)]" />
-                      Adjacent to focus
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-full bg-accent animate-pulse shadow-[0_0_10px_var(--accent)]" />
-                      Current focus
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Current focus: <span className="text-foreground font-semibold">Fuseal Cell</span> · between{" "}
-                  <span className="text-foreground font-semibold">301IM30</span> and{" "}
-                  <span className="text-foreground font-semibold">109IM00</span>.
-                </p>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+                  Floor Layout
+                </h3>
                 <FloorMap />
               </section>
             )}
