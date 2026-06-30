@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useIntouchSnapshot } from "@/hooks/use-intouch-snapshot";
+import type { IntouchSnapshot, IntouchStatus } from "@/lib/intouch-ocr";
 import {
   Activity,
   AlertTriangle,
@@ -508,9 +510,9 @@ function PillarCard({
   );
 }
 
-function FloorMap() {
+function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   // Deterministic status per machine id
-  const statusFor = (id: string): Status => {
+  const fallback = (id: string): Status => {
     let h = 0;
     for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
     const r = mulberry32(Math.abs(h))();
@@ -520,7 +522,13 @@ function FloorMap() {
     return "na";
   };
 
-  const tileColor = (s: Status) => {
+  const statusFor = (id: string): Status | "qc" => {
+    const live = ocr?.results[id]?.status;
+    if (!live || live === "unknown") return fallback(id);
+    return live as IntouchStatus & (Status | "qc");
+  };
+
+  const tileColor = (s: Status | "qc") => {
     switch (s) {
       case "ok":
         return "bg-success/80 border-success";
@@ -528,6 +536,8 @@ function FloorMap() {
         return "bg-warning/80 border-warning";
       case "fail":
         return "bg-danger/80 border-danger";
+      case "qc":
+        return "bg-purple-500/70 border-purple-400";
       default:
         return "bg-sky-500/70 border-sky-400";
     }
@@ -664,6 +674,94 @@ function FloorMap() {
   );
 }
 
+function IntouchFloor() {
+  const { snapshot, imageUrl, busy, error, ingest, reset } = useIntouchSnapshot();
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const ago = snapshot
+    ? (() => {
+        const s = Math.round((Date.now() - snapshot.sampledAt) / 1000);
+        if (s < 60) return `${s}s ago`;
+        const m = Math.round(s / 60);
+        if (m < 60) return `${m} min ago`;
+        const h = Math.round(m / 60);
+        return `${h}h ago`;
+      })()
+    : null;
+
+  const matched = snapshot
+    ? Object.values(snapshot.results).filter((r) => r.status !== "unknown").length
+    : 0;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+        <div className="flex items-center gap-3">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            Floor Layout
+          </h3>
+          {snapshot ? (
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground rounded-full border border-border/60 px-2 py-0.5">
+              <span className="size-1.5 rounded-full bg-success animate-pulse" />
+              InTouch · synced {ago} · {matched}/{Object.keys(snapshot.results).length} tiles
+            </span>
+          ) : (
+            <span className="text-[11px] text-muted-foreground">
+              No InTouch snapshot yet — upload one to colour live tiles.
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) void ingest(f);
+              e.target.value = "";
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={busy}
+            className="text-xs rounded-md border border-border/60 bg-secondary/60 hover:bg-secondary px-3 py-1.5 transition disabled:opacity-50"
+          >
+            {busy ? "Reading…" : snapshot ? "Re-sync" : "Upload InTouch screenshot"}
+          </button>
+          {snapshot && (
+            <button
+              type="button"
+              onClick={reset}
+              className="text-xs rounded-md border border-border/60 bg-transparent hover:bg-secondary/40 px-3 py-1.5 transition"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+      </div>
+      {error && (
+        <p className="text-xs text-danger mb-3">{error}</p>
+      )}
+      <FloorMap ocr={snapshot} />
+      {imageUrl && (
+        <details className="mt-4">
+          <summary className="text-[11px] uppercase tracking-wider text-muted-foreground cursor-pointer">
+            Source snapshot
+          </summary>
+          <img
+            src={imageUrl}
+            alt="InTouch snapshot"
+            className="mt-2 max-h-72 rounded border border-border/60"
+          />
+        </details>
+      )}
+    </div>
+  );
+}
+
 function PillarDetailOverlay({
   pillar,
   detail,
@@ -747,10 +845,7 @@ function PillarDetailOverlay({
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {pillar.key === "P" && (
               <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
-                  Floor Layout
-                </h3>
-                <FloorMap />
+                <IntouchFloor />
               </section>
             )}
 
