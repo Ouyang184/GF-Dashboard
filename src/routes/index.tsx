@@ -274,8 +274,11 @@ function Index() {
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
         <div className="mx-auto max-w-[1600px] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-[var(--gradient-accent)] grid place-items-center text-primary-foreground font-black shadow-[var(--shadow-glow)]">
-              A
+            <div
+              className="h-10 px-2.5 rounded-xl bg-[#ff6a13] grid place-items-center font-black text-white tracking-tight shadow-[var(--shadow-glow)]"
+              aria-label="Georg Fischer"
+            >
+              <span className="text-base leading-none font-mono">+GF+</span>
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight leading-none">AMG Dashboard</h1>
