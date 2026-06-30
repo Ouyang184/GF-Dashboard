@@ -380,12 +380,11 @@ function StatCard({
           ? "text-danger"
           : "text-accent";
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 shadow-[var(--shadow-card)]">
-      <div className="absolute -right-8 -top-8 size-32 rounded-full bg-accent/5 blur-2xl" />
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-          <div className="mt-2 text-3xl font-bold tracking-tight">{value}</div>
+          <div className="mt-2 text-3xl font-bold tracking-tight text-primary">{value}</div>
           {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
         </div>
         <Icon className={`size-5 ${toneCls}`} />
@@ -396,26 +395,25 @@ function StatCard({
 
 function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-[var(--gradient-hero)] p-5 shadow-[var(--shadow-card)]">
-      <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-accent/15 blur-2xl" />
+    <div className="relative overflow-hidden rounded-sm border border-primary bg-[var(--gradient-hero)] p-5 shadow-[var(--shadow-card)] text-primary-foreground">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Lottery Pick of the Day</div>
-        <Ticket className="size-5 text-accent" />
+        <div className="text-xs uppercase tracking-wider text-primary-foreground/70">Lottery Pick of the Day</div>
+        <Ticket className="size-5 text-primary-foreground" />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {numbers.map((n) => (
           <span
             key={n}
-            className="grid place-items-center size-10 rounded-full bg-card font-mono font-bold tabular-nums border border-border/80"
+            className="grid place-items-center size-10 rounded-sm bg-card text-primary font-mono font-bold tabular-nums border border-card"
           >
             {n.toString().padStart(2, "0")}
           </span>
         ))}
-        <span className="grid place-items-center size-10 rounded-full bg-accent text-accent-foreground font-mono font-bold tabular-nums shadow-[0_0_18px_var(--accent)]">
+        <span className="grid place-items-center size-10 rounded-sm bg-warning text-foreground font-mono font-bold tabular-nums">
           {power.toString().padStart(2, "0")}
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">For fun only · refreshes daily</p>
+      <p className="mt-2 text-[10px] text-primary-foreground/70">For fun only · refreshes daily</p>
     </div>
   );
 }
@@ -437,8 +435,7 @@ function PillarCard({
   const warnCount = dots.filter((d) => d.status === "warn").length;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
-      <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
       <div className="relative p-5">
         <button
           type="button"
@@ -448,7 +445,7 @@ function PillarCard({
         >
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid place-items-center size-9 rounded-lg bg-secondary text-accent">
+              <span className="grid place-items-center size-9 rounded-sm bg-primary text-primary-foreground">
                 <Icon className="size-5" />
               </span>
               <div>
@@ -459,7 +456,7 @@ function PillarCard({
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
+            <span className="font-black text-5xl text-primary/15 leading-none">{pillar.key}</span>
             <ChevronDown
               className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""} group-hover:text-foreground`}
             />
@@ -853,12 +850,12 @@ function Legend({ tone, label }: { tone: Status; label: string }) {
 
 function NotesCard({ title, items }: { title: string; items: string[] }) {
   return (
-    <div className="rounded-2xl border border-border/60 bg-card p-5 shadow-[var(--shadow-card)]">
-      <div className="text-xs uppercase tracking-wider text-muted-foreground">{title}</div>
+    <div className="rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
+      <div className="text-xs uppercase tracking-wider font-bold text-primary">{title}</div>
       <ul className="mt-3 space-y-2">
         {items.map((item) => (
           <li key={item} className="flex items-start gap-2 text-sm">
-            <span className="mt-1.5 size-1.5 rounded-full bg-accent shrink-0" />
+            <span className="mt-1.5 size-1.5 rounded-full bg-primary shrink-0" />
             <span>{item}</span>
           </li>
         ))}
