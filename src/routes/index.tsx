@@ -627,16 +627,6 @@ function FloorMap() {
           <Tile id="301IM30" />
           <Tile id="109IM00" />
         </div>
-        {/* Pulsing pin between 301IM30 (bottom-left) and 109IM00 (bottom-right) */}
-        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-[8%] flex flex-col items-center gap-1 z-20">
-          <span className="text-[8px] uppercase tracking-[0.2em] text-accent font-bold drop-shadow">
-            You are here
-          </span>
-          <span className="relative inline-flex">
-            <span className="absolute inset-0 rounded-full bg-accent/60 animate-ping" />
-            <span className="relative size-4 rounded-full bg-accent shadow-[0_0_18px_var(--accent)] ring-2 ring-background" />
-          </span>
-        </div>
       </Zone>
 
       {/* SD Cell 1 — center-right */}
