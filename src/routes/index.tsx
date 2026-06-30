@@ -615,51 +615,7 @@ function PillarDetailOverlay({
                   <span className="text-foreground font-semibold">301IM30</span> and{" "}
                   <span className="text-foreground font-semibold">109IM00</span>.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {FLOOR_LAYOUT.map((zone) => {
-                    const isFocusZone = zone.zone === "Fuseal Cell";
-                    return (
-                      <div
-                        key={zone.zone}
-                        className={`rounded-xl border p-3 ${
-                          isFocusZone
-                            ? "border-accent/60 bg-accent/5 shadow-[0_0_16px_-4px_var(--accent)]"
-                            : "border-border/60 bg-secondary/20"
-                        }`}
-                      >
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
-                          {zone.zone}
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 items-center">
-                          {zone.machines.map((m, idx) => {
-                            const highlight = HIGHLIGHT_MACHINES.has(m);
-                            const prev = zone.machines[idx - 1];
-                            const insertMarker = prev === "301IM30" && m === "109IM00";
-                            return (
-                              <span key={m} className="flex items-center gap-1.5">
-                                {insertMarker && (
-                                  <span
-                                    title="Current focus"
-                                    className="size-3 rounded-full bg-accent animate-pulse shadow-[0_0_12px_var(--accent)]"
-                                  />
-                                )}
-                                <span
-                                  className={`px-2 py-1 rounded-md text-[11px] font-mono font-semibold border ${
-                                    highlight
-                                      ? "border-accent bg-accent/20 text-foreground shadow-[0_0_10px_-2px_var(--accent)]"
-                                      : "border-border/60 bg-secondary/60 text-muted-foreground"
-                                  }`}
-                                >
-                                  {m}
-                                </span>
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <FloorMap />
               </section>
             )}
 
