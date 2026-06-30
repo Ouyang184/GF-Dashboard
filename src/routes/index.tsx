@@ -508,6 +508,106 @@ function PillarCard({
   );
 }
 
+function FloorMap() {
+  const Pill = ({ id }: { id: string }) => {
+    const highlight = HIGHLIGHT_MACHINES.has(id);
+    return (
+      <span
+        className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold border whitespace-nowrap ${
+          highlight
+            ? "border-accent bg-accent/20 text-foreground shadow-[0_0_10px_-2px_var(--accent)]"
+            : "border-border/60 bg-secondary/60 text-muted-foreground"
+        }`}
+      >
+        {id}
+      </span>
+    );
+  };
+
+  const Zone = ({
+    name,
+    machines,
+    className,
+    focus,
+    children,
+  }: {
+    name: string;
+    machines?: string[];
+    className?: string;
+    focus?: boolean;
+    children?: React.ReactNode;
+  }) => (
+    <div
+      className={`rounded-lg border p-2.5 flex flex-col min-h-0 ${
+        focus
+          ? "border-accent/60 bg-accent/5 ring-1 ring-accent/30 shadow-[0_0_24px_-6px_var(--accent)]"
+          : "border-border/60 bg-secondary/20"
+      } ${className ?? ""}`}
+    >
+      <div className="text-[9px] uppercase tracking-wider text-muted-foreground mb-1.5 font-semibold">
+        {name}
+      </div>
+      {children ?? (
+        <div className="flex flex-wrap gap-1 content-start">
+          {machines?.map((m) => <Pill key={m} id={m} />)}
+        </div>
+      )}
+    </div>
+  );
+
+  const zoneFor = (z: string) => FLOOR_LAYOUT.find((f) => f.zone === z)!.machines;
+  const fuseal = zoneFor("Fuseal Cell");
+  const otherFuseal = fuseal.filter((m) => !HIGHLIGHT_MACHINES.has(m));
+
+  return (
+    <div className="grid grid-cols-12 grid-rows-6 gap-2 min-h-[420px]">
+      <Zone
+        name="ENG. Extrusion"
+        machines={zoneFor("ENG. Extrusion")}
+        className="col-span-4 row-span-2"
+      />
+      <Zone
+        name="Coil & Collar"
+        machines={zoneFor("Coil & Collar")}
+        className="col-span-4 row-span-2"
+      />
+      <Zone
+        name="Vinyls Extrusion"
+        machines={zoneFor("Vinyls Extrusion")}
+        className="col-span-4 row-span-2"
+      />
+
+      <Zone name="Fuseal Cell" focus className="col-span-5 row-span-5">
+        <div className="flex-1 flex flex-col gap-2 min-h-0">
+          <div className="flex flex-wrap gap-1 content-start">
+            {otherFuseal.map((m) => <Pill key={m} id={m} />)}
+          </div>
+          <div className="mt-auto flex flex-col items-center gap-1.5 pb-1">
+            <span className="text-[9px] uppercase tracking-wider text-accent font-bold">Current</span>
+            <div className="flex items-center gap-2">
+              <Pill id="301IM30" />
+              <span
+                title="Current focus"
+                className="size-3.5 rounded-full bg-accent animate-pulse shadow-[0_0_16px_var(--accent)]"
+              />
+              <Pill id="109IM00" />
+            </div>
+          </div>
+        </div>
+      </Zone>
+
+      <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} className="col-span-3 row-span-2" />
+      <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} className="col-span-3 row-span-3" />
+
+      <div className="col-span-5 row-span-1 rounded-lg border border-dashed border-border/40 grid place-items-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
+        Aisle
+      </div>
+      <Zone name="MD Cell" machines={zoneFor("MD Cell")} className="col-span-2 row-span-1" />
+      <Zone name="LD Cell" machines={zoneFor("LD Cell")} className="col-span-2 row-span-1" />
+    </div>
+  );
+}
+
 function PillarDetailOverlay({
   pillar,
   detail,
@@ -615,51 +715,7 @@ function PillarDetailOverlay({
                   <span className="text-foreground font-semibold">301IM30</span> and{" "}
                   <span className="text-foreground font-semibold">109IM00</span>.
                 </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {FLOOR_LAYOUT.map((zone) => {
-                    const isFocusZone = zone.zone === "Fuseal Cell";
-                    return (
-                      <div
-                        key={zone.zone}
-                        className={`rounded-xl border p-3 ${
-                          isFocusZone
-                            ? "border-accent/60 bg-accent/5 shadow-[0_0_16px_-4px_var(--accent)]"
-                            : "border-border/60 bg-secondary/20"
-                        }`}
-                      >
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
-                          {zone.zone}
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 items-center">
-                          {zone.machines.map((m, idx) => {
-                            const highlight = HIGHLIGHT_MACHINES.has(m);
-                            const prev = zone.machines[idx - 1];
-                            const insertMarker = prev === "301IM30" && m === "109IM00";
-                            return (
-                              <span key={m} className="flex items-center gap-1.5">
-                                {insertMarker && (
-                                  <span
-                                    title="Current focus"
-                                    className="size-3 rounded-full bg-accent animate-pulse shadow-[0_0_12px_var(--accent)]"
-                                  />
-                                )}
-                                <span
-                                  className={`px-2 py-1 rounded-md text-[11px] font-mono font-semibold border ${
-                                    highlight
-                                      ? "border-accent bg-accent/20 text-foreground shadow-[0_0_10px_-2px_var(--accent)]"
-                                      : "border-border/60 bg-secondary/60 text-muted-foreground"
-                                  }`}
-                                >
-                                  {m}
-                                </span>
-                              </span>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <FloorMap />
               </section>
             )}
 
