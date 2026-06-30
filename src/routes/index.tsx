@@ -14,6 +14,7 @@ import {
   Sun,
   Ticket,
   Truck,
+  X,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -238,8 +239,8 @@ function Index() {
   const weather = useWeather();
   const lottery = useMemo(dailyLottery, []);
 
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const monthName = now.toLocaleString(undefined, { month: "long" });
+  const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
+  const monthName = liveNow ? now.toLocaleString(undefined, { month: "long" }) : "";
   const dateStr = liveNow ? liveNow.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" }) : "";
   const timeStr = liveNow ? liveNow.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--";
 
