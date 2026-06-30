@@ -435,8 +435,7 @@ function PillarCard({
   const warnCount = dots.filter((d) => d.status === "warn").length;
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
-      <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
       <div className="relative p-5">
         <button
           type="button"
@@ -446,7 +445,7 @@ function PillarCard({
         >
           <div>
             <div className="flex items-center gap-2">
-              <span className="grid place-items-center size-9 rounded-lg bg-secondary text-accent">
+              <span className="grid place-items-center size-9 rounded-sm bg-primary text-primary-foreground">
                 <Icon className="size-5" />
               </span>
               <div>
@@ -457,7 +456,7 @@ function PillarCard({
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
           </div>
           <div className="flex flex-col items-end gap-2">
-            <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
+            <span className="font-black text-5xl text-primary/15 leading-none">{pillar.key}</span>
             <ChevronDown
               className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""} group-hover:text-foreground`}
             />
