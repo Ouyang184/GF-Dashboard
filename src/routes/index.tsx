@@ -785,37 +785,41 @@ function PillarDetailOverlay({
               </section>
             )}
 
-            <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
-              <div className="grid grid-cols-10 sm:grid-cols-16 gap-2">
-                {dots.map((d) => (
-                  <div
-                    key={d.day}
-                    title={`Day ${d.day}`}
-                    className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
-                      d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
-                    }`}
-                  >
-                    {d.day}
+            {pillar.key !== "P" && (
+              <>
+                <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
+                  <div className="grid grid-cols-10 sm:grid-cols-16 gap-2">
+                    {dots.map((d) => (
+                      <div
+                        key={d.day}
+                        title={`Day ${d.day}`}
+                        className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
+                          d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
+                        }`}
+                      >
+                        {d.day}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </section>
+                </section>
 
-            <section className="rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-              <div className="space-y-3">
-                {SHIFTS.map((s, i) => (
-                  <div key={s} className="flex items-center justify-between text-sm gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
-                      <span className="font-semibold w-12 shrink-0">{s}</span>
-                      <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
-                    </div>
+                <section className="rounded-2xl border border-border/60 bg-card p-6">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
+                  <div className="space-y-3">
+                    {SHIFTS.map((s, i) => (
+                      <div key={s} className="flex items-center justify-between text-sm gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
+                          <span className="font-semibold w-12 shrink-0">{s}</span>
+                          <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </section>
+                </section>
+              </>
+            )}
 
             <section className="rounded-2xl border border-border/60 bg-card p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
