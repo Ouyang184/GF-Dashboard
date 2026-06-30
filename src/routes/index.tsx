@@ -49,6 +49,19 @@ const PILLARS: Pillar[] = [
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
 
+const FLOOR_LAYOUT: { zone: string; machines: string[] }[] = [
+  { zone: "ENG. Extrusion", machines: ["11EM00", "2EM20", "10EM00", "4EM20"] },
+  { zone: "Vinyls Extrusion", machines: ["1EM10"] },
+  { zone: "Coil & Collar", machines: ["419AM0", "417AM0", "415AM0", "413AM0", "COIL5", "COIL6"] },
+  { zone: "Fuseal Cell", machines: ["310IM30", "307IM30", "306IM30", "305IM30", "301IM30", "109IM00"] },
+  { zone: "SD Cell 1", machines: ["222IM10", "213IM10", "212IM10", "423IM10", "101IM10"] },
+  { zone: "SD Cell 2", machines: ["113IM00", "210IM00", "209IM00", "114IM00", "433IM10", "104IM10", "115IM00"] },
+  { zone: "MD Cell", machines: ["201IM40", "512IM40", "443IM10", "513IM40"] },
+  { zone: "LD Cell", machines: ["523IM40", "202IM50", "913IM50", "102IM50"] },
+];
+
+const HIGHLIGHT_MACHINES = new Set(["301IM30", "109IM00"]);
+
 type PillarDetail = {
   issues: string[];
   actions: { task: string; owner: string; due: string }[];
@@ -576,6 +589,80 @@ function PillarDetailOverlay({
           </div>
 
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {pillar.key === "P" && (
+              <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                    Floor Layout — Current Position
+                  </h3>
+                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="size-2.5 rounded-sm border border-border/60 bg-secondary/60" />
+                      Machine
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="size-2.5 rounded-sm border border-accent bg-accent/20 shadow-[0_0_8px_var(--accent)]" />
+                      Adjacent to focus
+                    </span>
+                    <span className="inline-flex items-center gap-1.5">
+                      <span className="size-2.5 rounded-full bg-accent animate-pulse shadow-[0_0_10px_var(--accent)]" />
+                      Current focus
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Current focus: <span className="text-foreground font-semibold">Fuseal Cell</span> · between{" "}
+                  <span className="text-foreground font-semibold">301IM30</span> and{" "}
+                  <span className="text-foreground font-semibold">109IM00</span>.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                  {FLOOR_LAYOUT.map((zone) => {
+                    const isFocusZone = zone.zone === "Fuseal Cell";
+                    return (
+                      <div
+                        key={zone.zone}
+                        className={`rounded-xl border p-3 ${
+                          isFocusZone
+                            ? "border-accent/60 bg-accent/5 shadow-[0_0_16px_-4px_var(--accent)]"
+                            : "border-border/60 bg-secondary/20"
+                        }`}
+                      >
+                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">
+                          {zone.zone}
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 items-center">
+                          {zone.machines.map((m, idx) => {
+                            const highlight = HIGHLIGHT_MACHINES.has(m);
+                            const prev = zone.machines[idx - 1];
+                            const insertMarker = prev === "301IM30" && m === "109IM00";
+                            return (
+                              <span key={m} className="flex items-center gap-1.5">
+                                {insertMarker && (
+                                  <span
+                                    title="Current focus"
+                                    className="size-3 rounded-full bg-accent animate-pulse shadow-[0_0_12px_var(--accent)]"
+                                  />
+                                )}
+                                <span
+                                  className={`px-2 py-1 rounded-md text-[11px] font-mono font-semibold border ${
+                                    highlight
+                                      ? "border-accent bg-accent/20 text-foreground shadow-[0_0_10px_-2px_var(--accent)]"
+                                      : "border-border/60 bg-secondary/60 text-muted-foreground"
+                                  }`}
+                                >
+                                  {m}
+                                </span>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
             <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
               <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
               <div className="grid grid-cols-10 sm:grid-cols-16 gap-2">
