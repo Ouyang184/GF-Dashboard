@@ -4,6 +4,7 @@ import {
   Activity,
   AlertTriangle,
   Box,
+  ChevronDown,
   Cloud,
   CloudRain,
   CloudSnow,
@@ -46,6 +47,81 @@ const PILLARS: Pillar[] = [
 ];
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
+
+type PillarDetail = {
+  issues: string[];
+  actions: { task: string; owner: string; due: string }[];
+  shiftNotes: Record<string, string>;
+  stats: { label: string; value: string }[];
+};
+
+const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
+  S: {
+    issues: ["PPE audit overdue – Line 2", "Near-miss reported at press 3", "Eye-wash inspection due"],
+    actions: [
+      { task: "Re-train Line 2 on PPE SOP", owner: "J. Reyes", due: "Fri" },
+      { task: "Replace damaged guarding", owner: "Maint.", due: "Mon" },
+    ],
+    shiftNotes: { LD: "All clear", MD: "Minor spill, contained", SD1: "PPE check ok", SD2: "—", FS: "—", "PA&F": "Audit pending", EXT: "—" },
+    stats: [
+      { label: "Days since incident", value: "47" },
+      { label: "MTD OK", value: "92%" },
+      { label: "Open audits", value: "1" },
+    ],
+  },
+  Q: {
+    issues: ["Scrap spike on press 4 (6.2%)", "Color drift lot #A-204", "CMM gauge R&R due"],
+    actions: [
+      { task: "Root cause press 4 scrap", owner: "Quality", due: "Wed" },
+      { task: "Re-run gauge R&R", owner: "M. Patel", due: "Thu" },
+    ],
+    shiftNotes: { LD: "Within spec", MD: "Spike 04:20", SD1: "Recovered", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "Weekly scrap", value: "5.4%" },
+      { label: "First pass yield", value: "94%" },
+      { label: "Open NCRs", value: "3" },
+    ],
+  },
+  D: {
+    issues: ["PO #4421 late 1 day", "Carrier delay – inbound resin", "Process deviation: cycle time"],
+    actions: [
+      { task: "Expedite PO #4421", owner: "Logistics", due: "Today" },
+      { task: "Update sequencing plan", owner: "Planner", due: "Fri" },
+    ],
+    shiftNotes: { LD: "On schedule", MD: "−2 units", SD1: "Caught up", SD2: "—", FS: "—", "PA&F": "—", EXT: "Delay" },
+    stats: [
+      { label: "OTIF", value: "96%" },
+      { label: "Backlog", value: "12" },
+      { label: "Deviations", value: "3" },
+    ],
+  },
+  I: {
+    issues: ["Resin lot variance – silo 2", "Cycle count mismatch bin B-14", "Mold locker not returned"],
+    actions: [
+      { task: "Recount bin B-14", owner: "Wh. team", due: "Tue" },
+      { task: "Retrieve mold locker", owner: "Tooling", due: "Wed" },
+    ],
+    shiftNotes: { LD: "Counts ok", MD: "1 short", SD1: "Reconciled", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "Inventory accuracy", value: "98.1%" },
+      { label: "Days on hand", value: "11" },
+      { label: "Variances", value: "2" },
+    ],
+  },
+  P: {
+    issues: ["Changeover 38 min (target 25)", "Press 6 short stops", "OEE below target on SD1"],
+    actions: [
+      { task: "SMED kaizen press 6", owner: "CI team", due: "Next wk" },
+      { task: "Tune sensor on conveyor 3", owner: "Maint.", due: "Thu" },
+    ],
+    shiftNotes: { LD: "OEE 82%", MD: "OEE 76%", SD1: "OEE 71%", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "OEE", value: "78%" },
+      { label: "Downtime (MTD)", value: "14.2h" },
+      { label: "Short stops", value: "21" },
+    ],
+  },
+};
 
 // Deterministic seeded RNG so dots/shifts/lottery are stable per day.
 function mulberry32(seed: number) {
@@ -108,8 +184,9 @@ function dailyLottery() {
 }
 
 function useNow() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -156,14 +233,15 @@ function useWeather(): Weather {
 }
 
 function Index() {
-  const now = useNow();
+  const liveNow = useNow();
+  const now = liveNow ?? new Date(0);
   const weather = useWeather();
   const lottery = useMemo(dailyLottery, []);
 
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const monthName = now.toLocaleString(undefined, { month: "long" });
-  const dateStr = now.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" });
-  const timeStr = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const dateStr = liveNow ? liveNow.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" }) : "";
+  const timeStr = liveNow ? liveNow.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--";
 
   const WIcon = weather ? weatherLabel(weather.code).Icon : Cloud;
 
@@ -206,8 +284,8 @@ function Index() {
             </div>
 
             <div className="text-right">
-              <div className="font-mono text-2xl font-bold tabular-nums tracking-tight">{timeStr}</div>
-              <div className="text-xs text-muted-foreground">{dateStr}</div>
+              <div className="font-mono text-2xl font-bold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
+              <div className="text-xs text-muted-foreground" suppressHydrationWarning>{dateStr}</div>
             </div>
           </div>
         </div>
