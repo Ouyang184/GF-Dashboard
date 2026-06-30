@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useIntouchSnapshot } from "@/hooks/use-intouch-snapshot";
+import type { IntouchSnapshot, IntouchStatus } from "@/lib/intouch-ocr";
 import {
   Activity,
   AlertTriangle,
@@ -508,9 +510,9 @@ function PillarCard({
   );
 }
 
-function FloorMap() {
+function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   // Deterministic status per machine id
-  const statusFor = (id: string): Status => {
+  const fallback = (id: string): Status => {
     let h = 0;
     for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
     const r = mulberry32(Math.abs(h))();
@@ -520,7 +522,13 @@ function FloorMap() {
     return "na";
   };
 
-  const tileColor = (s: Status) => {
+  const statusFor = (id: string): Status | "qc" => {
+    const live = ocr?.results[id]?.status;
+    if (!live || live === "unknown") return fallback(id);
+    return live as IntouchStatus & (Status | "qc");
+  };
+
+  const tileColor = (s: Status | "qc") => {
     switch (s) {
       case "ok":
         return "bg-success/80 border-success";
@@ -528,6 +536,8 @@ function FloorMap() {
         return "bg-warning/80 border-warning";
       case "fail":
         return "bg-danger/80 border-danger";
+      case "qc":
+        return "bg-purple-500/70 border-purple-400";
       default:
         return "bg-sky-500/70 border-sky-400";
     }
