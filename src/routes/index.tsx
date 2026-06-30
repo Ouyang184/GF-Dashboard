@@ -526,11 +526,11 @@ function PillarDetailOverlay({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-stretch justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-stretch justify-center bg-background/70 backdrop-blur-xl animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="relative w-full h-full overflow-y-auto bg-background"
+        className="relative w-full h-full overflow-y-auto bg-background/60 animate-scale-in origin-center"
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`absolute inset-x-0 top-0 h-64 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
