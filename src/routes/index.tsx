@@ -275,10 +275,10 @@ function Index() {
         <div className="mx-auto max-w-[1600px] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
-              className="h-10 px-2.5 rounded-xl bg-[#ff6a13] grid place-items-center font-black text-white tracking-tight shadow-[var(--shadow-glow)]"
+              className="h-10 px-2.5 rounded-xl bg-white grid place-items-center font-black tracking-tight shadow-[var(--shadow-glow)] ring-1 ring-[#0033a0]/20"
               aria-label="Georg Fischer"
             >
-              <span className="text-base leading-none font-mono">+GF+</span>
+              <span className="text-base leading-none font-mono text-[#0033a0]">+GF+</span>
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight leading-none">AMG Dashboard</h1>
