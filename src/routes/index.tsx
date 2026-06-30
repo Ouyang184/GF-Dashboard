@@ -627,16 +627,6 @@ function FloorMap() {
           <Tile id="301IM30" />
           <Tile id="109IM00" />
         </div>
-        {/* Pulsing pin between 301IM30 (bottom-left) and 109IM00 (bottom-right) */}
-        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-[8%] flex flex-col items-center gap-1 z-20">
-          <span className="text-[8px] uppercase tracking-[0.2em] text-accent font-bold drop-shadow">
-            You are here
-          </span>
-          <span className="relative inline-flex">
-            <span className="absolute inset-0 rounded-full bg-accent/60 animate-ping" />
-            <span className="relative size-4 rounded-full bg-accent shadow-[0_0_18px_var(--accent)] ring-2 ring-background" />
-          </span>
-        </div>
       </Zone>
 
       {/* SD Cell 1 — center-right */}
@@ -757,30 +747,9 @@ function PillarDetailOverlay({
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {pillar.key === "P" && (
               <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-                    Floor Layout — Current Position
-                  </h3>
-                  <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-sm border border-border/60 bg-secondary/60" />
-                      Machine
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-sm border border-accent bg-accent/20 shadow-[0_0_8px_var(--accent)]" />
-                      Adjacent to focus
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="size-2.5 rounded-full bg-accent animate-pulse shadow-[0_0_10px_var(--accent)]" />
-                      Current focus
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Current focus: <span className="text-foreground font-semibold">Fuseal Cell</span> · between{" "}
-                  <span className="text-foreground font-semibold">301IM30</span> and{" "}
-                  <span className="text-foreground font-semibold">109IM00</span>.
-                </p>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+                  Floor Layout
+                </h3>
                 <FloorMap />
               </section>
             )}
