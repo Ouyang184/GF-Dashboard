@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useIntouchSnapshot } from "@/hooks/use-intouch-snapshot";
-import type { IntouchSnapshot, IntouchStatus } from "@/lib/intouch-ocr";
+import { useEffect, useMemo, useState } from "react";
+import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
+import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import {
   Activity,
   AlertTriangle,
@@ -524,8 +524,8 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
 
   const statusFor = (id: string): Status | "qc" => {
     const live = ocr?.results[id]?.status;
-    if (!live || live === "unknown") return fallback(id);
-    return live as IntouchStatus & (Status | "qc");
+    if (!live) return fallback(id);
+    return live;
   };
 
   const tileColor = (s: Status | "qc") => {
