@@ -476,60 +476,161 @@ function PillarCard({
             <div key={s} className="flex items-center justify-between text-xs">
               <span className="font-medium text-muted-foreground">{s}</span>
               <div className="flex items-center gap-2">
-                {expanded && (
-                  <span className="text-[10px] text-muted-foreground/80 truncate max-w-[140px]">
-                    {detail.shiftNotes[s] ?? "—"}
-                  </span>
-                )}
                 <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
               </div>
             </div>
           ))}
         </div>
+      </div>
+      {expanded && (
+        <PillarDetailOverlay
+          pillar={pillar}
+          detail={detail}
+          dots={dots}
+          shifts={shifts}
+          onClose={() => setExpanded(false)}
+        />
+      )}
+    </div>
+  );
+}
 
-        {/* Expanded detail */}
-        <div
-          className={`grid transition-all duration-300 ease-out ${
-            expanded ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"
-          }`}
-        >
-          <div className="overflow-hidden">
-            <div className="border-t border-border/60 pt-4 space-y-4">
-              <div className="grid grid-cols-3 gap-2">
-                {detail.stats.map((s) => (
-                  <div key={s.label} className="rounded-lg bg-secondary/60 p-2">
-                    <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
-                    <div className="text-sm font-bold mt-0.5">{s.value}</div>
+function PillarDetailOverlay({
+  pillar,
+  detail,
+  dots,
+  shifts,
+  onClose,
+}: {
+  pillar: Pillar;
+  detail: PillarDetail;
+  dots: { day: number; status: Status }[];
+  shifts: Status[];
+  onClose: () => void;
+}) {
+  const Icon = pillar.icon;
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [onClose]);
+
+  const okCount = dots.filter((d) => d.status === "ok").length;
+  const warnCount = dots.filter((d) => d.status === "warn").length;
+  const failCount = dots.filter((d) => d.status === "fail").length;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-stretch justify-center bg-background/80 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full h-full overflow-y-auto bg-background"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className={`absolute inset-x-0 top-0 h-64 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
+        <div className="relative mx-auto max-w-[1400px] px-8 py-8">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <span className="grid place-items-center size-14 rounded-xl bg-secondary text-accent">
+                <Icon className="size-7" />
+              </span>
+              <div>
+                <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Pillar Detail</div>
+                <h2 className="text-3xl font-bold tracking-tight">{pillar.label}</h2>
+                <p className="text-sm text-muted-foreground mt-1">KPI: {pillar.kpi}</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close"
+              className="grid place-items-center size-10 rounded-lg border border-border/60 bg-card hover:bg-secondary transition"
+            >
+              <X className="size-5" />
+            </button>
+          </div>
+
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {detail.stats.map((s) => (
+              <div key={s.label} className="rounded-xl border border-border/60 bg-card p-4">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                <div className="mt-1 text-2xl font-bold">{s.value}</div>
+              </div>
+            ))}
+            <div className="rounded-xl border border-border/60 bg-card p-4">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Month Score</div>
+              <div className="mt-1 flex items-baseline gap-2 text-sm">
+                <span className="text-success font-bold">{okCount} ok</span>
+                <span className="text-warning font-bold">{warnCount} warn</span>
+                <span className="text-danger font-bold">{failCount} miss</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
+              <div className="grid grid-cols-10 sm:grid-cols-16 gap-2">
+                {dots.map((d) => (
+                  <div
+                    key={d.day}
+                    title={`Day ${d.day}`}
+                    className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
+                      d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
+                    }`}
+                  >
+                    {d.day}
                   </div>
                 ))}
               </div>
+            </section>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Top Issues</div>
-                <ul className="space-y-1.5">
-                  {detail.issues.map((it) => (
-                    <li key={it} className="flex items-start gap-2 text-xs">
-                      <span className="mt-1 size-1.5 rounded-full bg-warning shrink-0" />
-                      <span>{it}</span>
-                    </li>
-                  ))}
-                </ul>
+            <section className="rounded-2xl border border-border/60 bg-card p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
+              <div className="space-y-3">
+                {SHIFTS.map((s, i) => (
+                  <div key={s} className="flex items-center justify-between text-sm gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
+                      <span className="font-semibold w-12 shrink-0">{s}</span>
+                      <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
+            </section>
 
-              <div>
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Action Items</div>
-                <ul className="space-y-1.5">
-                  {detail.actions.map((a) => (
-                    <li key={a.task} className="flex items-start justify-between gap-2 text-xs">
-                      <span className="flex-1">{a.task}</span>
-                      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
-                        {a.owner} · {a.due}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            <section className="rounded-2xl border border-border/60 bg-card p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
+              <ul className="space-y-3">
+                {detail.issues.map((it) => (
+                  <li key={it} className="flex items-start gap-3 text-sm">
+                    <span className="mt-1.5 size-2 rounded-full bg-warning shrink-0" />
+                    <span>{it}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Action Items</h3>
+              <ul className="space-y-3">
+                {detail.actions.map((a) => (
+                  <li key={a.task} className="flex items-center justify-between gap-3 text-sm rounded-lg bg-secondary/40 px-4 py-3">
+                    <span className="flex-1">{a.task}</span>
+                    <span className="shrink-0 rounded-full bg-card border border-border/60 px-3 py-1 text-xs text-muted-foreground">
+                      {a.owner} · {a.due}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
           </div>
         </div>
       </div>
