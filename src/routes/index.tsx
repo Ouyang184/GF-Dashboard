@@ -757,10 +757,7 @@ function PillarDetailOverlay({
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {pillar.key === "P" && (
               <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
-                  Floor Layout
-                </h3>
-                <FloorMap />
+                <IntouchFloor />
               </section>
             )}
 
