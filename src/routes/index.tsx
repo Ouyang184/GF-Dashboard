@@ -4,6 +4,7 @@ import {
   Activity,
   AlertTriangle,
   Box,
+  ChevronDown,
   Cloud,
   CloudRain,
   CloudSnow,
@@ -46,6 +47,81 @@ const PILLARS: Pillar[] = [
 ];
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
+
+type PillarDetail = {
+  issues: string[];
+  actions: { task: string; owner: string; due: string }[];
+  shiftNotes: Record<string, string>;
+  stats: { label: string; value: string }[];
+};
+
+const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
+  S: {
+    issues: ["PPE audit overdue – Line 2", "Near-miss reported at press 3", "Eye-wash inspection due"],
+    actions: [
+      { task: "Re-train Line 2 on PPE SOP", owner: "J. Reyes", due: "Fri" },
+      { task: "Replace damaged guarding", owner: "Maint.", due: "Mon" },
+    ],
+    shiftNotes: { LD: "All clear", MD: "Minor spill, contained", SD1: "PPE check ok", SD2: "—", FS: "—", "PA&F": "Audit pending", EXT: "—" },
+    stats: [
+      { label: "Days since incident", value: "47" },
+      { label: "MTD OK", value: "92%" },
+      { label: "Open audits", value: "1" },
+    ],
+  },
+  Q: {
+    issues: ["Scrap spike on press 4 (6.2%)", "Color drift lot #A-204", "CMM gauge R&R due"],
+    actions: [
+      { task: "Root cause press 4 scrap", owner: "Quality", due: "Wed" },
+      { task: "Re-run gauge R&R", owner: "M. Patel", due: "Thu" },
+    ],
+    shiftNotes: { LD: "Within spec", MD: "Spike 04:20", SD1: "Recovered", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "Weekly scrap", value: "5.4%" },
+      { label: "First pass yield", value: "94%" },
+      { label: "Open NCRs", value: "3" },
+    ],
+  },
+  D: {
+    issues: ["PO #4421 late 1 day", "Carrier delay – inbound resin", "Process deviation: cycle time"],
+    actions: [
+      { task: "Expedite PO #4421", owner: "Logistics", due: "Today" },
+      { task: "Update sequencing plan", owner: "Planner", due: "Fri" },
+    ],
+    shiftNotes: { LD: "On schedule", MD: "−2 units", SD1: "Caught up", SD2: "—", FS: "—", "PA&F": "—", EXT: "Delay" },
+    stats: [
+      { label: "OTIF", value: "96%" },
+      { label: "Backlog", value: "12" },
+      { label: "Deviations", value: "3" },
+    ],
+  },
+  I: {
+    issues: ["Resin lot variance – silo 2", "Cycle count mismatch bin B-14", "Mold locker not returned"],
+    actions: [
+      { task: "Recount bin B-14", owner: "Wh. team", due: "Tue" },
+      { task: "Retrieve mold locker", owner: "Tooling", due: "Wed" },
+    ],
+    shiftNotes: { LD: "Counts ok", MD: "1 short", SD1: "Reconciled", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "Inventory accuracy", value: "98.1%" },
+      { label: "Days on hand", value: "11" },
+      { label: "Variances", value: "2" },
+    ],
+  },
+  P: {
+    issues: ["Changeover 38 min (target 25)", "Press 6 short stops", "OEE below target on SD1"],
+    actions: [
+      { task: "SMED kaizen press 6", owner: "CI team", due: "Next wk" },
+      { task: "Tune sensor on conveyor 3", owner: "Maint.", due: "Thu" },
+    ],
+    shiftNotes: { LD: "OEE 82%", MD: "OEE 76%", SD1: "OEE 71%", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
+    stats: [
+      { label: "OEE", value: "78%" },
+      { label: "Downtime (MTD)", value: "14.2h" },
+      { label: "Short stops", value: "21" },
+    ],
+  },
+};
 
 // Deterministic seeded RNG so dots/shifts/lottery are stable per day.
 function mulberry32(seed: number) {
@@ -108,8 +184,9 @@ function dailyLottery() {
 }
 
 function useNow() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -156,14 +233,15 @@ function useWeather(): Weather {
 }
 
 function Index() {
-  const now = useNow();
+  const liveNow = useNow();
+  const now = liveNow ?? new Date(0);
   const weather = useWeather();
   const lottery = useMemo(dailyLottery, []);
 
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
   const monthName = now.toLocaleString(undefined, { month: "long" });
-  const dateStr = now.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" });
-  const timeStr = now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  const dateStr = liveNow ? liveNow.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" }) : "";
+  const timeStr = liveNow ? liveNow.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--";
 
   const WIcon = weather ? weatherLabel(weather.code).Icon : Cloud;
 
@@ -206,8 +284,8 @@ function Index() {
             </div>
 
             <div className="text-right">
-              <div className="font-mono text-2xl font-bold tabular-nums tracking-tight">{timeStr}</div>
-              <div className="text-xs text-muted-foreground">{dateStr}</div>
+              <div className="font-mono text-2xl font-bold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
+              <div className="text-xs text-muted-foreground" suppressHydrationWarning>{dateStr}</div>
             </div>
           </div>
         </div>
@@ -333,6 +411,8 @@ function PillarCard({
   shifts: Status[];
 }) {
   const Icon = pillar.icon;
+  const [expanded, setExpanded] = useState(false);
+  const detail = PILLAR_DETAILS[pillar.key];
   const okCount = dots.filter((d) => d.status === "ok").length;
   const failCount = dots.filter((d) => d.status === "fail").length;
   const warnCount = dots.filter((d) => d.status === "warn").length;
@@ -341,7 +421,12 @@ function PillarCard({
     <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
       <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
       <div className="relative p-5">
-        <div className="flex items-start justify-between">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="flex w-full items-start justify-between text-left cursor-pointer group"
+        >
           <div>
             <div className="flex items-center gap-2">
               <span className="grid place-items-center size-9 rounded-lg bg-secondary text-accent">
@@ -354,8 +439,13 @@ function PillarCard({
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
           </div>
-          <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
-        </div>
+          <div className="flex flex-col items-end gap-2">
+            <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
+            <ChevronDown
+              className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""} group-hover:text-foreground`}
+            />
+          </div>
+        </button>
 
         {/* Day dots grid */}
         <div className="mt-4 grid grid-cols-8 gap-1.5">
@@ -384,9 +474,62 @@ function PillarCard({
           {SHIFTS.map((s, i) => (
             <div key={s} className="flex items-center justify-between text-xs">
               <span className="font-medium text-muted-foreground">{s}</span>
-              <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
+              <div className="flex items-center gap-2">
+                {expanded && (
+                  <span className="text-[10px] text-muted-foreground/80 truncate max-w-[140px]">
+                    {detail.shiftNotes[s] ?? "—"}
+                  </span>
+                )}
+                <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Expanded detail */}
+        <div
+          className={`grid transition-all duration-300 ease-out ${
+            expanded ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="border-t border-border/60 pt-4 space-y-4">
+              <div className="grid grid-cols-3 gap-2">
+                {detail.stats.map((s) => (
+                  <div key={s.label} className="rounded-lg bg-secondary/60 p-2">
+                    <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                    <div className="text-sm font-bold mt-0.5">{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Top Issues</div>
+                <ul className="space-y-1.5">
+                  {detail.issues.map((it) => (
+                    <li key={it} className="flex items-start gap-2 text-xs">
+                      <span className="mt-1 size-1.5 rounded-full bg-warning shrink-0" />
+                      <span>{it}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Action Items</div>
+                <ul className="space-y-1.5">
+                  {detail.actions.map((a) => (
+                    <li key={a.task} className="flex items-start justify-between gap-2 text-xs">
+                      <span className="flex-1">{a.task}</span>
+                      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
+                        {a.owner} · {a.due}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
