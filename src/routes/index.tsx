@@ -508,7 +508,6 @@ function PillarCard({
   );
 }
 
-function PillarDetailOverlay({
 function FloorMap() {
   const Pill = ({ id }: { id: string }) => {
     const highlight = HIGHLIGHT_MACHINES.has(id);
