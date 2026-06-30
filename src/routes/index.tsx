@@ -509,6 +509,7 @@ function PillarCard({
 }
 
 function PillarDetailOverlay({
+  // moved below FloorMap
   pillar,
   detail,
   dots,
