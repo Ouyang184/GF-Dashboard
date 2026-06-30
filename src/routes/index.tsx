@@ -538,7 +538,7 @@ function FloorMap() {
     children?: React.ReactNode;
   }) => (
     <div
-      className={`rounded-lg border p-2.5 flex flex-col min-h-0 ${
+      className={`absolute rounded-md border p-2 flex flex-col min-h-0 overflow-hidden ${
         focus
           ? "border-accent/60 bg-accent/5 ring-1 ring-accent/30 shadow-[0_0_24px_-6px_var(--accent)]"
           : "border-border/60 bg-secondary/20"
@@ -560,50 +560,91 @@ function FloorMap() {
   const otherFuseal = fuseal.filter((m) => !HIGHLIGHT_MACHINES.has(m));
 
   return (
-    <div className="grid grid-cols-12 grid-rows-6 gap-2 min-h-[420px]">
+    <div
+      className="relative w-full h-[520px] rounded-xl border-2 border-border/70 bg-[repeating-linear-gradient(45deg,transparent_0_14px,oklch(1_0_0/0.015)_14px_15px)] overflow-hidden"
+      aria-label="Plant floor map"
+    >
+      {/* Compass + scale */}
+      <div className="absolute top-2 right-3 text-[9px] uppercase tracking-[0.2em] text-muted-foreground/70 font-semibold">
+        Plant Floor · Top-Down
+      </div>
+      <div className="absolute bottom-2 left-3 flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-muted-foreground/60">
+        <span className="h-px w-10 bg-muted-foreground/40" /> 20m
+      </div>
+
+      {/* Horizontal main aisle */}
+      <div className="absolute left-[2%] right-[2%] top-[44%] h-[6%] border-y border-dashed border-border/40">
+        <div className="h-full grid place-items-center text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50">
+          ← Main Aisle →
+        </div>
+      </div>
+      {/* Vertical aisle on the right */}
+      <div className="absolute top-[2%] bottom-[2%] left-[64%] w-[3%] border-x border-dashed border-border/30" />
+
+      {/* TOP STRIP: extrusion line */}
       <Zone
         name="ENG. Extrusion"
         machines={zoneFor("ENG. Extrusion")}
-        className="col-span-4 row-span-2"
+        className="top-[2%] left-[2%] w-[28%] h-[40%]"
       />
       <Zone
         name="Coil & Collar"
         machines={zoneFor("Coil & Collar")}
-        className="col-span-4 row-span-2"
+        className="top-[2%] left-[32%] w-[30%] h-[26%]"
       />
       <Zone
         name="Vinyls Extrusion"
         machines={zoneFor("Vinyls Extrusion")}
-        className="col-span-4 row-span-2"
+        className="top-[30%] left-[32%] w-[30%] h-[12%]"
       />
 
-      <Zone name="Fuseal Cell" focus className="col-span-5 row-span-5">
+      {/* RIGHT COLUMN: SD / MD / LD cells along vertical aisle */}
+      <Zone
+        name="SD Cell 1"
+        machines={zoneFor("SD Cell 1")}
+        className="top-[2%] left-[68%] w-[30%] h-[20%]"
+      />
+      <Zone
+        name="SD Cell 2"
+        machines={zoneFor("SD Cell 2")}
+        className="top-[24%] left-[68%] w-[30%] h-[34%]"
+      />
+      <Zone
+        name="MD Cell"
+        machines={zoneFor("MD Cell")}
+        className="top-[60%] left-[68%] w-[14%] h-[38%]"
+      />
+      <Zone
+        name="LD Cell"
+        machines={zoneFor("LD Cell")}
+        className="top-[60%] left-[84%] w-[14%] h-[38%]"
+      />
+
+      {/* BOTTOM-LEFT: Fuseal Cell (focus) — L-shape feel via offset */}
+      <Zone
+        name="Fuseal Cell"
+        focus
+        className="top-[52%] left-[2%] w-[60%] h-[46%]"
+      >
         <div className="flex-1 flex flex-col gap-2 min-h-0">
           <div className="flex flex-wrap gap-1 content-start">
             {otherFuseal.map((m) => <Pill key={m} id={m} />)}
           </div>
-          <div className="mt-auto flex flex-col items-center gap-1.5 pb-1">
-            <span className="text-[9px] uppercase tracking-wider text-accent font-bold">Current</span>
+          <div className="mt-auto flex flex-col items-center gap-1 pb-1">
+            <span className="text-[9px] uppercase tracking-[0.2em] text-accent font-bold">
+              You are here
+            </span>
             <div className="flex items-center gap-2">
               <Pill id="301IM30" />
-              <span
-                title="Current focus"
-                className="size-3.5 rounded-full bg-accent animate-pulse shadow-[0_0_16px_var(--accent)]"
-              />
+              <span className="relative inline-flex">
+                <span className="absolute inset-0 rounded-full bg-accent/50 animate-ping" />
+                <span className="relative size-3.5 rounded-full bg-accent shadow-[0_0_18px_var(--accent)] ring-2 ring-background" />
+              </span>
               <Pill id="109IM00" />
             </div>
           </div>
         </div>
       </Zone>
-
-      <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} className="col-span-3 row-span-2" />
-      <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} className="col-span-3 row-span-3" />
-
-      <div className="col-span-5 row-span-1 rounded-lg border border-dashed border-border/40 grid place-items-center text-[10px] uppercase tracking-[0.2em] text-muted-foreground/60">
-        Aisle
-      </div>
-      <Zone name="MD Cell" machines={zoneFor("MD Cell")} className="col-span-2 row-span-1" />
-      <Zone name="LD Cell" machines={zoneFor("LD Cell")} className="col-span-2 row-span-1" />
     </div>
   );
 }
