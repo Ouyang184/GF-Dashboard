@@ -380,12 +380,11 @@ function StatCard({
           ? "text-danger"
           : "text-accent";
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 shadow-[var(--shadow-card)]">
-      <div className="absolute -right-8 -top-8 size-32 rounded-full bg-accent/5 blur-2xl" />
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-start justify-between">
         <div>
           <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-          <div className="mt-2 text-3xl font-bold tracking-tight">{value}</div>
+          <div className="mt-2 text-3xl font-bold tracking-tight text-primary">{value}</div>
           {sub && <div className="mt-1 text-xs text-muted-foreground">{sub}</div>}
         </div>
         <Icon className={`size-5 ${toneCls}`} />
@@ -396,26 +395,25 @@ function StatCard({
 
 function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-[var(--gradient-hero)] p-5 shadow-[var(--shadow-card)]">
-      <div className="absolute -right-10 -bottom-10 size-40 rounded-full bg-accent/15 blur-2xl" />
+    <div className="relative overflow-hidden rounded-sm border border-primary bg-[var(--gradient-hero)] p-5 shadow-[var(--shadow-card)] text-primary-foreground">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Lottery Pick of the Day</div>
-        <Ticket className="size-5 text-accent" />
+        <div className="text-xs uppercase tracking-wider text-primary-foreground/70">Lottery Pick of the Day</div>
+        <Ticket className="size-5 text-primary-foreground" />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {numbers.map((n) => (
           <span
             key={n}
-            className="grid place-items-center size-10 rounded-full bg-card font-mono font-bold tabular-nums border border-border/80"
+            className="grid place-items-center size-10 rounded-sm bg-card text-primary font-mono font-bold tabular-nums border border-card"
           >
             {n.toString().padStart(2, "0")}
           </span>
         ))}
-        <span className="grid place-items-center size-10 rounded-full bg-accent text-accent-foreground font-mono font-bold tabular-nums shadow-[0_0_18px_var(--accent)]">
+        <span className="grid place-items-center size-10 rounded-sm bg-warning text-foreground font-mono font-bold tabular-nums">
           {power.toString().padStart(2, "0")}
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">For fun only · refreshes daily</p>
+      <p className="mt-2 text-[10px] text-primary-foreground/70">For fun only · refreshes daily</p>
     </div>
   );
 }
