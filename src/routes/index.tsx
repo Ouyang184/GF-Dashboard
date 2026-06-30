@@ -411,6 +411,8 @@ function PillarCard({
   shifts: Status[];
 }) {
   const Icon = pillar.icon;
+  const [expanded, setExpanded] = useState(false);
+  const detail = PILLAR_DETAILS[pillar.key];
   const okCount = dots.filter((d) => d.status === "ok").length;
   const failCount = dots.filter((d) => d.status === "fail").length;
   const warnCount = dots.filter((d) => d.status === "warn").length;
@@ -419,7 +421,12 @@ function PillarCard({
     <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
       <div className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
       <div className="relative p-5">
-        <div className="flex items-start justify-between">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="flex w-full items-start justify-between text-left cursor-pointer group"
+        >
           <div>
             <div className="flex items-center gap-2">
               <span className="grid place-items-center size-9 rounded-lg bg-secondary text-accent">
@@ -432,8 +439,13 @@ function PillarCard({
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
           </div>
-          <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
-        </div>
+          <div className="flex flex-col items-end gap-2">
+            <span className="font-black text-5xl text-foreground/10 leading-none">{pillar.key}</span>
+            <ChevronDown
+              className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""} group-hover:text-foreground`}
+            />
+          </div>
+        </button>
 
         {/* Day dots grid */}
         <div className="mt-4 grid grid-cols-8 gap-1.5">
@@ -462,9 +474,62 @@ function PillarCard({
           {SHIFTS.map((s, i) => (
             <div key={s} className="flex items-center justify-between text-xs">
               <span className="font-medium text-muted-foreground">{s}</span>
-              <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
+              <div className="flex items-center gap-2">
+                {expanded && (
+                  <span className="text-[10px] text-muted-foreground/80 truncate max-w-[140px]">
+                    {detail.shiftNotes[s] ?? "—"}
+                  </span>
+                )}
+                <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
+              </div>
             </div>
           ))}
+        </div>
+
+        {/* Expanded detail */}
+        <div
+          className={`grid transition-all duration-300 ease-out ${
+            expanded ? "grid-rows-[1fr] opacity-100 mt-4" : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="border-t border-border/60 pt-4 space-y-4">
+              <div className="grid grid-cols-3 gap-2">
+                {detail.stats.map((s) => (
+                  <div key={s.label} className="rounded-lg bg-secondary/60 p-2">
+                    <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+                    <div className="text-sm font-bold mt-0.5">{s.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Top Issues</div>
+                <ul className="space-y-1.5">
+                  {detail.issues.map((it) => (
+                    <li key={it} className="flex items-start gap-2 text-xs">
+                      <span className="mt-1 size-1.5 rounded-full bg-warning shrink-0" />
+                      <span>{it}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Action Items</div>
+                <ul className="space-y-1.5">
+                  {detail.actions.map((a) => (
+                    <li key={a.task} className="flex items-start justify-between gap-2 text-xs">
+                      <span className="flex-1">{a.task}</span>
+                      <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
+                        {a.owner} · {a.due}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
