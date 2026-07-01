@@ -879,3 +879,81 @@ function NotesCard({ title, items }: { title: string; items: string[] }) {
     </div>
   );
 }
+
+function CompliancePanel() {
+  const availabilityLeaves = [
+    "Matching: 7",
+    "Comparable: 3",
+    "Downtime alerts",
+  ];
+  const complianceLeaves = [
+    "6 of 10 available",
+    "Repro: 6/18 (33%)",
+    "2 MC in cabinet",
+  ];
+  return (
+    <div>
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-6">
+        Availability vs Compliance
+      </h3>
+      <div className="flex flex-col items-center">
+        {/* Root */}
+        <div className="rounded-xl border border-border/60 bg-card px-6 py-3 shadow-[var(--shadow-card)] text-center">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pillar</div>
+          <div className="text-lg font-bold text-primary">Productivity</div>
+        </div>
+
+        {/* Vertical trunk */}
+        <div className="h-6 w-px bg-border" />
+
+        {/* Horizontal bar spanning both branches */}
+        <div className="relative w-full max-w-2xl">
+          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-border" />
+          <div className="grid grid-cols-2">
+            {/* Availability branch */}
+            <div className="flex flex-col items-center">
+              <div className="h-6 w-px bg-border" />
+              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-warning">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Availability</div>
+                <div className="text-xl font-bold text-warning">55%</div>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <ul className="w-full max-w-[240px] space-y-2">
+                {availabilityLeaves.map((leaf) => (
+                  <li
+                    key={leaf}
+                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
+                  >
+                    <span className="size-1.5 rounded-full bg-warning shrink-0" />
+                    <span>{leaf}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Compliance branch */}
+            <div className="flex flex-col items-center">
+              <div className="h-6 w-px bg-border" />
+              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-success">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Compliance</div>
+                <div className="text-xl font-bold text-success">80%</div>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <ul className="w-full max-w-[240px] space-y-2">
+                {complianceLeaves.map((leaf) => (
+                  <li
+                    key={leaf}
+                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
+                  >
+                    <span className="size-1.5 rounded-full bg-success shrink-0" />
+                    <span>{leaf}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
