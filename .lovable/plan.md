@@ -1,33 +1,68 @@
-## Changes to `src/routes/index.tsx`
+## Answers to your two questions first
 
-**1. Remove from home page**
-- Delete the `MasterCard Compliance` `StatCard` in the top stats row (line 318). Replace the 4-col grid with 3 cards: Month, Open Escalations, LotteryCard — grid becomes `md:grid-cols-3`.
-- Delete the `Availability vs Compliance` `NotesCard` (lines 351–354). Footer notes grid becomes `lg:grid-cols-2` with just Open Escalations + Long Term Actions.
+- **Yes, this can connect to SharePoint.** Lovable ships a Microsoft SharePoint connector that goes through Microsoft Graph. We link it once, sign in with the Microsoft account whose SharePoint you want to read (your company account), and the app queries the list from a server function. No SharePoint credentials ever live in the codebase.
+- **Running locally vs. hosted makes no difference for auth.** The connector stores your Microsoft OAuth tokens on Lovable's side and injects two env vars (`LOVABLE_API_KEY` + `MICROSOFT_SHAREPOINT_API_KEY`) into the server runtime. Local `bun dev`, Lovable preview, and the published site all read the same tokens and hit the same gateway. Local only becomes a problem if your company's SharePoint is behind a VPN/Conditional Access rule that blocks non-corporate IPs — that would block Lovable's servers too, and would need IT to allow the Lovable gateway.
 
-**2. Add a merged "Availability vs Compliance" tree card into the Productivity pillar overlay**
+**Important caveat on the account:** the connector authenticates as *one* Microsoft account (the one you sign in with when linking). For a company dashboard the right move is to sign in with a **shared/service account** your IT owns (e.g. `amg-dashboard@yourco.com`) that has read access to the SharePoint list — not your personal login. Otherwise the dashboard breaks the day you leave or your password rotates. If you don't have one yet, we can start with your company account to prove it works, then swap the connection to a service account later without code changes.
 
-Only mount it when `pillar.key === "P"`, placed **above** `IntouchFloor` inside the Productivity section (mirrors how D/I get the floor map). Update the conditional at line 778 so:
-- `D` / `I` → `<IntouchFloor />` only (unchanged)
-- `P` → new `<CompliancePanel />` **then** `<IntouchFloor />`, both full-width
-- others → existing Month Status + Shifts
+## What I need from you before building
 
-**3. New `CompliancePanel` component (tree/hierarchy visual)**
+1. **Confirm the connector link.** I'll trigger the connect flow for `microsoft_sharepoint`; you sign in with the company (or service) account.
+2. **SharePoint site + list identity.** Paste the SharePoint URL of the list — something like `https://<tenant>.sharepoint.com/sites/<site>/Lists/<ListName>`. I'll resolve it to the Graph `siteId` and `listId`.
+3. **Column mapping.** Tell me which list columns hold:
+   - Machine ID (matching IDs like `310IM30`, `419AM0`, …)
+   - Deviation status or severity (or just "a row = a deviation")
+   - Timestamp / "date opened"
+   - Optional: "is open" / "resolved" flag so we ignore closed items
 
-Root node "Productivity" branching into two children "Availability 55%" and "Compliance 80%", each with leaf metrics. Rendered as a simple SVG-free CSS tree using the existing tokens (`bg-card`, `border-border`, `text-primary`, `text-success`, `text-warning`) — no new deps.
+We'll only count deviations dated **today** (America/Chicago) that are still open.
 
-```text
-              ┌─────────────────────┐
-              │    Productivity     │
-              └──────────┬──────────┘
-              ┌──────────┴──────────┐
-    ┌─────────▼────────┐   ┌────────▼─────────┐
-    │ Availability 55% │   │ Compliance 80%   │
-    └───┬──────────────┘   └──┬───────────────┘
-        ├─ Matching: 7        ├─ 6 of 10 available
-        ├─ Comparable: 3      ├─ Repro: 6/18 (33%)
-        └─ Downtime alerts    └─ 2 MC in cabinet
+## What I'll build
+
+### 1. Server function — `src/lib/sharepoint-deviations.functions.ts`
+
+```ts
+export const getTodaysDeviations = createServerFn({ method: "GET" })
+  .handler(async () => {
+    // GET {GATEWAY}/microsoft_sharepoint/sites/{siteId}/lists/{listId}/items?expand=fields
+    //   &$filter=fields/DateOpened ge 'YYYY-MM-DDT00:00:00Z' and fields/Status ne 'Closed'
+    // Auth headers:
+    //   Authorization: Bearer ${LOVABLE_API_KEY}
+    //   X-Connection-Api-Key: ${MICROSOFT_SHAREPOINT_API_KEY}
+    // Returns { deviations: [{ machineId, status, note }], sampledAt }
+  });
 ```
 
-Structure: nested flex columns with connector lines drawn via `border-l` / `border-t` on child wrappers (same trick already used in `NotesCard`-style tokens). Root and branch nodes are pill-style rounded boxes matching the mastercard aesthetic (`rounded-xl border border-border/60 bg-card px-4 py-3 shadow-[var(--shadow-card)]`). Leaves use small muted list rows.
+- Site + list IDs read from env vars (`SHAREPOINT_SITE_ID`, `SHAREPOINT_LIST_ID`) which I'll store via `add_secret` after you confirm the URL — that way we can point at a different list without a redeploy.
+- Explicit error handling: if the gateway 401s, return `{ deviations: [], error: "sharepoint_unauthorized" }` so the UI shows a "Reconnect SharePoint" hint instead of blanking the dashboard.
 
-No new files, no dep changes, no data-model changes — purely presentational reshuffle inside `src/routes/index.tsx`.
+### 2. Client hook — `src/hooks/use-sharepoint-deviations.ts`
+
+- Uses TanStack Query, `refetchInterval: 60_000` (1 min), `staleTime: 30_000`.
+- Exposes `{ count, byMachine, sampledAt, error, isLoading }`.
+
+### 3. Wire into the existing rule
+
+Replace `useDeviationCount()` (which reads local tile clicks) with the SharePoint count for the QDIP dots, keeping the same thresholds:
+
+- Inventory today red when `count >= 1`
+- Delivery today red when `count > 3`
+
+Manual tile clicking on the floor map stays as a manual override for anything not yet in the SharePoint list — it just OR's with the SharePoint count so nothing regresses.
+
+### 4. Small UI additions inside the Productivity pillar overlay
+
+- Under the tree card: "SharePoint deviations today: N · synced Xs ago" badge, with a "Reconnect" link when `error === "sharepoint_unauthorized"`.
+- Red tint on the machine tile whose ID matches an open deviation row.
+
+### 5. Non-goals in this pass
+
+- No write-back to SharePoint (that was option 3 in the earlier question and you picked read-only).
+- No per-viewer Microsoft login. Dashboard viewers see whatever the connected account can see.
+
+## Order of operations
+
+1. You approve this plan.
+2. I trigger `standard_connectors--connect` for Microsoft SharePoint → you sign in with the company/service account.
+3. You paste the list URL + column names.
+4. I resolve `siteId`/`listId` via a one-off gateway call, save both as secrets, then write the server fn, hook, and UI wiring in one pass.
