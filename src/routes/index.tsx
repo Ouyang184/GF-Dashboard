@@ -549,7 +549,6 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   };
 
   const Tile = ({ id }: { id: string }) => {
-    const highlight = HIGHLIGHT_MACHINES.has(id);
     const s = statusFor(id);
     const cycle = () => {
       const idx = STATUS_CYCLE.indexOf(s);
@@ -561,9 +560,7 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
         type="button"
         onClick={cycle}
         title={`${id} — click to change status`}
-        className={`relative rounded-sm border px-1 py-1 font-mono font-bold text-background leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${tileColor(s)} ${
-          highlight ? "ring-2 ring-accent shadow-[0_0_14px_var(--accent)] z-10" : ""
-        }`}
+        className={`relative rounded-sm border px-1 py-1 font-mono font-bold text-background leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${tileColor(s)}`}
       >
         <span className="truncate">{displayId(id)}</span>
       </button>
