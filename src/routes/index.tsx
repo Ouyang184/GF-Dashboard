@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
+import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import {
   Activity,
   AlertTriangle,
@@ -189,6 +190,24 @@ function buildMonthDots(pillarIdx: number, daysInMonth: number) {
   return dots;
 }
 
+/**
+ * Apply live deviation rules to today's dot:
+ *  - Inventory (I): ≥1 deviation → red
+ *  - Delivery  (D): >3 deviations → red
+ */
+function applyDeviationRule(
+  dots: { day: number; status: Status }[],
+  pillarKey: string,
+  deviationCount: number,
+) {
+  const today = new Date().getDate();
+  const trigger =
+    (pillarKey === "I" && deviationCount >= 1) ||
+    (pillarKey === "D" && deviationCount > 3);
+  if (!trigger) return dots;
+  return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
+}
+
 function dailyLottery() {
   const today = new Date();
   const rng = mulberry32(dateSeed(today, 777));
@@ -253,6 +272,7 @@ function Index() {
   const now = liveNow ?? new Date(0);
   const weather = useWeather();
   const lottery = useMemo(dailyLottery, []);
+  const deviationCount = useDeviationCount();
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
   const monthName = liveNow ? now.toLocaleString(undefined, { month: "long" }) : "";
@@ -324,7 +344,7 @@ function Index() {
             <PillarCard
               key={p.key}
               pillar={p}
-              dots={buildMonthDots(i, daysInMonth)}
+              dots={applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)}
               shifts={shiftStatuses[i]}
             />
           ))}
@@ -506,7 +526,7 @@ function PillarCard({
 }
 
 function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
-  const [overrides, setOverrides] = useState<Record<string, Status | "qc">>({});
+  const overrides = useFloorOverrides();
   const STATUS_CYCLE: Array<Status | "qc"> = ["ok", "warn", "fail", "qc", "na"];
   const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
 
@@ -548,7 +568,7 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
     const cycle = () => {
       const idx = STATUS_CYCLE.indexOf(s);
       const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
-      setOverrides((o) => ({ ...o, [id]: next }));
+      setFloorOverride(id, next);
     };
     return (
       <button
