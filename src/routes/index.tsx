@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
+import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import {
   Activity,
   AlertTriangle,
@@ -187,6 +188,24 @@ function buildMonthDots(pillarIdx: number, daysInMonth: number) {
     }
   }
   return dots;
+}
+
+/**
+ * Apply live deviation rules to today's dot:
+ *  - Inventory (I): ≥1 deviation → red
+ *  - Delivery  (D): >3 deviations → red
+ */
+function applyDeviationRule(
+  dots: { day: number; status: Status }[],
+  pillarKey: string,
+  deviationCount: number,
+) {
+  const today = new Date().getDate();
+  const trigger =
+    (pillarKey === "I" && deviationCount >= 1) ||
+    (pillarKey === "D" && deviationCount > 3);
+  if (!trigger) return dots;
+  return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
 }
 
 function dailyLottery() {
