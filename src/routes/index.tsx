@@ -526,7 +526,7 @@ function PillarCard({
 }
 
 function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
-  const [overrides, setOverrides] = useState<Record<string, Status | "qc">>({});
+  const overrides = useFloorOverrides();
   const STATUS_CYCLE: Array<Status | "qc"> = ["ok", "warn", "fail", "qc", "na"];
   const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
 
@@ -568,7 +568,7 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
     const cycle = () => {
       const idx = STATUS_CYCLE.indexOf(s);
       const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
-      setOverrides((o) => ({ ...o, [id]: next }));
+      setFloorOverride(id, next);
     };
     return (
       <button
