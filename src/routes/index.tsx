@@ -312,10 +312,9 @@ function Index() {
 
       <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-8">
         {/* Top stats row */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={Activity} />
           <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
-          <StatCard label="MasterCard Compliance" value="80%" sub="6 of 10 available" icon={Shield} tone="ok" />
           <LotteryCard numbers={lottery.numbers} power={lottery.power} />
         </section>
 
@@ -332,7 +331,7 @@ function Index() {
         </section>
 
         {/* Footer notes */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <NotesCard
             title="Open Escalations"
             items={[
@@ -347,10 +346,6 @@ function Index() {
               "4 reprints made (10 → 14, 78%)",
               "2 MC in cabinet but not on machine",
             ]}
-          />
-          <NotesCard
-            title="Availability vs Compliance"
-            items={["Availability: 55%", "Compliance: 80%", "Matching: 7 · Comparable: 3"]}
           />
         </section>
       </main>
