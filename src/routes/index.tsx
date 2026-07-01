@@ -312,10 +312,9 @@ function Index() {
 
       <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-8">
         {/* Top stats row */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={Activity} />
           <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
-          <StatCard label="MasterCard Compliance" value="80%" sub="6 of 10 available" icon={Shield} tone="ok" />
           <LotteryCard numbers={lottery.numbers} power={lottery.power} />
         </section>
 
@@ -332,7 +331,7 @@ function Index() {
         </section>
 
         {/* Footer notes */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <NotesCard
             title="Open Escalations"
             items={[
@@ -347,10 +346,6 @@ function Index() {
               "4 reprints made (10 → 14, 78%)",
               "2 MC in cabinet but not on machine",
             ]}
-          />
-          <NotesCard
-            title="Availability vs Compliance"
-            items={["Availability: 55%", "Compliance: 80%", "Matching: 7 · Comparable: 3"]}
           />
         </section>
       </main>
@@ -781,7 +776,18 @@ function PillarDetailOverlay({
               </section>
             )}
 
-            {pillar.key !== "D" && pillar.key !== "I" && (
+            {pillar.key === "P" && (
+              <>
+                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                  <CompliancePanel />
+                </section>
+                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                  <IntouchFloor />
+                </section>
+              </>
+            )}
+
+            {pillar.key !== "D" && pillar.key !== "I" && pillar.key !== "P" && (
               <>
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
@@ -870,6 +876,84 @@ function NotesCard({ title, items }: { title: string; items: string[] }) {
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function CompliancePanel() {
+  const availabilityLeaves = [
+    "Matching: 7",
+    "Comparable: 3",
+    "Downtime alerts",
+  ];
+  const complianceLeaves = [
+    "6 of 10 available",
+    "Repro: 6/18 (33%)",
+    "2 MC in cabinet",
+  ];
+  return (
+    <div>
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-6">
+        Availability vs Compliance
+      </h3>
+      <div className="flex flex-col items-center">
+        {/* Root */}
+        <div className="rounded-xl border border-border/60 bg-card px-6 py-3 shadow-[var(--shadow-card)] text-center">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pillar</div>
+          <div className="text-lg font-bold text-primary">Productivity</div>
+        </div>
+
+        {/* Vertical trunk */}
+        <div className="h-6 w-px bg-border" />
+
+        {/* Horizontal bar spanning both branches */}
+        <div className="relative w-full max-w-2xl">
+          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-border" />
+          <div className="grid grid-cols-2">
+            {/* Availability branch */}
+            <div className="flex flex-col items-center">
+              <div className="h-6 w-px bg-border" />
+              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-warning">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Availability</div>
+                <div className="text-xl font-bold text-warning">55%</div>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <ul className="w-full max-w-[240px] space-y-2">
+                {availabilityLeaves.map((leaf) => (
+                  <li
+                    key={leaf}
+                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
+                  >
+                    <span className="size-1.5 rounded-full bg-warning shrink-0" />
+                    <span>{leaf}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Compliance branch */}
+            <div className="flex flex-col items-center">
+              <div className="h-6 w-px bg-border" />
+              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-success">
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Compliance</div>
+                <div className="text-xl font-bold text-success">80%</div>
+              </div>
+              <div className="h-4 w-px bg-border" />
+              <ul className="w-full max-w-[240px] space-y-2">
+                {complianceLeaves.map((leaf) => (
+                  <li
+                    key={leaf}
+                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
+                  >
+                    <span className="size-1.5 rounded-full bg-success shrink-0" />
+                    <span>{leaf}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
