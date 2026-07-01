@@ -395,16 +395,16 @@ function StatCard({
 
 function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
   return (
-    <div className="relative overflow-hidden rounded-sm border border-primary bg-primary p-5 shadow-[var(--shadow-card)] text-primary-foreground border-l-4 border-l-warning">
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-wider font-semibold text-primary-foreground">Lottery Pick of the Day</div>
-        <Ticket className="size-5 text-warning" />
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">Lottery Pick of the Day</div>
+        <Ticket className="size-5 text-accent" />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {numbers.map((n) => (
           <span
             key={n}
-            className="grid place-items-center size-10 rounded-sm bg-card text-primary font-mono font-bold tabular-nums"
+            className="grid place-items-center size-10 rounded-sm border border-border bg-background text-primary font-mono font-bold tabular-nums"
           >
             {n.toString().padStart(2, "0")}
           </span>
@@ -413,7 +413,7 @@ function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
           {power.toString().padStart(2, "0")}
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-primary-foreground/80">For fun only · refreshes daily</p>
+      <p className="mt-2 text-[10px] text-muted-foreground">For fun only · refreshes daily</p>
     </div>
   );
 }
