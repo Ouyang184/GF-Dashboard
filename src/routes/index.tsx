@@ -511,6 +511,10 @@ function PillarCard({
 }
 
 function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
+  const [overrides, setOverrides] = useState<Record<string, Status | "qc">>({});
+  const STATUS_CYCLE: Array<Status | "qc"> = ["ok", "warn", "fail", "qc", "na"];
+  const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
+
   // Deterministic status per machine id
   const fallback = (id: string): Status => {
     let h = 0;
@@ -523,6 +527,7 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   };
 
   const statusFor = (id: string): Status | "qc" => {
+    if (overrides[id]) return overrides[id];
     const live = ocr?.results[id]?.status;
     if (!live) return fallback(id);
     return live;
@@ -546,14 +551,22 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   const Tile = ({ id }: { id: string }) => {
     const highlight = HIGHLIGHT_MACHINES.has(id);
     const s = statusFor(id);
+    const cycle = () => {
+      const idx = STATUS_CYCLE.indexOf(s);
+      const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
+      setOverrides((o) => ({ ...o, [id]: next }));
+    };
     return (
-      <div
-        className={`relative rounded-sm border px-1 py-1 text-[9px] font-mono font-bold text-background/95 leading-none flex items-center justify-center min-w-0 ${tileColor(s)} ${
+      <button
+        type="button"
+        onClick={cycle}
+        title={`${id} — click to change status`}
+        className={`relative rounded-sm border px-1 py-1 font-mono font-bold text-background leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${tileColor(s)} ${
           highlight ? "ring-2 ring-accent shadow-[0_0_14px_var(--accent)] z-10" : ""
         }`}
       >
-        <span className="truncate">{id}</span>
-      </div>
+        <span className="truncate">{displayId(id)}</span>
+      </button>
     );
   };
 
