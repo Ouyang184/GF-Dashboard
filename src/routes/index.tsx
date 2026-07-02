@@ -418,6 +418,106 @@ function StatCard({
   );
 }
 
+function AvailabilityScrapChart() {
+  const data = useMemo(() => {
+    const today = new Date();
+    const points: { day: string; availability: number; scrap: number }[] = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+      const rng = mulberry32(dateSeed(d, 4242));
+      // Availability 78-97%, scrap inversely correlated 1.2-6.5%
+      const availability = Math.round((82 + rng() * 15) * 10) / 10;
+      const noise = (rng() - 0.5) * 1.2;
+      const scrap = Math.max(0.8, Math.round((7.5 - (availability - 82) * 0.32 + noise) * 10) / 10);
+      points.push({
+        day: `${d.getMonth() + 1}/${d.getDate()}`,
+        availability,
+        scrap,
+      });
+    }
+    return points;
+  }, []);
+
+  const avgAvail = (data.reduce((s, p) => s + p.availability, 0) / data.length).toFixed(1);
+  const avgScrap = (data.reduce((s, p) => s + p.scrap, 0) / data.length).toFixed(2);
+
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-4 gap-4 flex-wrap">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            MasterCard Availability vs Scrap Rate
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">Rolling 30 days · inverse correlation</p>
+        </div>
+        <div className="flex gap-4 text-xs">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Avg Availability</div>
+            <div className="text-lg font-bold text-primary">{avgAvail}%</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Avg Scrap</div>
+            <div className="text-lg font-bold text-danger">{avgScrap}%</div>
+          </div>
+        </div>
+      </div>
+      <div className="h-72 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+            <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+            <YAxis
+              yAxisId="left"
+              domain={[70, 100]}
+              tick={{ fontSize: 11 }}
+              stroke="hsl(var(--primary))"
+              label={{ value: "Availability %", angle: -90, position: "insideLeft", fontSize: 11, fill: "hsl(var(--primary))" }}
+            />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              domain={[0, 10]}
+              tick={{ fontSize: 11 }}
+              stroke="hsl(var(--danger))"
+              label={{ value: "Scrap %", angle: 90, position: "insideRight", fontSize: 11, fill: "hsl(var(--danger))" }}
+            />
+            <Tooltip
+              contentStyle={{
+                background: "hsl(var(--card))",
+                border: "1px solid hsl(var(--border))",
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+            />
+            <RcLegend wrapperStyle={{ fontSize: 12 }} />
+            <Line
+              yAxisId="left"
+              type="monotone"
+              dataKey="availability"
+              name="Availability %"
+              stroke="hsl(var(--primary))"
+              strokeWidth={2.5}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="scrap"
+              name="Scrap %"
+              stroke="hsl(var(--danger))"
+              strokeWidth={2.5}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
 function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
   return (
     <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
