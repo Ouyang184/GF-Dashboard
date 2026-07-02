@@ -24,6 +24,8 @@ import {
   Legend as RcLegend,
   Line,
   LineChart,
+  Bar,
+  BarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
