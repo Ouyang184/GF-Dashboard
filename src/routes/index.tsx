@@ -802,6 +802,9 @@ function PillarDetailOverlay({
                   <CompliancePanel />
                 </section>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                  <AvailabilityScrapChart />
+                </section>
+                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <IntouchFloor />
                 </section>
               </>
