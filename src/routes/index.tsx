@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import {
   CartesianGrid,
-  Legend,
+  Legend as RcLegend,
   Line,
   LineChart,
   ResponsiveContainer,
