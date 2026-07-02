@@ -468,26 +468,26 @@ function AvailabilityScrapChart() {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
+            <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
             <YAxis
               yAxisId="left"
               domain={[70, 100]}
               tick={{ fontSize: 11 }}
-              stroke="hsl(var(--primary))"
-              label={{ value: "Availability %", angle: -90, position: "insideLeft", fontSize: 11, fill: "hsl(var(--primary))" }}
+              stroke="var(--primary)"
+              label={{ value: "Availability %", angle: -90, position: "insideLeft", fontSize: 11, fill: "var(--primary)" }}
             />
             <YAxis
               yAxisId="right"
               orientation="right"
               domain={[0, 10]}
               tick={{ fontSize: 11 }}
-              stroke="hsl(var(--danger))"
-              label={{ value: "Scrap %", angle: 90, position: "insideRight", fontSize: 11, fill: "hsl(var(--danger))" }}
+              stroke="var(--danger)"
+              label={{ value: "Scrap %", angle: 90, position: "insideRight", fontSize: 11, fill: "var(--danger)" }}
             />
             <Tooltip
               contentStyle={{
-                background: "hsl(var(--card))",
-                border: "1px solid hsl(var(--border))",
+                background: "var(--card)",
+                border: "1px solid var(--border)",
                 borderRadius: 8,
                 fontSize: 12,
               }}
@@ -498,7 +498,7 @@ function AvailabilityScrapChart() {
               type="monotone"
               dataKey="availability"
               name="Availability %"
-              stroke="hsl(var(--primary))"
+              stroke="var(--primary)"
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 4 }}
@@ -508,12 +508,72 @@ function AvailabilityScrapChart() {
               type="monotone"
               dataKey="scrap"
               name="Scrap %"
-              stroke="hsl(var(--danger))"
+              stroke="var(--danger)"
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 4 }}
             />
           </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+}
+
+function DowntimeByShiftChart() {
+  const data = useMemo(() => {
+    const today = new Date();
+    return SHIFTS.map((s, i) => {
+      const rng = mulberry32(dateSeed(today, 9000 + i));
+      return {
+        shift: s,
+        planned: Math.round(rng() * 45 + 15),
+        unplanned: Math.round(rng() * 60 + 10),
+      };
+    });
+  }, []);
+
+  const totalPlanned = data.reduce((s, d) => s + d.planned, 0);
+  const totalUnplanned = data.reduce((s, d) => s + d.unplanned, 0);
+
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-4 gap-4 flex-wrap">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            Downtime by Shift
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">Minutes lost today</p>
+        </div>
+        <div className="flex gap-4 text-xs">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Planned</div>
+            <div className="text-lg font-bold text-primary">{totalPlanned}m</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Unplanned</div>
+            <div className="text-lg font-bold text-danger">{totalUnplanned}m</div>
+          </div>
+        </div>
+      </div>
+      <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+            <XAxis dataKey="shift" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+            <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+            <Tooltip
+              contentStyle={{
+                background: "var(--card)",
+                border: "1px solid var(--border)",
+                borderRadius: 8,
+                fontSize: 12,
+              }}
+            />
+            <RcLegend wrapperStyle={{ fontSize: 12 }} />
+            <Bar dataKey="planned" name="Planned" stackId="a" fill="var(--primary)" radius={[0, 0, 0, 0]} />
+            <Bar dataKey="unplanned" name="Unplanned" stackId="a" fill="var(--danger)" radius={[4, 4, 0, 0]} />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
