@@ -926,7 +926,7 @@ function PillarDetailOverlay({
       aria-modal="true"
     >
       <div
-        className="relative w-full max-w-[1500px] my-4 mx-4 rounded-2xl border border-border/60 overflow-y-auto bg-background/80 shadow-2xl animate-scale-in origin-center"
+        className="hide-scrollbar relative w-full max-w-[1500px] my-4 mx-4 rounded-2xl border border-border/60 overflow-y-auto bg-background/80 shadow-2xl animate-scale-in origin-center"
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`absolute inset-x-0 top-0 h-64 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
