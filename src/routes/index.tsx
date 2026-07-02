@@ -538,8 +538,9 @@ function MastercardsProductionChart() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMonth]);
 
+  const monthlyTarget = 120000;
   const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
-  const ytdTarget = target * (currentMonth + 1);
+  const ytdTarget = monthlyTarget * (currentMonth + 1);
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(0)}k` : `${n}`;
 
   return (
@@ -575,7 +576,7 @@ function MastercardsProductionChart() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
-              formatter={(v: number | null) => (v == null ? "—" : v.toLocaleString())}
+              formatter={(v) => (v == null ? "—" : Number(v).toLocaleString())}
             />
             <RcLegend wrapperStyle={{ fontSize: 12 }} />
             <Bar dataKey="target" name="Target" fill="var(--muted)" radius={[2, 2, 0, 0]} />
@@ -983,7 +984,7 @@ function PillarDetailOverlay({
                       <CompliancePanel />
                     </div>
                     <div className="lg:col-span-2 lg:border-l lg:border-border/60 lg:pl-6">
-                      <DowntimeByShiftChart />
+                      <MastercardsProductionChart />
                     </div>
                   </div>
                 </section>
