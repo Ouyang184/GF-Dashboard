@@ -520,39 +520,46 @@ function AvailabilityScrapChart() {
   );
 }
 
-function DowntimeByShiftChart() {
-  const data = useMemo(() => {
-    const today = new Date();
-    return SHIFTS.map((s, i) => {
-      const rng = mulberry32(dateSeed(today, 9000 + i));
-      return {
-        shift: s,
-        planned: Math.round(rng() * 45 + 15),
-        unplanned: Math.round(rng() * 60 + 10),
-      };
-    });
-  }, []);
+function MastercardsProductionChart() {
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const now = new Date();
+  const currentMonth = now.getMonth();
 
-  const totalPlanned = data.reduce((s, d) => s + d.planned, 0);
-  const totalUnplanned = data.reduce((s, d) => s + d.unplanned, 0);
+  const data = useMemo(() => {
+    return MONTHS.map((m, i) => {
+      const rng = mulberry32(dateSeed(new Date(now.getFullYear(), i, 1), 7700 + i));
+      // Target ~120k units/month; actuals vary; future months null
+      const target = 120000;
+      const actual = i <= currentMonth
+        ? Math.round(target * (0.82 + rng() * 0.28))
+        : null;
+      return { month: m, actual, target };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentMonth]);
+
+  const monthlyTarget = 120000;
+  const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
+  const ytdTarget = monthlyTarget * (currentMonth + 1);
+  const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(0)}k` : `${n}`;
 
   return (
     <div>
       <div className="flex items-end justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            Downtime by Shift
+            MasterCards Production by Month
           </h3>
-          <p className="text-xs text-muted-foreground mt-1">Minutes lost today</p>
+          <p className="text-xs text-muted-foreground mt-1">Units produced vs monthly target</p>
         </div>
         <div className="flex gap-4 text-xs">
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Planned</div>
-            <div className="text-lg font-bold text-primary">{totalPlanned}m</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">YTD Actual</div>
+            <div className="text-lg font-bold text-primary">{fmt(ytdActual)}</div>
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Unplanned</div>
-            <div className="text-lg font-bold text-danger">{totalUnplanned}m</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">YTD Target</div>
+            <div className="text-lg font-bold text-foreground">{fmt(ytdTarget)}</div>
           </div>
         </div>
       </div>
@@ -560,8 +567,8 @@ function DowntimeByShiftChart() {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-            <XAxis dataKey="shift" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
-            <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+            <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+            <YAxis tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" tickFormatter={fmt} />
             <Tooltip
               contentStyle={{
                 background: "var(--card)",
@@ -569,10 +576,11 @@ function DowntimeByShiftChart() {
                 borderRadius: 8,
                 fontSize: 12,
               }}
+              formatter={(v) => (v == null ? "—" : Number(v).toLocaleString())}
             />
             <RcLegend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="planned" name="Planned" stackId="a" fill="var(--primary)" radius={[0, 0, 0, 0]} />
-            <Bar dataKey="unplanned" name="Unplanned" stackId="a" fill="var(--danger)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="target" name="Target" fill="var(--muted)" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="actual" name="Actual" fill="var(--primary)" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -976,7 +984,7 @@ function PillarDetailOverlay({
                       <CompliancePanel />
                     </div>
                     <div className="lg:col-span-2 lg:border-l lg:border-border/60 lg:pl-6">
-                      <DowntimeByShiftChart />
+                      <MastercardsProductionChart />
                     </div>
                   </div>
                 </section>
