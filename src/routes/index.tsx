@@ -428,10 +428,12 @@ function AvailabilityScrapChart() {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
       const rng = mulberry32(dateSeed(d, 4242));
-      // Availability 78-97%, scrap inversely correlated 1.2-6.5%
-      const availability = Math.round((82 + rng() * 15) * 10) / 10;
-      const noise = (rng() - 0.5) * 1.2;
-      const scrap = Math.max(0.8, Math.round((7.5 - (availability - 82) * 0.32 + noise) * 10) / 10);
+      // Clear divergence: availability trends UP, scrap trends DOWN over 30 days
+      const t = (29 - i) / 29; // 0 -> 1 across the window
+      const availNoise = (rng() - 0.5) * 1.4;
+      const scrapNoise = (rng() - 0.5) * 0.5;
+      const availability = Math.round((82 + t * 13 + availNoise) * 10) / 10; // ~82 -> ~95
+      const scrap = Math.max(0.6, Math.round((6.2 - t * 4.8 + scrapNoise) * 10) / 10); // ~6.2 -> ~1.4
       points.push({
         day: `${d.getMonth() + 1}/${d.getDate()}`,
         availability,
