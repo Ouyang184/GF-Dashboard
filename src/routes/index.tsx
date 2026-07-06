@@ -16,7 +16,7 @@ import {
   Shield,
   BadgeCheck,
   Sun,
-  Ticket,
+  Quote,
   Truck,
   X,
 } from "lucide-react";
@@ -338,7 +338,7 @@ function Index() {
   const liveNow = useNow();
   const now = liveNow ?? new Date(0);
   const weather = useWeather();
-  const lottery = useLatestPowerball();
+  const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
@@ -402,12 +402,7 @@ function Index() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
           <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
-          <LotteryCard
-            numbers={lottery.numbers}
-            power={lottery.power}
-            drawDate={lottery.drawDate}
-            source={lottery.source}
-          />
+          <QuoteCard text={quote.text} author={quote.author} />
         </section>
 
         {/* QDIP grid */}
