@@ -1040,35 +1040,168 @@ function PillarDetailOverlay({
               </>
             )}
 
-            <section className="rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
-              <ul className="space-y-3">
-                {detail.issues.map((it) => (
-                  <li key={it} className="flex items-start gap-3 text-sm">
-                    <span className="mt-1.5 size-2 rounded-full bg-warning shrink-0" />
-                    <span>{it}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Action Items</h3>
-              <ul className="space-y-3">
-                {detail.actions.map((a) => (
-                  <li key={a.task} className="flex items-center justify-between gap-3 text-sm rounded-lg bg-secondary/40 px-4 py-3">
-                    <span className="flex-1">{a.task}</span>
-                    <span className="shrink-0 rounded-full bg-card border border-border/60 px-3 py-1 text-xs text-muted-foreground">
-                      {a.owner} · {a.due}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
+            <ActionItemsCard pillarKey={pillar.key} defaultItems={detail.actions} />
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+type ActionItem = { task: string; owner: string; due: string };
+
+function useLocalState<T>(storageKey: string, defaultValue: T) {
+  const [value, setValue] = useState<T>(defaultValue);
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) setValue(JSON.parse(raw));
+    } catch {}
+    setHydrated(true);
+  }, [storageKey]);
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(value));
+    } catch {}
+  }, [value, storageKey, hydrated]);
+  return [value, setValue] as const;
+}
+
+function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: string[] }) {
+  const [items, setItems] = useLocalState<string[]>(`pillar:${pillarKey}:issues`, defaultItems);
+  const [draft, setDraft] = useState("");
+  const update = (i: number, v: string) => setItems((p) => p.map((it, idx) => (idx === i ? v : it)));
+  const remove = (i: number) => setItems((p) => p.filter((_, idx) => idx !== i));
+  const add = () => {
+    const v = draft.trim();
+    if (!v) return;
+    setItems((p) => [...p, v]);
+    setDraft("");
+  };
+  return (
+    <section className="group/card rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
+      <ul className="space-y-3">
+        {items.map((it, i) => (
+          <li key={i} className="flex items-start gap-3 text-sm group/item">
+            <span className="mt-2 size-2 rounded-full bg-warning shrink-0" />
+            <input
+              value={it}
+              onChange={(e) => update(i, e.target.value)}
+              className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5"
+            />
+            <button
+              type="button"
+              onClick={() => remove(i)}
+              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity"
+              aria-label="Remove issue"
+            >
+              ✕
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2 flex items-center gap-3 text-sm opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity">
+        <span className="size-2 rounded-full bg-muted-foreground/40 shrink-0" />
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder="Add issue…"
+          className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50"
+        />
+      </div>
+    </section>
+  );
+}
+
+function ActionItemsCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: ActionItem[] }) {
+  const [items, setItems] = useLocalState<ActionItem[]>(`pillar:${pillarKey}:actions`, defaultItems);
+  const [draft, setDraft] = useState<ActionItem>({ task: "", owner: "", due: "" });
+  const update = (i: number, patch: Partial<ActionItem>) =>
+    setItems((p) => p.map((it, idx) => (idx === i ? { ...it, ...patch } : it)));
+  const remove = (i: number) => setItems((p) => p.filter((_, idx) => idx !== i));
+  const add = () => {
+    if (!draft.task.trim()) return;
+    setItems((p) => [...p, { task: draft.task.trim(), owner: draft.owner.trim() || "—", due: draft.due.trim() || "—" }]);
+    setDraft({ task: "", owner: "", due: "" });
+  };
+  return (
+    <section className="lg:col-span-2 group/card rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Action Items</h3>
+      <ul className="space-y-3">
+        {items.map((a, i) => (
+          <li
+            key={i}
+            className="flex items-center justify-between gap-3 text-sm rounded-lg bg-secondary/40 px-4 py-3 group/item"
+          >
+            <input
+              value={a.task}
+              onChange={(e) => update(i, { task: e.target.value })}
+              className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5"
+            />
+            <span className="shrink-0 rounded-full bg-card border border-border/60 px-3 py-1 text-xs text-muted-foreground flex items-center gap-1">
+              <input
+                value={a.owner}
+                onChange={(e) => update(i, { owner: e.target.value })}
+                className="w-20 bg-transparent outline-none focus:border-b focus:border-border/60 text-center"
+              />
+              <span>·</span>
+              <input
+                value={a.due}
+                onChange={(e) => update(i, { due: e.target.value })}
+                className="w-16 bg-transparent outline-none focus:border-b focus:border-border/60 text-center"
+              />
+            </span>
+            <button
+              type="button"
+              onClick={() => remove(i)}
+              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity"
+              aria-label="Remove action"
+            >
+              ✕
+            </button>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-2 flex items-center justify-between gap-3 text-sm px-4 py-2 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity">
+        <input
+          value={draft.task}
+          onChange={(e) => setDraft((d) => ({ ...d, task: e.target.value }))}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              add();
+            }
+          }}
+          placeholder="Add action…"
+          className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50"
+        />
+        <span className="shrink-0 flex items-center gap-1 text-xs text-muted-foreground">
+          <input
+            value={draft.owner}
+            onChange={(e) => setDraft((d) => ({ ...d, owner: e.target.value }))}
+            placeholder="Owner"
+            className="w-20 bg-transparent outline-none border-b border-transparent focus:border-border/60 text-center placeholder:text-muted-foreground/50"
+          />
+          <span>·</span>
+          <input
+            value={draft.due}
+            onChange={(e) => setDraft((d) => ({ ...d, due: e.target.value }))}
+            placeholder="Due"
+            className="w-16 bg-transparent outline-none border-b border-transparent focus:border-border/60 text-center placeholder:text-muted-foreground/50"
+          />
+        </span>
+      </div>
+    </section>
   );
 }
 
