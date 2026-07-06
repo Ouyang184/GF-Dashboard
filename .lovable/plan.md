@@ -1,68 +1,64 @@
-## Answers to your two questions first
+# Auto-pull MasterCards production from OneDrive Excel
 
-- **Yes, this can connect to SharePoint.** Lovable ships a Microsoft SharePoint connector that goes through Microsoft Graph. We link it once, sign in with the Microsoft account whose SharePoint you want to read (your company account), and the app queries the list from a server function. No SharePoint credentials ever live in the codebase.
-- **Running locally vs. hosted makes no difference for auth.** The connector stores your Microsoft OAuth tokens on Lovable's side and injects two env vars (`LOVABLE_API_KEY` + `MICROSOFT_SHAREPOINT_API_KEY`) into the server runtime. Local `bun dev`, Lovable preview, and the published site all read the same tokens and hit the same gateway. Local only becomes a problem if your company's SharePoint is behind a VPN/Conditional Access rule that blocks non-corporate IPs — that would block Lovable's servers too, and would need IT to allow the Lovable gateway.
+Replace the randomly-generated MasterCards chart data with live counts from your `Mastercards_after_.xlsx` workbook in OneDrive. Each row in the sheet = one MasterCard. We count rows by month for the current fiscal year (Dec → Nov).
 
-**Important caveat on the account:** the connector authenticates as *one* Microsoft account (the one you sign in with when linking). For a company dashboard the right move is to sign in with a **shared/service account** your IT owns (e.g. `amg-dashboard@yourco.com`) that has read access to the SharePoint list — not your personal login. Otherwise the dashboard breaks the day you leave or your password rotates. If you don't have one yet, we can start with your company account to prove it works, then swap the connection to a service account later without code changes.
+## What I still need from you (in the first build step)
 
-## What I need from you before building
+You gave the OneDrive root, not the file link. Before I can call Excel, I need one of:
 
-1. **Confirm the connector link.** I'll trigger the connect flow for `microsoft_sharepoint`; you sign in with the company (or service) account.
-2. **SharePoint site + list identity.** Paste the SharePoint URL of the list — something like `https://<tenant>.sharepoint.com/sites/<site>/Lists/<ListName>`. I'll resolve it to the Graph `siteId` and `listId`.
-3. **Column mapping.** Tell me which list columns hold:
-   - Machine ID (matching IDs like `310IM30`, `419AM0`, …)
-   - Deviation status or severity (or just "a row = a deviation")
-   - Timestamp / "date opened"
-   - Optional: "is open" / "resolved" flag so we ignore closed items
+1. The **direct share link** to `Mastercards_after_.xlsx` (open the file in OneDrive → Share → Copy link), or
+2. The **exact file path** inside your OneDrive (e.g. `/Documents/AMG/Mastercards_after_.xlsx`).
 
-We'll only count deviations dated **today** (America/Chicago) that are still open.
+Also: the exact **sheet name** (e.g. `Sheet1`) and the header text of the **date column** (e.g. `Date`, `Completed`, `Timestamp`). If the "Mastercards" you mentioned is the sheet name and the date column is literally called `Date`, I'll use those.
 
-## What I'll build
+## Steps
 
-### 1. Server function — `src/lib/sharepoint-deviations.functions.ts`
+### 1. Link the Microsoft Excel connector
+Trigger `standard_connectors--connect` for `microsoft_excel`. You sign in with the Microsoft account that owns the OneDrive file. This injects `LOVABLE_API_KEY` + `MICROSOFT_EXCEL_API_KEY` into the server runtime — no secrets in code.
+
+Note: the connector reads as whichever account you sign in with. For a dashboard that shouldn't break when you leave, IT should give it a shared/service account later; we can swap the connection without code changes.
+
+### 2. Resolve the file to a Graph `driveItemId` (one-off)
+Using the link/path you provide, I do a single gateway call to Microsoft Graph to get the workbook's `itemId`, then store it as a secret (`EXCEL_MASTERCARDS_ITEM_ID`) so we don't re-resolve on every request.
+
+### 3. Server function — `src/lib/mastercards.functions.ts`
 
 ```ts
-export const getTodaysDeviations = createServerFn({ method: "GET" })
+export const getMastercardsByMonth = createServerFn({ method: "GET" })
   .handler(async () => {
-    // GET {GATEWAY}/microsoft_sharepoint/sites/{siteId}/lists/{listId}/items?expand=fields
-    //   &$filter=fields/DateOpened ge 'YYYY-MM-DDT00:00:00Z' and fields/Status ne 'Closed'
-    // Auth headers:
-    //   Authorization: Bearer ${LOVABLE_API_KEY}
-    //   X-Connection-Api-Key: ${MICROSOFT_SHAREPOINT_API_KEY}
-    // Returns { deviations: [{ machineId, status, note }], sampledAt }
+    // 1. GET workbook usedRange bounds (cheap):
+    //    /me/drive/items/{itemId}/workbook/worksheets/{sheet}/usedRange(valuesOnly=true)
+    //      ?$select=address,rowCount,columnCount
+    // 2. Page through the date column in ~2000-row chunks via
+    //    range(address='A2:A2001') to avoid 504 timeouts on large sheets.
+    // 3. Bucket dates by fiscal month (Dec..Nov of the current fiscal year).
+    // Returns: { months: [{ month: "Dec", count: 1234 }, ...],
+    //            ytdActual, sampledAt, fiscalYearStart }
   });
 ```
 
-- Site + list IDs read from env vars (`SHAREPOINT_SITE_ID`, `SHAREPOINT_LIST_ID`) which I'll store via `add_secret` after you confirm the URL — that way we can point at a different list without a redeploy.
-- Explicit error handling: if the gateway 401s, return `{ deviations: [], error: "sharepoint_unauthorized" }` so the UI shows a "Reconnect SharePoint" hint instead of blanking the dashboard.
+Defensive behavior:
 
-### 2. Client hook — `src/hooks/use-sharepoint-deviations.ts`
+- Retries on 429/503/504 with backoff (Graph times out on big sheets).
+- If the gateway 401s, returns `{ error: "excel_unauthorized" }` so the card shows a "Reconnect Excel" hint instead of blanking.
+- Reads only the date column, not the full sheet.
 
-- Uses TanStack Query, `refetchInterval: 60_000` (1 min), `staleTime: 30_000`.
-- Exposes `{ count, byMachine, sampledAt, error, isLoading }`.
+### 4. Client hook — `src/hooks/use-mastercards-production.ts`
+TanStack Query, `refetchInterval: 5 * 60_000` (5 min), `staleTime: 60_000`. Exposes `{ months, ytdActual, sampledAt, error, isLoading }`.
 
-### 3. Wire into the existing rule
+### 5. Rewire `MastercardsProductionChart` in `src/routes/index.tsx`
+Drop the `mulberry32` fake-data block. Feed `data` from the hook, keep the existing bar-chart rendering, target line, and YTD tiles untouched. Add a small "synced Xm ago · live from Excel" badge under the title, matching the InTouch sync badge style.
 
-Replace `useDeviationCount()` (which reads local tile clicks) with the SharePoint count for the QDIP dots, keeping the same thresholds:
+Target stays hardcoded at 120,000/month unless you later add a target column to the workbook.
 
-- Inventory today red when `count >= 1`
-- Delivery today red when `count > 3`
+### 6. Non-goals
+- No write-back to Excel.
+- No auth for dashboard viewers — they see whatever the linked Microsoft account can see.
+- Other cards (Quote of the Day, QDIP, floor map) untouched.
 
-Manual tile clicking on the floor map stays as a manual override for anything not yet in the SharePoint list — it just OR's with the SharePoint count so nothing regresses.
+## Order I'll do it in build mode
 
-### 4. Small UI additions inside the Productivity pillar overlay
-
-- Under the tree card: "SharePoint deviations today: N · synced Xs ago" badge, with a "Reconnect" link when `error === "sharepoint_unauthorized"`.
-- Red tint on the machine tile whose ID matches an open deviation row.
-
-### 5. Non-goals in this pass
-
-- No write-back to SharePoint (that was option 3 in the earlier question and you picked read-only).
-- No per-viewer Microsoft login. Dashboard viewers see whatever the connected account can see.
-
-## Order of operations
-
-1. You approve this plan.
-2. I trigger `standard_connectors--connect` for Microsoft SharePoint → you sign in with the company/service account.
-3. You paste the list URL + column names.
-4. I resolve `siteId`/`listId` via a one-off gateway call, save both as secrets, then write the server fn, hook, and UI wiring in one pass.
+1. Ask for the file link + sheet/date-column names.
+2. Trigger `microsoft_excel` connector connect → you sign in.
+3. Resolve `itemId`, save as secret.
+4. Write server fn + hook + wire chart in one pass, verify with a live fetch.
