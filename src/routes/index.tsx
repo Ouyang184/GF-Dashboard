@@ -648,7 +648,7 @@ function PillarCard({
               <span
                 className={
                   pillar.key === "Q"
-                    ? "grid place-items-center size-9 rounded-sm bg-sky-50 text-sky-700 border border-sky-200 p-1.5"
+                    ? "grid place-items-center size-9 rounded-sm bg-transparent text-muted-foreground border border-transparent p-1.5 transition-colors hover:bg-secondary hover:text-foreground hover:border-border/60 focus-visible:bg-secondary focus-visible:text-foreground focus-visible:border-border/60 focus-visible:outline-none"
                     : "grid place-items-center size-9 rounded-sm bg-primary text-primary-foreground"
                 }
               >
