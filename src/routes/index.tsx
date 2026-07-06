@@ -367,14 +367,16 @@ function Index() {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <NotesCard
             title="Open Escalations"
-            items={[
+            storageKey="notes:open-escalations"
+            defaultItems={[
               "Mold lockers not being returned",
               "PVL/LPVL grinder blades damaged by metal tools",
             ]}
           />
           <NotesCard
             title="Long Term Actions"
-            items={[
+            storageKey="notes:long-term-actions"
+            defaultItems={[
               "Repro compliance: 6/18 = 33%",
               "4 reprints made (10 → 14, 78%)",
               "2 MC in cabinet but not on machine",
@@ -1079,18 +1081,89 @@ function Legend({ tone, label }: { tone: Status; label: string }) {
   );
 }
 
-function NotesCard({ title, items }: { title: string; items: string[] }) {
+function NotesCard({
+  title,
+  storageKey,
+  defaultItems,
+}: {
+  title: string;
+  storageKey: string;
+  defaultItems: string[];
+}) {
+  const [items, setItems] = useState<string[]>(defaultItems);
+  const [draft, setDraft] = useState("");
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) setItems(JSON.parse(raw));
+    } catch {}
+    setHydrated(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(items));
+    } catch {}
+  }, [items, storageKey, hydrated]);
+
+  const updateItem = (idx: number, value: string) =>
+    setItems((prev) => prev.map((it, i) => (i === idx ? value : it)));
+  const removeItem = (idx: number) =>
+    setItems((prev) => prev.filter((_, i) => i !== idx));
+  const addItem = () => {
+    const v = draft.trim();
+    if (!v) return;
+    setItems((prev) => [...prev, v]);
+    setDraft("");
+  };
+
   return (
     <div className="rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
       <div className="text-xs uppercase tracking-wider font-bold text-primary">{title}</div>
       <ul className="mt-3 space-y-2">
-        {items.map((item) => (
-          <li key={item} className="flex items-start gap-2 text-sm">
-            <span className="mt-1.5 size-1.5 rounded-full bg-primary shrink-0" />
-            <span>{item}</span>
+        {items.map((item, idx) => (
+          <li key={idx} className="flex items-start gap-2 text-sm group">
+            <span className="mt-2.5 size-1.5 rounded-full bg-primary shrink-0" />
+            <input
+              value={item}
+              onChange={(e) => updateItem(idx, e.target.value)}
+              className="flex-1 bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none py-1"
+            />
+            <button
+              type="button"
+              onClick={() => removeItem(idx)}
+              className="opacity-0 group-hover:opacity-100 text-xs text-muted-foreground hover:text-danger px-1"
+              aria-label="Remove item"
+            >
+              ✕
+            </button>
           </li>
         ))}
       </ul>
+      <div className="mt-3 flex items-center gap-2">
+        <input
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addItem();
+            }
+          }}
+          placeholder="Add item…"
+          className="flex-1 rounded-md border border-border bg-background/50 px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+        />
+        <button
+          type="button"
+          onClick={addItem}
+          className="rounded-md border border-border bg-secondary/60 px-3 py-1.5 text-xs font-semibold hover:bg-secondary"
+        >
+          Add
+        </button>
+      </div>
     </div>
   );
 }
