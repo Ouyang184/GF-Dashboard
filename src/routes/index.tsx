@@ -221,14 +221,29 @@ function applyDeviationRule(
   return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
 }
 
-function dailyLottery() {
-  const today = new Date();
-  const rng = mulberry32(dateSeed(today, 777));
-  const pool = new Set<number>();
-  while (pool.size < 5) pool.add(1 + Math.floor(rng() * 69));
-  const numbers = [...pool].sort((a, b) => a - b);
-  const power = 1 + Math.floor(rng() * 26);
-  return { numbers, power };
+const DAILY_QUOTES: { text: string; author: string }[] = [
+  { text: "Quality is never an accident; it is always the result of intelligent effort.", author: "John Ruskin" },
+  { text: "The most dangerous kind of waste is the waste we do not recognize.", author: "Shigeo Shingo" },
+  { text: "Without standards, there can be no improvement.", author: "Taiichi Ohno" },
+  { text: "If you can't describe what you are doing as a process, you don't know what you're doing.", author: "W. Edwards Deming" },
+  { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+  { text: "Safety isn't expensive, it's priceless.", author: "Unknown" },
+  { text: "Continuous improvement is better than delayed perfection.", author: "Mark Twain" },
+  { text: "A bad system will beat a good person every time.", author: "W. Edwards Deming" },
+  { text: "Where there is no standard, there can be no kaizen.", author: "Taiichi Ohno" },
+  { text: "Do the best you can until you know better. Then when you know better, do better.", author: "Maya Angelou" },
+  { text: "Excellence is doing ordinary things extraordinarily well.", author: "John W. Gardner" },
+  { text: "Working together, ordinary people can perform extraordinary feats.", author: "Jean Ritchie" },
+  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+];
+
+function useDailyQuote() {
+  return useMemo(() => {
+    const today = new Date();
+    const idx = dateSeed(today, 42) % DAILY_QUOTES.length;
+    return DAILY_QUOTES[idx];
+  }, []);
 }
 
 type PowerballDraw = {
