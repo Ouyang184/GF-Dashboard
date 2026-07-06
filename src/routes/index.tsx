@@ -338,7 +338,7 @@ function Index() {
   const liveNow = useNow();
   const now = liveNow ?? new Date(0);
   const weather = useWeather();
-  const lottery = useMemo(dailyLottery, []);
+  const lottery = useLatestPowerball();
   const deviationCount = useDeviationCount();
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
