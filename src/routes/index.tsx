@@ -610,50 +610,19 @@ function MastercardsProductionChart() {
   );
 }
 
-function LotteryCard({
-  numbers,
-  power,
-  drawDate,
-  source,
-}: {
-  numbers: number[];
-  power: number;
-  drawDate: string | null;
-  source: "powerball" | "fallback";
-}) {
-  const dateLabel = drawDate
-    ? new Date(drawDate).toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
-    : null;
+function QuoteCard({ text, author }: { text: string; author: string }) {
   return (
     <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-center justify-between">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          Powerball · Latest Winning Numbers
+          Quote of the Day
         </div>
-        <Ticket className="size-5 text-accent" />
+        <Quote className="size-5 text-accent" />
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {numbers.map((n) => (
-          <span
-            key={n}
-            className="grid place-items-center size-10 rounded-sm border border-border bg-background text-primary font-mono font-bold tabular-nums"
-          >
-            {n.toString().padStart(2, "0")}
-          </span>
-        ))}
-        <span className="grid place-items-center size-10 rounded-sm bg-warning text-primary font-mono font-bold tabular-nums">
-          {power.toString().padStart(2, "0")}
-        </span>
-      </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">
-        {source === "powerball" && dateLabel
-          ? `Official drawing · ${dateLabel}`
-          : "Live feed unavailable · showing sample numbers"}
-      </p>
+      <blockquote className="mt-3 text-sm leading-relaxed text-foreground italic">
+        “{text}”
+      </blockquote>
+      <p className="mt-2 text-[11px] text-muted-foreground">— {author}</p>
     </div>
   );
 }
