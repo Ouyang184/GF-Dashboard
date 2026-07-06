@@ -584,7 +584,7 @@ function MastercardsProductionChart() {
               formatter={(v) => (v == null ? "—" : Number(v).toLocaleString())}
             />
             <RcLegend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="target" name="Target" fill="var(--muted)" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="target" name="Target" fill="hsl(var(--muted-foreground) / 0.45)" radius={[2, 2, 0, 0]} />
             <Bar dataKey="actual" name="Actual" fill="var(--primary)" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
