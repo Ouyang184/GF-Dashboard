@@ -1040,31 +1040,8 @@ function PillarDetailOverlay({
               </>
             )}
 
-            <section className="rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
-              <ul className="space-y-3">
-                {detail.issues.map((it) => (
-                  <li key={it} className="flex items-start gap-3 text-sm">
-                    <span className="mt-1.5 size-2 rounded-full bg-warning shrink-0" />
-                    <span>{it}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Action Items</h3>
-              <ul className="space-y-3">
-                {detail.actions.map((a) => (
-                  <li key={a.task} className="flex items-center justify-between gap-3 text-sm rounded-lg bg-secondary/40 px-4 py-3">
-                    <span className="flex-1">{a.task}</span>
-                    <span className="shrink-0 rounded-full bg-card border border-border/60 px-3 py-1 text-xs text-muted-foreground">
-                      {a.owner} · {a.due}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
+            <ActionItemsCard pillarKey={pillar.key} defaultItems={detail.actions} />
           </div>
         </div>
       </div>
