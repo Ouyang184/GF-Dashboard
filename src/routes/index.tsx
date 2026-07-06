@@ -14,7 +14,7 @@ import {
   CloudSnow,
   Gauge,
   Shield,
-  Sparkles,
+  BadgeCheck,
   Sun,
   Ticket,
   Truck,
@@ -57,7 +57,7 @@ type Pillar = {
 
 const PILLARS: Pillar[] = [
   { key: "S", label: "Safety", kpi: "0 Equip Safety Issues", icon: Shield, accent: "from-emerald-400/20 to-emerald-400/0" },
-  { key: "Q", label: "Quality", kpi: "Weekly Scrap ≥ 5%", icon: Sparkles, accent: "from-sky-400/20 to-sky-400/0" },
+  { key: "Q", label: "Quality", kpi: "Weekly Scrap ≥ 5%", icon: BadgeCheck, accent: "from-sky-400/20 to-sky-400/0" },
   { key: "D", label: "Delivery", kpi: "≥ 3 New Process Deviations", icon: Truck, accent: "from-amber-400/20 to-amber-400/0" },
   { key: "I", label: "Inventory", kpi: "0 New Product Deviations", icon: Box, accent: "from-fuchsia-400/20 to-fuchsia-400/0" },
   { key: "P", label: "Productivity", kpi: "Machine Downtime", icon: Gauge, accent: "from-cyan-400/20 to-cyan-400/0" },
