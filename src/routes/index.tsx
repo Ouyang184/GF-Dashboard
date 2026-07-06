@@ -997,13 +997,13 @@ function PillarDetailOverlay({
               </>
             )}
 
-            {pillar.key === "Q" && (
-              <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <AvailabilityScrapChart />
-              </section>
-            )}
-
-            {pillar.key !== "D" && pillar.key !== "I" && pillar.key !== "P" && pillar.key !== "Q" && (
+            {pillar.key !== "D" && pillar.key !== "I" && pillar.key !== "P" && (
+              <>
+                {pillar.key === "Q" && (
+                  <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                    <AvailabilityScrapChart />
+                  </section>
+                )}
               <>
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
