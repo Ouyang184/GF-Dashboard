@@ -1121,21 +1121,21 @@ function NotesCard({
   };
 
   return (
-    <div className="rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
+    <div className="group/notes rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
       <div className="text-xs uppercase tracking-wider font-bold text-primary">{title}</div>
       <ul className="mt-3 space-y-2">
         {items.map((item, idx) => (
-          <li key={idx} className="flex items-start gap-2 text-sm group">
-            <span className="mt-2.5 size-1.5 rounded-full bg-primary shrink-0" />
+          <li key={idx} className="flex items-start gap-2 text-sm group/item">
+            <span className="mt-1.5 size-1.5 rounded-full bg-primary shrink-0" />
             <input
               value={item}
               onChange={(e) => updateItem(idx, e.target.value)}
-              className="flex-1 bg-transparent border-b border-transparent hover:border-border focus:border-primary focus:outline-none py-1"
+              className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 -my-0.5 py-0.5"
             />
             <button
               type="button"
               onClick={() => removeItem(idx)}
-              className="opacity-0 group-hover:opacity-100 text-xs text-muted-foreground hover:text-danger px-1"
+              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity"
               aria-label="Remove item"
             >
               ✕
@@ -1143,7 +1143,8 @@ function NotesCard({
           </li>
         ))}
       </ul>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-2 flex items-center gap-2 text-sm opacity-0 group-hover/notes:opacity-100 focus-within:opacity-100 transition-opacity">
+        <span className="size-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -1154,15 +1155,8 @@ function NotesCard({
             }
           }}
           placeholder="Add item…"
-          className="flex-1 rounded-md border border-border bg-background/50 px-3 py-1.5 text-sm focus:border-primary focus:outline-none"
+          className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50"
         />
-        <button
-          type="button"
-          onClick={addItem}
-          className="rounded-md border border-border bg-secondary/60 px-3 py-1.5 text-xs font-semibold hover:bg-secondary"
-        >
-          Add
-        </button>
       </div>
     </div>
   );
