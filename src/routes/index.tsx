@@ -841,19 +841,11 @@ function PillarCard({
 
 function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   const overrides = useFloorOverrides();
-  const STATUS_CYCLE: Array<Status | "qc"> = ["ok", "warn", "fail", "qc", "na"];
   const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
 
-  // Deterministic status per machine id
-  const fallback = (id: string): Status => {
-    let h = 0;
-    for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
-    const r = mulberry32(Math.abs(h))();
-    if (r < 0.55) return "ok";
-    if (r < 0.78) return "warn";
-    if (r < 0.92) return "fail";
-    return "na";
-  };
+  // Default every tile to green (ok); users flip individual tiles to red
+  // via click, which feeds the Delivery / Inventory deviation counters.
+  const fallback = (_id: string): Status => "ok";
 
   const statusFor = (id: string): Status | "qc" => {
     if (overrides[id]) return overrides[id];
@@ -880,9 +872,9 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
   const Tile = ({ id }: { id: string }) => {
     const s = statusFor(id);
     const cycle = () => {
-      const idx = STATUS_CYCLE.indexOf(s);
-      const next = STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length];
-      setFloorOverride(id, next);
+      // Toggle green ↔ red so it directly drives the deviation rule:
+      // Inventory day turns red at ≥1 red tile, Delivery at >3.
+      setFloorOverride(id, s === "fail" ? "ok" : "fail");
     };
     return (
       <button
