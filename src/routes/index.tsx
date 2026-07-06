@@ -712,9 +712,37 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const okCount = dots.filter((d) => d.status === "ok").length;
-  const failCount = dots.filter((d) => d.status === "fail").length;
-  const warnCount = dots.filter((d) => d.status === "warn").length;
+  const [safetyOverride, setSafetyOverride] = useState<Status | null>(() => {
+    if (typeof window === "undefined") return null;
+    const raw = window.localStorage.getItem("safety-today-override");
+    if (!raw) return null;
+    try {
+      const parsed = JSON.parse(raw) as { day: number; status: Status };
+      if (parsed.day === new Date().getDate()) return parsed.status;
+    } catch {}
+    return null;
+  });
+  const today = new Date().getDate();
+  const displayDots =
+    pillar.key === "S" && safetyOverride
+      ? dots.map((d) => (d.day === today ? { ...d, status: safetyOverride } : d))
+      : dots;
+  const cycleSafety = () => {
+    const order: Status[] = ["ok", "warn", "fail"];
+    const current =
+      safetyOverride ?? displayDots.find((d) => d.day === today)?.status ?? "ok";
+    const next = order[(order.indexOf(current as Status) + 1) % order.length];
+    setSafetyOverride(next);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        "safety-today-override",
+        JSON.stringify({ day: today, status: next }),
+      );
+    }
+  };
+  const okCount = displayDots.filter((d) => d.status === "ok").length;
+  const failCount = displayDots.filter((d) => d.status === "fail").length;
+  const warnCount = displayDots.filter((d) => d.status === "warn").length;
 
   return (
     <div className="relative overflow-hidden rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
@@ -747,17 +775,36 @@ function PillarCard({
 
         {/* Day dots grid */}
         <div className="mt-4 grid grid-cols-8 gap-1.5">
-          {dots.map((d) => (
-            <div
-              key={d.day}
-              title={`Day ${d.day}`}
-              className={`size-5 rounded-full grid place-items-center text-[8px] font-bold text-background ${
-                d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
-              }`}
-            >
-              {d.day}
-            </div>
-          ))}
+          {displayDots.map((d) => {
+            const isSafetyToday = pillar.key === "S" && d.day === today;
+            return (
+              <button
+                key={d.day}
+                type="button"
+                disabled={!isSafetyToday}
+                onClick={
+                  isSafetyToday
+                    ? (e) => {
+                        e.stopPropagation();
+                        cycleSafety();
+                      }
+                    : undefined
+                }
+                title={
+                  isSafetyToday
+                    ? `Day ${d.day} — click to change status`
+                    : `Day ${d.day}`
+                }
+                className={`size-5 rounded-full grid place-items-center text-[8px] font-bold text-background ${
+                  d.status === "na"
+                    ? "bg-secondary text-muted-foreground"
+                    : statusColor(d.status)
+                } ${isSafetyToday ? "cursor-pointer ring-1 ring-primary/60 hover:scale-110 transition-transform" : "cursor-default"}`}
+              >
+                {d.day}
+              </button>
+            );
+          })}
         </div>
 
         {/* Legend counts */}
@@ -783,7 +830,7 @@ function PillarCard({
         <PillarDetailOverlay
           pillar={pillar}
           detail={detail}
-          dots={dots}
+          dots={displayDots}
           shifts={shifts}
           onClose={() => setExpanded(false)}
         />
