@@ -367,14 +367,16 @@ function Index() {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <NotesCard
             title="Open Escalations"
-            items={[
+            storageKey="notes:open-escalations"
+            defaultItems={[
               "Mold lockers not being returned",
               "PVL/LPVL grinder blades damaged by metal tools",
             ]}
           />
           <NotesCard
             title="Long Term Actions"
-            items={[
+            storageKey="notes:long-term-actions"
+            defaultItems={[
               "Repro compliance: 6/18 = 33%",
               "4 reprints made (10 → 14, 78%)",
               "2 MC in cabinet but not on machine",
