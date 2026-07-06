@@ -645,14 +645,8 @@ function PillarCard({
         >
           <div>
             <div className="flex items-center gap-2">
-              <span
-                className={
-                  pillar.key === "Q"
-                    ? "grid place-items-center shrink-0 size-8 sm:size-9 rounded-sm bg-transparent text-muted-foreground border border-transparent p-1 sm:p-1.5 transition-colors hover:bg-secondary hover:text-foreground hover:border-border/60 focus-visible:bg-secondary focus-visible:text-foreground focus-visible:border-border/60 focus-visible:outline-none"
-                    : "grid place-items-center shrink-0 size-9 rounded-sm bg-primary text-primary-foreground"
-                }
-              >
-                <Icon className={pillar.key === "Q" ? "size-4 sm:size-[18px]" : "size-5"} />
+              <span className="grid place-items-center shrink-0 size-9 rounded-sm bg-primary text-primary-foreground">
+                <Icon className="size-5" />
               </span>
               <div>
                 <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Pillar</div>
