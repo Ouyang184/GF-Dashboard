@@ -543,13 +543,20 @@ function AvailabilityScrapChart() {
 }
 
 function MastercardsProductionChart() {
-  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  // Fiscal year starts in December
+  const MONTHS = ["Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"];
   const now = new Date();
-  const currentMonth = now.getMonth();
+  const calMonth = now.getMonth(); // 0=Jan..11=Dec
+  // Index within fiscal year (Dec=0, Jan=1, ..., Nov=11)
+  const currentMonth = (calMonth + 1) % 12;
+  const fiscalYearStart = calMonth === 11 ? now.getFullYear() : now.getFullYear() - 1;
 
   const data = useMemo(() => {
     return MONTHS.map((m, i) => {
-      const rng = mulberry32(dateSeed(new Date(now.getFullYear(), i, 1), 7700 + i));
+      // Map fiscal index i back to calendar month/year: Dec of fiscalYearStart, then Jan..Nov of following year
+      const calM = i === 0 ? 11 : i - 1;
+      const yr = i === 0 ? fiscalYearStart : fiscalYearStart + 1;
+      const rng = mulberry32(dateSeed(new Date(yr, calM, 1), 7700 + i));
       // Target ~120k units/month; actuals vary; future months null
       const target = 120000;
       const actual = i <= currentMonth
@@ -558,7 +565,7 @@ function MastercardsProductionChart() {
       return { month: m, actual, target };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMonth]);
+  }, [currentMonth, fiscalYearStart]);
 
   const monthlyTarget = 120000;
   const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
