@@ -402,7 +402,12 @@ function Index() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
           <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
-          <LotteryCard numbers={lottery.numbers} power={lottery.power} />
+          <LotteryCard
+            numbers={lottery.numbers}
+            power={lottery.power}
+            drawDate={lottery.drawDate}
+            source={lottery.source}
+          />
         </section>
 
         {/* QDIP grid */}
@@ -647,11 +652,30 @@ function MastercardsProductionChart() {
   );
 }
 
-function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
+function LotteryCard({
+  numbers,
+  power,
+  drawDate,
+  source,
+}: {
+  numbers: number[];
+  power: number;
+  drawDate: string | null;
+  source: "powerball" | "fallback";
+}) {
+  const dateLabel = drawDate
+    ? new Date(drawDate).toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      })
+    : null;
   return (
     <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">Lottery Pick of the Day</div>
+        <div className="text-xs uppercase tracking-wider text-muted-foreground">
+          Powerball · Latest Winning Numbers
+        </div>
         <Ticket className="size-5 text-accent" />
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -667,7 +691,11 @@ function LotteryCard({ numbers, power }: { numbers: number[]; power: number }) {
           {power.toString().padStart(2, "0")}
         </span>
       </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">For fun only · refreshes daily</p>
+      <p className="mt-2 text-[10px] text-muted-foreground">
+        {source === "powerball" && dateLabel
+          ? `Official drawing · ${dateLabel}`
+          : "Live feed unavailable · showing sample numbers"}
+      </p>
     </div>
   );
 }
