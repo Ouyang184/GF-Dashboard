@@ -231,6 +231,60 @@ function dailyLottery() {
   return { numbers, power };
 }
 
+type PowerballDraw = {
+  numbers: number[];
+  power: number;
+  drawDate: string | null;
+  source: "powerball" | "fallback";
+};
+
+function useLatestPowerball(): PowerballDraw {
+  const fallback = useMemo<PowerballDraw>(() => {
+    const { numbers, power } = dailyLottery();
+    return { numbers, power, drawDate: null, source: "fallback" };
+  }, []);
+  const [draw, setDraw] = useState<PowerballDraw>(fallback);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          "https://data.ny.gov/resource/d6yy-54nr.json?$order=draw_date%20DESC&$limit=1",
+        );
+        if (!res.ok) return;
+        const rows = (await res.json()) as Array<{
+          draw_date?: string;
+          winning_numbers?: string;
+        }>;
+        const row = rows?.[0];
+        if (!row?.winning_numbers) return;
+        const parts = row.winning_numbers
+          .split(/\s+/)
+          .map((n) => Number.parseInt(n, 10))
+          .filter((n) => Number.isFinite(n));
+        if (parts.length < 6) return;
+        const numbers = parts.slice(0, 5).sort((a, b) => a - b);
+        const power = parts[5];
+        if (cancelled) return;
+        setDraw({
+          numbers,
+          power,
+          drawDate: row.draw_date ?? null,
+          source: "powerball",
+        });
+      } catch {
+        /* keep fallback */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return draw;
+}
+
 function useNow() {
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
