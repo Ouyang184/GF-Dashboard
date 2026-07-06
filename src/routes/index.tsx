@@ -16,7 +16,7 @@ import {
   Shield,
   BadgeCheck,
   Sun,
-  Ticket,
+  Quote,
   Truck,
   X,
 } from "lucide-react";
@@ -221,69 +221,32 @@ function applyDeviationRule(
   return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
 }
 
-function dailyLottery() {
-  const today = new Date();
-  const rng = mulberry32(dateSeed(today, 777));
-  const pool = new Set<number>();
-  while (pool.size < 5) pool.add(1 + Math.floor(rng() * 69));
-  const numbers = [...pool].sort((a, b) => a - b);
-  const power = 1 + Math.floor(rng() * 26);
-  return { numbers, power };
+const DAILY_QUOTES: { text: string; author: string }[] = [
+  { text: "Quality is never an accident; it is always the result of intelligent effort.", author: "John Ruskin" },
+  { text: "The most dangerous kind of waste is the waste we do not recognize.", author: "Shigeo Shingo" },
+  { text: "Without standards, there can be no improvement.", author: "Taiichi Ohno" },
+  { text: "If you can't describe what you are doing as a process, you don't know what you're doing.", author: "W. Edwards Deming" },
+  { text: "The best way to predict the future is to create it.", author: "Peter Drucker" },
+  { text: "Safety isn't expensive, it's priceless.", author: "Unknown" },
+  { text: "Continuous improvement is better than delayed perfection.", author: "Mark Twain" },
+  { text: "A bad system will beat a good person every time.", author: "W. Edwards Deming" },
+  { text: "Where there is no standard, there can be no kaizen.", author: "Taiichi Ohno" },
+  { text: "Do the best you can until you know better. Then when you know better, do better.", author: "Maya Angelou" },
+  { text: "Excellence is doing ordinary things extraordinarily well.", author: "John W. Gardner" },
+  { text: "Working together, ordinary people can perform extraordinary feats.", author: "Jean Ritchie" },
+  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier" },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+];
+
+function useDailyQuote() {
+  return useMemo(() => {
+    const today = new Date();
+    const idx = dateSeed(today, 42) % DAILY_QUOTES.length;
+    return DAILY_QUOTES[idx];
+  }, []);
 }
 
-type PowerballDraw = {
-  numbers: number[];
-  power: number;
-  drawDate: string | null;
-  source: "powerball" | "fallback";
-};
 
-function useLatestPowerball(): PowerballDraw {
-  const fallback = useMemo<PowerballDraw>(() => {
-    const { numbers, power } = dailyLottery();
-    return { numbers, power, drawDate: null, source: "fallback" };
-  }, []);
-  const [draw, setDraw] = useState<PowerballDraw>(fallback);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch(
-          "https://data.ny.gov/resource/d6yy-54nr.json?$order=draw_date%20DESC&$limit=1",
-        );
-        if (!res.ok) return;
-        const rows = (await res.json()) as Array<{
-          draw_date?: string;
-          winning_numbers?: string;
-        }>;
-        const row = rows?.[0];
-        if (!row?.winning_numbers) return;
-        const parts = row.winning_numbers
-          .split(/\s+/)
-          .map((n) => Number.parseInt(n, 10))
-          .filter((n) => Number.isFinite(n));
-        if (parts.length < 6) return;
-        const numbers = parts.slice(0, 5).sort((a, b) => a - b);
-        const power = parts[5];
-        if (cancelled) return;
-        setDraw({
-          numbers,
-          power,
-          drawDate: row.draw_date ?? null,
-          source: "powerball",
-        });
-      } catch {
-        /* keep fallback */
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return draw;
-}
 
 function useNow() {
   const [now, setNow] = useState<Date | null>(null);
@@ -338,7 +301,7 @@ function Index() {
   const liveNow = useNow();
   const now = liveNow ?? new Date(0);
   const weather = useWeather();
-  const lottery = useLatestPowerball();
+  const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
@@ -402,12 +365,7 @@ function Index() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
           <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
-          <LotteryCard
-            numbers={lottery.numbers}
-            power={lottery.power}
-            drawDate={lottery.drawDate}
-            source={lottery.source}
-          />
+          <QuoteCard text={quote.text} author={quote.author} />
         </section>
 
         {/* QDIP grid */}
@@ -652,50 +610,19 @@ function MastercardsProductionChart() {
   );
 }
 
-function LotteryCard({
-  numbers,
-  power,
-  drawDate,
-  source,
-}: {
-  numbers: number[];
-  power: number;
-  drawDate: string | null;
-  source: "powerball" | "fallback";
-}) {
-  const dateLabel = drawDate
-    ? new Date(drawDate).toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      })
-    : null;
+function QuoteCard({ text, author }: { text: string; author: string }) {
   return (
     <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
       <div className="flex items-center justify-between">
         <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          Powerball · Latest Winning Numbers
+          Quote of the Day
         </div>
-        <Ticket className="size-5 text-accent" />
+        <Quote className="size-5 text-accent" />
       </div>
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        {numbers.map((n) => (
-          <span
-            key={n}
-            className="grid place-items-center size-10 rounded-sm border border-border bg-background text-primary font-mono font-bold tabular-nums"
-          >
-            {n.toString().padStart(2, "0")}
-          </span>
-        ))}
-        <span className="grid place-items-center size-10 rounded-sm bg-warning text-primary font-mono font-bold tabular-nums">
-          {power.toString().padStart(2, "0")}
-        </span>
-      </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">
-        {source === "powerball" && dateLabel
-          ? `Official drawing · ${dateLabel}`
-          : "Live feed unavailable · showing sample numbers"}
-      </p>
+      <blockquote className="mt-3 text-sm leading-relaxed text-foreground italic">
+        “{text}”
+      </blockquote>
+      <p className="mt-2 text-[11px] text-muted-foreground">— {author}</p>
     </div>
   );
 }
