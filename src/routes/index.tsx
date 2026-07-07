@@ -1256,74 +1256,49 @@ function PillarCard({
 }
 
 function FloorMap({
-  ocr,
-  floorMap,
+ floorMap,
 }: {
-  ocr?: IntouchSnapshot | null;
-  floorMap?: Record<string, FloorMapEntry>;
+  floorMap?: FloorMapEntry[] | Record<string, FloorMapEntry>;
 }) {
-  const overrides = useFloorOverrides();
-  const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
+  const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "").trim();
 
-  // Map the backend floorMap status ("matching"|"comparable"|"missing") into
-  // the tile Status vocabulary. Tiles with no backend entry are "na" (gray).
-  const backendStatusFor = (id: string): { status: Status | "na"; entry?: FloorMapEntry } => {
-    const key = displayId(id);
-    const entry = floorMap?.[key];
-    if (!entry) return { status: "na" };
-    if (entry.worstStatus === "matching") return { status: "ok", entry };
-    if (entry.worstStatus === "comparable") return { status: "warn", entry };
-    return { status: "fail", entry };
-  };
-
-  const statusFor = (id: string): { status: Status | "qc" | "na"; entry?: FloorMapEntry } => {
-    if (overrides[id]) return { status: overrides[id] };
-    const live = ocr?.results[id]?.status;
-    if (live) return { status: live };
-    return backendStatusFor(id);
-  };
-
-  const tileColor = (s: Status | "qc" | "na") => {
-    switch (s) {
-      case "ok":
-        return "bg-success/80 border-success";
-      case "warn":
-        return "bg-warning/80 border-warning";
-      case "fail":
-        return "bg-danger/80 border-danger";
-      case "qc":
-        return "bg-purple-500/70 border-purple-400";
-      case "na":
-        return "bg-muted/60 border-border text-muted-foreground";
-      default:
-        return "bg-sky-500/70 border-sky-400";
-    }
-  };
+  // Normalize API floorMap into a Map keyed by strict machine-number string.
+  const entries: FloorMapEntry[] = Array.isArray(floorMap)
+    ? floorMap
+    : floorMap
+      ? Object.values(floorMap)
+      : [];
+  const byMachine = new Map<string, FloorMapEntry>();
+  for (const e of entries) {
+    const key = String(e.machine ?? "").trim();
+    if (key) byMachine.set(key, e);
+  }
 
   const Tile = ({ id }: { id: string }) => {
-    const { status: s, entry } = statusFor(id);
-    const cycle = () => {
-      // Toggle green ↔ red so it directly drives the deviation rule:
-      // Inventory day turns red at ≥1 red tile, Delivery at >3.
-      setFloorOverride(id, s === "fail" ? "ok" : "fail");
-    };
+    const key = displayId(id);
+    const entry = byMachine.get(key);
+    const running = !!entry;
     const tooltip = entry
-      ? entry.jobs
-          .map(
+      ? [
+          `Machine ${key} — RUNNING (${entry.jobCount} job${entry.jobCount === 1 ? "" : "s"})`,
+          ...entry.jobs.map(
             (j) =>
-              `Machine ${j.machine}\nPart ${j.partNumber}${j.partDescription ? ` — ${j.partDescription}` : ""}\nMasterCard ${j.masterCard || "—"}\nTech ${j.productionTech || "—"}\nWO ${j.workOrder || "—"}`,
-          )
-          .join("\n\n")
-      : `${id} — not running / no data`;
+              `• Part ${j.partNumber}${j.partDescription ? ` — ${j.partDescription}` : ""}\n  MasterCard: ${j.masterCard || "—"}  ·  Tech: ${j.productionTech || "—"}`,
+          ),
+        ].join("\n")
+      : `${key} — not running / no data`;
     return (
       <button
         type="button"
-        onClick={cycle}
         title={tooltip}
-        className={`relative rounded-sm border px-1 py-1 font-mono font-bold text-background leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${tileColor(s)}`}
+        className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 transition text-sm sm:text-base ${
+          running
+            ? "bg-success/80 border-success text-background hover:brightness-110 cursor-pointer"
+            : "bg-muted/60 border-border text-muted-foreground cursor-default"
+        }`}
       >
-        <span className="truncate">{displayId(id)}</span>
-        {entry && entry.jobCount > 1 && (
+        <span className="truncate">{key}</span>
+        {running && entry && (
           <span
             className="absolute -top-1 -right-1 rounded-full bg-background text-foreground border border-border text-[9px] leading-none font-semibold px-1.5 py-0.5"
             aria-label={`${entry.jobCount} jobs`}
