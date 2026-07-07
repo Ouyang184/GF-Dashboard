@@ -1436,7 +1436,6 @@ function NotesCard({
 }
 
 function CompliancePanel() {
-function CompliancePanel() {
   const data = useComplianceData();
 
   const dateStr = data?.date
