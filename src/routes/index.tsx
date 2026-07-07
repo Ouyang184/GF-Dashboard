@@ -195,12 +195,16 @@ function statusColor(s: Status) {
 function buildMonthDots(pillarIdx: number, daysInMonth: number) {
   const today = new Date();
   const rng = mulberry32(dateSeed(today, pillarIdx * 31));
-  const dots: { day: number; status: Status }[] = [];
+  const dots: { day: number; status: Status; weekend: boolean }[] = [];
   for (let d = 1; d <= daysInMonth; d++) {
-    if (d > today.getDate()) {
-      dots.push({ day: d, status: "na" });
+    const dow = new Date(today.getFullYear(), today.getMonth(), d).getDay();
+    const weekend = dow === 0 || dow === 6;
+    if (weekend) {
+      dots.push({ day: d, status: "na", weekend: true });
+    } else if (d > today.getDate()) {
+      dots.push({ day: d, status: "na", weekend: false });
     } else {
-      dots.push({ day: d, status: pickStatus(rng) });
+      dots.push({ day: d, status: pickStatus(rng), weekend: false });
     }
   }
   return dots;
@@ -212,7 +216,7 @@ function buildMonthDots(pillarIdx: number, daysInMonth: number) {
  *  - Delivery  (D): >3 deviations → red
  */
 function applyDeviationRule(
-  dots: { day: number; status: Status }[],
+  dots: { day: number; status: Status; weekend?: boolean }[],
   pillarKey: string,
   deviationCount: number,
 ) {
@@ -221,7 +225,9 @@ function applyDeviationRule(
     (pillarKey === "I" && deviationCount >= 1) ||
     (pillarKey === "D" && deviationCount > 3);
   if (!trigger) return dots;
-  return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
+  return dots.map((d) =>
+    d.day === today && !d.weekend ? { ...d, status: "fail" as Status } : d,
+  );
 }
 
 const DAILY_QUOTES: { text: string; author: string }[] = [
@@ -947,7 +953,7 @@ function PillarCard({
   shifts,
 }: {
   pillar: Pillar;
-  dots: { day: number; status: Status }[];
+  dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
 }) {
   const Icon = pillar.icon;
@@ -1017,7 +1023,17 @@ function PillarCard({
         {/* Day dots grid */}
         <div className="mt-4 grid grid-cols-8 gap-1.5">
           {displayDots.map((d) => {
-            const isSafetyToday = pillar.key === "S" && d.day === today;
+            const isSafetyToday = pillar.key === "S" && d.day === today && !d.weekend;
+            if (d.weekend) {
+              return (
+                <div
+                  key={d.day}
+                  title={`Day ${d.day} — weekend`}
+                  aria-hidden="true"
+                  className="size-5 rounded-full bg-muted/30"
+                />
+              );
+            }
             return (
               <button
                 key={d.day}
@@ -1265,7 +1281,7 @@ function PillarDetailOverlay({
 }: {
   pillar: Pillar;
   detail: PillarDetail;
-  dots: { day: number; status: Status }[];
+  dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
   onClose: () => void;
 }) {
@@ -1374,12 +1390,16 @@ function PillarDetailOverlay({
                     {dots.map((d) => (
                       <div
                         key={d.day}
-                        title={`Day ${d.day}`}
+                        title={d.weekend ? `Day ${d.day} — weekend` : `Day ${d.day}`}
                         className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
-                          d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
+                          d.weekend
+                            ? "bg-muted/30"
+                            : d.status === "na"
+                              ? "bg-secondary text-muted-foreground"
+                              : statusColor(d.status)
                         }`}
                       >
-                        {d.day}
+                        {d.weekend ? "" : d.day}
                       </div>
                     ))}
                   </div>
