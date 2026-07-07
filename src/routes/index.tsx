@@ -627,28 +627,28 @@ function LiveKpiRow({
         <StatCard
           label="MC Available"
           value={pct(data.mcAvailablePercent ?? 0)}
-          sub={`${data.mcAvailableCount ?? data.matching ?? 0} / ${denom} MasterCard = Yes`}
+          sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
           icon={BadgeCheck}
           tone="ok"
         />
         <StatCard
           label="Matching"
-          value={String(data.matching ?? 0)}
-          sub="Exact MasterCard match"
+          value={String(data.matchingCount ?? 0)}
+          sub={`${pct(data.matchingPercent ?? 0)} · Exact MasterCard match`}
           icon={Shield}
           tone="ok"
         />
         <StatCard
           label="Comparable"
-          value={String(data.comparable ?? 0)}
-          sub="MasterCard = Comparable"
+          value={String(data.comparableCount ?? 0)}
+          sub={`${pct(data.comparablePercent ?? 0)} · MasterCard = Comparable`}
           icon={Shield}
           tone="warn"
         />
         <StatCard
           label="Missing / No MC"
-          value={String(data.missing ?? 0)}
-          sub="No, blank, or missing"
+          value={String(data.missingCount ?? 0)}
+          sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
           icon={AlertTriangle}
           tone="fail"
         />
