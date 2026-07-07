@@ -1479,6 +1479,36 @@ function PillarCard({
               </div>
             </div>
           ))}
+          {pillar.key === "Q" && qualityIssues && qualityIssues.length > 0 && (
+            <div className="pt-2 border-t border-dashed border-border/60">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                Current quality issues
+              </div>
+              <div className="space-y-1.5">
+                {qualityIssues.slice(0, 3).map((issue) => (
+                  <div key={issue.machine} className="flex items-center justify-between text-xs gap-2">
+                    <span className="font-semibold truncate">{issue.machine}</span>
+                    <span
+                      className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border ${
+                        issue.status === "missing"
+                          ? "bg-danger/10 border-danger/40 text-danger"
+                          : issue.status === "comparable"
+                            ? "bg-warning/10 border-warning/40 text-warning"
+                            : "bg-muted border-border text-muted-foreground"
+                      }`}
+                    >
+                      {issue.status}
+                    </span>
+                  </div>
+                ))}
+                {qualityIssues.length > 3 && (
+                  <div className="text-[10px] text-muted-foreground">
+                    +{qualityIssues.length - 3} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {expanded && (
