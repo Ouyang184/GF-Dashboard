@@ -183,15 +183,12 @@ function computeSummary(rows) {
   const pct = (n) =>
     machinesRunning === 0 ? 0 : Math.round((n / machinesRunning) * 100);
 
-  const latestRows = [...uniqueJobs]
-    .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
-    .slice(0, 25)
-    .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
-
-  // Full list of unique Machine+Part jobs (unbounded) for the floor map.
+  // Buyoff log = every unique Machine + Part job in the production window.
+  // The floor map is derived from the same list so the two views always match.
   const machineJobs = [...uniqueJobs]
     .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
+  const latestRows = machineJobs;
 
   // Normalize a Machine value like "301IM30" / "443IM" to floor-tile "301" / "443".
   const normalizeMachine = (m) =>
