@@ -1974,18 +1974,52 @@ function PillarDetailOverlay({
                 </section>
 
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="space-y-3">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-sm gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
-                          <span className="font-semibold w-12 shrink-0">{s}</span>
-                          <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+                    {pillar.key === "Q" && qualityIssues ? "Shift Quality Issues" : "Shifts"}
+                  </h3>
+                  {pillar.key === "Q" && qualityIssues && qualityIssues.length > 0 ? (
+                    <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
+                      {qualityIssues.map((issue) => (
+                        <div key={issue.machine} className="rounded-lg bg-secondary/40 p-3 text-sm">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold">{issue.machine}</span>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${
+                                issue.status === "missing"
+                                  ? "bg-danger/10 border-danger/40 text-danger"
+                                  : issue.status === "comparable"
+                                    ? "bg-warning/10 border-warning/40 text-warning"
+                                    : "bg-muted border-border text-muted-foreground"
+                              }`}
+                            >
+                              {issue.status}
+                            </span>
+                          </div>
+                          {issue.partNumber && (
+                            <div className="mt-1 text-xs text-muted-foreground font-mono">
+                              {issue.partNumber}
+                            </div>
+                          )}
+                          <div className="mt-1 text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Activity className="size-3" />
+                            {issue.when}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {SHIFTS.map((s, i) => (
+                        <div key={s} className="flex items-center justify-between text-sm gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
+                            <span className="font-semibold w-12 shrink-0">{s}</span>
+                            <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </section>
               </>
             )}
