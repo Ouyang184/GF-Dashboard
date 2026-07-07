@@ -15,6 +15,7 @@ export type DashboardRow = {
 
 export type DashboardData = {
   updatedAt: string;
+  latestDate: string;
   totalRows: number;
   availabilityCount: number;
   availabilityPercent: number;
