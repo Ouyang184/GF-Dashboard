@@ -3,6 +3,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
+import {
+  useDeviationMap,
+  useDeviationCountFor,
+  toggleDeviation,
+  clearDeviations,
+  type PillarKey as DeviationPillarKey,
+} from "@/hooks/use-deviation-map";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
@@ -366,6 +373,8 @@ function Index() {
   const weather = useWeather();
   const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
+  const deliveryDeviations = useDeviationCountFor("D");
+  const inventoryDeviations = useDeviationCountFor("I");
   const uploadMastercards = useMastercardsUploader();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const uploadCompliance = useComplianceUploader();
@@ -521,7 +530,11 @@ function Index() {
               dots={
                 p.key === "Q"
                   ? applyQualityWeeklyScrapRule(buildMonthDots(i, daysInMonth))
-                  : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
+                  : p.key === "D"
+                    ? applyDeviationRule(buildMonthDots(i, daysInMonth), "D", deliveryDeviations)
+                    : p.key === "I"
+                      ? applyDeviationRule(buildMonthDots(i, daysInMonth), "I", inventoryDeviations)
+                      : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
               }
               shifts={shiftStatuses[i]}
             />
