@@ -306,6 +306,29 @@ function applyQualityWeeklyScrapRule(
   });
 }
 
+function useQualityIssues(data: DashboardData | null): QualityIssue[] {
+  return useMemo(() => {
+    if (!data?.floorMap) return [];
+    const entries: FloorMapEntry[] = Array.isArray(data.floorMap)
+      ? data.floorMap
+      : Object.values(data.floorMap);
+    const issues: QualityIssue[] = [];
+    for (const e of entries) {
+      if (!e.worstStatus || e.worstStatus === "matching") continue;
+      const latest = e.jobs
+        .filter((j) => j.dateCreated)
+        .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())[0];
+      issues.push({
+        machine: e.machine,
+        status: e.worstStatus,
+        when: latest?.dateCreated ?? data.latestDate ?? "—",
+        partNumber: latest?.partNumber,
+      });
+    }
+    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime());
+  }, [data]);
+}
+
 const DAILY_QUOTES: { text: string; author: string }[] = [
   { text: "Quality is never an accident; it is always the result of intelligent effort.", author: "John Ruskin" },
   { text: "The most dangerous kind of waste is the waste we do not recognize.", author: "Shigeo Shingo" },
