@@ -445,7 +445,6 @@ function Index() {
       </header>
 
       <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-8">
-        <LiveDashboardSection />
         {/* Top stats row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
@@ -1349,7 +1348,7 @@ function PillarDetailOverlay({
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div className="lg:col-span-3">
-                      <CompliancePanel />
+                      <LiveDashboardSection />
                     </div>
                     <div className="lg:col-span-2 lg:border-l lg:border-border/60 lg:pl-6">
                       <MastercardsProductionChart />
