@@ -531,6 +531,15 @@ function AvailabilityScrapChart() {
 
 function LiveDashboardSection() {
   const { data, isLoading, error, lastFetchedAt } = useDashboardData();
+  const [reproComplete, setReproComplete] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    return window.localStorage.getItem("amg.reproComplete") ?? "";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("amg.reproComplete", reproComplete);
+    }
+  }, [reproComplete]);
   return (
     <section className="space-y-4">
       {error && (
@@ -544,14 +553,32 @@ function LiveDashboardSection() {
           Loading live dashboard data…
         </div>
       )}
-      {data && <LiveKpiRow data={data} lastFetchedAt={lastFetchedAt} />}
+      {data && (
+        <LiveKpiRow
+          data={data}
+          lastFetchedAt={lastFetchedAt}
+          reproComplete={reproComplete}
+          onReproChange={setReproComplete}
+        />
+      )}
       {data && <LiveLatestRowsTable data={data} />}
     </section>
   );
 }
 
-function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedAt: Date | null }) {
+function LiveKpiRow({
+  data,
+  lastFetchedAt,
+  reproComplete,
+  onReproChange,
+}: {
+  data: DashboardData;
+  lastFetchedAt: Date | null;
+  reproComplete: string;
+  onReproChange: (v: string) => void;
+}) {
   const pct = (n: number) => `${Math.round(n)}%`;
+  const denom = data.machinesRunning || 0;
   return (
     <div className="space-y-2">
       <div className="rounded-sm border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -585,33 +612,80 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
           Fetched {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"} · auto-refresh 30s
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
         <StatCard
           label="Machines Running"
-          value={String(data.machinesRunning ?? 0)}
-          sub={`${data.totalRows} records in window`}
+          value={String(denom)}
+          sub={`${data.totalRows} raw rows · unique Machine+Part`}
           icon={Gauge}
         />
         <StatCard
-          label="Availability"
-          value={pct(data.availabilityPercent)}
-          sub={`${data.availabilityCount} / ${data.totalRows} (Yes+Comparable)`}
+          label="MC Available"
+          value={pct(data.mcAvailablePercent ?? 0)}
+          sub={`${data.mcAvailableCount ?? data.matching ?? 0} / ${denom} MasterCard = Yes`}
           icon={BadgeCheck}
           tone="ok"
         />
         <StatCard
-          label="MasterCard Yes"
-          value={String(data.mastercardYes)}
-          sub={`Comparable ${data.mastercardComparable} · No ${data.mastercardNo}`}
+          label="Matching"
+          value={String(data.matching ?? 0)}
+          sub="Exact MasterCard match"
           icon={Shield}
+          tone="ok"
+        />
+        <StatCard
+          label="Comparable"
+          value={String(data.comparable ?? 0)}
+          sub="MasterCard = Comparable"
+          icon={Shield}
+          tone="warn"
+        />
+        <StatCard
+          label="Missing / No MC"
+          value={String(data.missing ?? 0)}
+          sub="No, blank, or missing"
+          icon={AlertTriangle}
+          tone="fail"
         />
         <StatCard
           label="Compliance"
           value={pct(data.compliancePercent)}
-          sub={`${data.complianceCount} of ${data.totalRows} compliant`}
+          sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
           icon={Gauge}
           tone="ok"
         />
+        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
+      </div>
+    </div>
+  );
+}
+
+function ReproCompleteCard({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
+      <div className="flex items-start justify-between">
+        <div className="w-full">
+          <div className="text-xs uppercase tracking-wider text-muted-foreground">
+            Repro Complete
+          </div>
+          <input
+            type="text"
+            inputMode="numeric"
+            value={value}
+            onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, ""))}
+            placeholder="0"
+            className="mt-2 w-full bg-transparent text-3xl font-bold tracking-tight text-primary outline-none border-b border-transparent focus:border-primary/40"
+            aria-label="Repro Complete (manual entry)"
+          />
+          <div className="mt-1 text-xs text-muted-foreground">Manual entry</div>
+        </div>
+        <BadgeCheck className="size-5 text-accent" />
       </div>
     </div>
   );

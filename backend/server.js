@@ -66,6 +66,8 @@ function normalizeRow(raw) {
   return {
     id: Number(pick(raw, "ID", "Id") ?? 0) || 0,
     dateCreated: parsedDate ? parsedDate.toISOString().slice(0, 10) : "",
+    dateCreatedRaw: parsedDate ? parsedDate.toISOString() : "",
+    _ts: parsedDate ? parsedDate.getTime() : 0,
     workOrder: normalizeValue(pick(raw, "WorkOrder", "Work_x0020_Order", "WO")),
     machine: normalizeValue(pick(raw, "Machine")),
     partNumber: normalizeValue(pick(raw, "PartNumber", "Part_x0020_Number", "Part")),
@@ -117,53 +119,112 @@ function readDataFile() {
 
 // ---------- KPI computation ----------
 
+function getProductionWindow(now = new Date()) {
+  // 7:00 AM local -> next day 7:00 AM local
+  const start = new Date(now);
+  start.setHours(7, 0, 0, 0);
+  if (now.getTime() < start.getTime()) {
+    start.setDate(start.getDate() - 1);
+  }
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
+  return { start, end };
+}
+
+function fmtTime(d) {
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function fmtDate(d) {
+  return d.toISOString().slice(0, 10);
+}
+
 function computeSummary(rows) {
-  const totalRows = rows.length;
-  let mastercardYes = 0;
-  let mastercardComparable = 0;
-  let mastercardNo = 0;
-  let complianceYes = 0;
-  let complianceNo = 0;
+  const now = new Date();
+  const { start, end } = getProductionWindow(now);
 
-  for (const r of rows) {
+  // Filter to the current 7 AM -> 7 AM production window.
+  const inWindow = rows.filter((r) => {
+    if (!r._ts) return false;
+    return r._ts >= start.getTime() && r._ts < end.getTime();
+  });
+
+  // Dedupe by Machine + PartNumber, keep the latest record (by timestamp, then id).
+  const byKey = new Map();
+  for (const r of inWindow) {
+    const machine = (r.machine || "").trim();
+    const part = (r.partNumber || "").trim();
+    if (!machine || !part) continue;
+    const key = `${machine}||${part}`;
+    const prev = byKey.get(key);
+    if (!prev || r._ts > prev._ts || (r._ts === prev._ts && r.id > prev.id)) {
+      byKey.set(key, r);
+    }
+  }
+  const uniqueJobs = [...byKey.values()];
+
+  let matching = 0;      // MasterCard === "Yes"
+  let comparable = 0;    // MasterCard === "Comparable"
+  let missing = 0;       // "No", blank, null, missing
+
+  for (const r of uniqueJobs) {
     const mc = (r.masterCard || "").toLowerCase();
-    if (mc === "yes") mastercardYes++;
-    else if (mc.startsWith("compar")) mastercardComparable++;
-    else mastercardNo++; // blank/null counts as No/missing
-
-    const acc = (r.overallAcceptance || "").toLowerCase();
-    if (acc === "yes") complianceYes++;
-    else complianceNo++;
+    if (mc === "yes") matching++;
+    else if (mc.startsWith("compar")) comparable++;
+    else missing++;
   }
 
-  const availabilityCount = mastercardYes + mastercardComparable;
-  const complianceCount = complianceYes;
-  const pct = (n) => (totalRows === 0 ? 0 : Math.round((n / totalRows) * 100));
+  const machinesRunning = uniqueJobs.length;
+  const mcAvailableCount = matching; // MC Available = MasterCard "Yes"
+  const complianceCount = matching + comparable; // Compliant if MC exists
+  const pct = (n) =>
+    machinesRunning === 0 ? 0 : Math.round((n / machinesRunning) * 100);
 
-  const latestRows = [...rows]
-    .sort((a, b) => {
-      if (a.dateCreated === b.dateCreated) return b.id - a.id;
-      return a.dateCreated < b.dateCreated ? 1 : -1;
-    })
-    .slice(0, 25);
+  const latestRows = [...uniqueJobs]
+    .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
+    .slice(0, 25)
+    .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
 
-  const latestDate = rows.length
-    ? rows.reduce((max, r) => (r.dateCreated > max ? r.dateCreated : max), rows[0].dateCreated)
+  const latestDate = uniqueJobs.length
+    ? uniqueJobs.reduce((max, r) => (r.dateCreated > max ? r.dateCreated : max), uniqueJobs[0].dateCreated)
     : "";
 
   return {
     updatedAt: new Date().toLocaleString(),
+    productionDate: fmtDate(start),
+    productionWindowStart: fmtTime(start),
+    productionWindowEnd: fmtTime(end),
     latestDate,
-    totalRows,
-    availabilityCount,
-    availabilityPercent: pct(availabilityCount),
-    mastercardYes,
-    mastercardComparable,
-    mastercardNo,
+
+    // Row counts
+    totalRows: inWindow.length, // raw rows in the window (before dedupe)
+    machinesRunning,             // unique Machine + PartNumber pairs
+
+    // MC Available (exact match)
+    mcAvailableCount,
+    mcAvailablePercent: pct(mcAvailableCount),
+
+    // Breakdown
+    matching,
+    comparable,
+    missing,
+
+    // Compliance (Yes OR Comparable)
     complianceCount,
     compliancePercent: pct(complianceCount),
-    complianceYes,
-    complianceNo,
+
+    // Repro Complete — manual input, not derived from SharePoint yet.
+    reproComplete: null,
+
+    // Legacy aliases kept for backward compatibility with the frontend.
+    availabilityCount: complianceCount,
+    availabilityPercent: pct(complianceCount),
+    mastercardYes: matching,
+    mastercardComparable: comparable,
+    mastercardNo: missing,
+    complianceYes: matching,
+    complianceNo: missing,
+
     latestRows,
   };
 }
