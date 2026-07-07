@@ -16,6 +16,10 @@ export type DashboardRow = {
 export type DashboardData = {
   updatedAt: string;
   latestDate: string;
+  productionDate: string;
+  productionWindowStart: string;
+  productionWindowEnd: string;
+  machinesRunning: number;
   totalRows: number;
   availabilityCount: number;
   availabilityPercent: number;
