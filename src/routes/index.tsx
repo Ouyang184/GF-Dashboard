@@ -304,6 +304,31 @@ function Index() {
   const weather = useWeather();
   const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
+  const uploadMastercards = useMastercardsUploader();
+  const uploadInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+        uploadInputRef.current?.click();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  const onUploadChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const result = await uploadMastercards(file);
+      console.info("[mastercards] uploaded", result);
+    } catch (err) {
+      console.error("[mastercards] upload failed", err);
+    }
+  };
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
   const monthName = liveNow ? now.toLocaleString(undefined, { month: "long" }) : "";
