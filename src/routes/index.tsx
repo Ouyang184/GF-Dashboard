@@ -15,6 +15,14 @@ import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
 import {
+  MOLDING_CELL_TOTAL,
+  MOLDING_WEEKLY_SCRAP,
+  MOLDING_TOP_PRODUCTS,
+  MOLDING_TOP_PRODUCTS_TOTAL,
+  MOLDING_TOP_REASONS,
+  MOLDING_TOP_REASONS_TOTAL,
+} from "@/data/molding-scrap";
+import {
   Activity,
   AlertTriangle,
   Box,
