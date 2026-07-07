@@ -328,7 +328,7 @@ function useQualityIssues(data: DashboardData | null): QualityIssue[] {
         partNumber: latest?.partNumber,
       });
     }
-    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.dateCreated).getTime());
+    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime());
   }, [data]);
 }
 
