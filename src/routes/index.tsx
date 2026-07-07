@@ -60,7 +60,7 @@ type Pillar = {
 
 const PILLARS: Pillar[] = [
   { key: "S", label: "Safety", kpi: "0 Equip Safety Issues", icon: Shield, accent: "from-primary/20 to-primary/0" },
-  { key: "Q", label: "Quality", kpi: "Weekly Scrap ≥ 5%", icon: BadgeCheck, accent: "from-primary/20 to-primary/0" },
+  { key: "Q", label: "Quality", kpi: "Weekly Scrap < 3.5%", icon: BadgeCheck, accent: "from-primary/20 to-primary/0" },
   { key: "D", label: "Delivery", kpi: "≥ 3 New Process Deviations", icon: Truck, accent: "from-primary/20 to-primary/0" },
   { key: "I", label: "Inventory", kpi: "0 New Product Deviations", icon: Box, accent: "from-primary/20 to-primary/0" },
   { key: "P", label: "Productivity", kpi: "Machine Downtime", icon: Gauge, accent: "from-primary/20 to-primary/0" },
@@ -228,6 +228,59 @@ function applyDeviationRule(
   return dots.map((d) =>
     d.day === today && !d.weekend ? { ...d, status: "fail" as Status } : d,
   );
+}
+
+/**
+ * Quality pillar rule:
+ *   For each ISO-ish week (Sun–Sat), compute average daily scrap % using the
+ *   same deterministic generator as AvailabilityScrapChartImpl.
+ *   If the week's average is < 3.5% → every weekday dot in that week is green.
+ *   Otherwise → red. Weekend and future days stay "na".
+ */
+function applyQualityWeeklyScrapRule(
+  dots: { day: number; status: Status; weekend?: boolean }[],
+) {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const todayDay = today.getDate();
+
+  // Per-day scrap % using the same seed as the availability/scrap chart.
+  const scrapForDay = (day: number) => {
+    const d = new Date(year, month, day);
+    const rng = mulberry32(dateSeed(d, 4242));
+    rng(); // availNoise slot (kept in sync with the chart generator)
+    const scrapNoise = (rng() - 0.5) * 0.5;
+    // Rough proxy of the chart's downward trend, clamped like the chart.
+    return Math.max(0.6, Math.round((4.2 + scrapNoise) * 10) / 10);
+  };
+
+  // Group days by week bucket (Sun-anchored).
+  const weekBucket = (day: number) => {
+    const d = new Date(year, month, day);
+    const sunday = new Date(d);
+    sunday.setDate(d.getDate() - d.getDay());
+    return `${sunday.getFullYear()}-${sunday.getMonth()}-${sunday.getDate()}`;
+  };
+
+  const weekAvg = new Map<string, number>();
+  const weekDays = new Map<string, number[]>();
+  for (const dot of dots) {
+    if (dot.weekend || dot.day > todayDay) continue;
+    const key = weekBucket(dot.day);
+    if (!weekDays.has(key)) weekDays.set(key, []);
+    weekDays.get(key)!.push(dot.day);
+  }
+  for (const [key, days] of weekDays) {
+    const avg = days.reduce((s, d) => s + scrapForDay(d), 0) / days.length;
+    weekAvg.set(key, avg);
+  }
+
+  return dots.map((d) => {
+    if (d.weekend || d.day > todayDay) return d;
+    const avg = weekAvg.get(weekBucket(d.day)) ?? 0;
+    return { ...d, status: (avg < 3.5 ? "ok" : "fail") as Status };
+  });
 }
 
 const DAILY_QUOTES: { text: string; author: string }[] = [
@@ -464,7 +517,11 @@ function Index() {
             <PillarCard
               key={p.key}
               pillar={p}
-              dots={applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)}
+              dots={
+                p.key === "Q"
+                  ? applyQualityWeeklyScrapRule(buildMonthDots(i, daysInMonth))
+                  : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
+              }
               shifts={shiftStatuses[i]}
             />
           ))}
