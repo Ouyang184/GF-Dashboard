@@ -25,9 +25,11 @@ export type FloorMapJob = {
 };
 
 export type FloorMapEntry = {
-  machine: string; // normalized (e.g. "301")
+  machine: string; // normalized machine number, e.g. "301"
   jobCount: number;
-  worstStatus: "matching" | "comparable" | "missing";
+  status?: string; // e.g. "Matching" / "Comparable" / "Missing"
+  color?: string;  // e.g. "green" / "yellow" / "red"
+  worstStatus?: "matching" | "comparable" | "missing";
   jobs: FloorMapJob[];
 };
 
@@ -63,7 +65,8 @@ export type DashboardData = {
   missing?: number;
   latestRows: DashboardRow[];
   machineJobs?: DashboardRow[];
-  floorMap?: Record<string, FloorMapEntry>;
+  // API returns an array; older builds returned an object keyed by machine.
+  floorMap?: FloorMapEntry[] | Record<string, FloorMapEntry>;
 };
 
 export type DashboardState = {
@@ -73,7 +76,7 @@ export type DashboardState = {
   lastFetchedAt: Date | null;
 };
 
-const REFRESH_MS = 30_000;
+const REFRESH_MS = 60_000;
 
 function getBaseUrl(): string {
   const env = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
