@@ -475,6 +475,7 @@ function Index() {
 
   const { data: dashboardData } = useDashboardData();
   const qualityIssues = useQualityIssues(dashboardData);
+  console.log("[debug] dashboardData", dashboardData?.floorMap?.length, "qualityIssues", qualityIssues.length);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
