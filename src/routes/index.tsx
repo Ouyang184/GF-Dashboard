@@ -347,6 +347,24 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_oklch(0.27_0.04_200/0.35),transparent_60%),radial-gradient(ellipse_at_bottom_right,_oklch(0.4_0.12_160/0.18),transparent_55%)]" />
 
+      {/* Hidden MasterCards upload — trigger with Ctrl/Cmd+Shift+U or click the top-left corner */}
+      <input
+        ref={uploadInputRef}
+        type="file"
+        accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        onChange={onUploadChange}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
+        onClick={() => uploadInputRef.current?.click()}
+        aria-label="Upload MasterCards Excel"
+        title="Upload MasterCards Excel (Ctrl+Shift+U)"
+        className="fixed top-0 left-0 h-6 w-6 z-50 opacity-0"
+      />
+
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
         <div className="mx-auto max-w-[1600px] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
