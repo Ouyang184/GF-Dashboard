@@ -619,6 +619,15 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
 
 function LiveLatestRowsTable({ data }: { data: DashboardData }) {
   if (!data.latestRows?.length) return null;
+  const asText = (v: unknown): string => {
+    if (v == null) return "";
+    if (typeof v === "string" || typeof v === "number") return String(v);
+    if (typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      return String(o.Value ?? o.value ?? o.Title ?? o.LookupValue ?? o.DisplayName ?? "");
+    }
+    return String(v);
+  };
   return (
     <div className="rounded-sm border border-border bg-card shadow-[var(--shadow-card)] overflow-hidden">
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
@@ -649,13 +658,13 @@ function LiveLatestRowsTable({ data }: { data: DashboardData }) {
                 <td className="px-3 py-2 font-mono">{r.id}</td>
                 <td className="px-3 py-2">{r.dateCreated}</td>
                 <td className="px-3 py-2 font-mono">{r.workOrder}</td>
-                <td className="px-3 py-2">{r.machine}</td>
+                <td className="px-3 py-2">{asText(r.machine)}</td>
                 <td className="px-3 py-2 font-mono">{r.partNumber}</td>
                 <td className="px-3 py-2">{r.partDescription}</td>
-                <td className="px-3 py-2">{r.restartMoldChange}</td>
+                <td className="px-3 py-2">{asText(r.restartMoldChange)}</td>
                 <td className="px-3 py-2">{r.productionTech}</td>
-                <td className="px-3 py-2">{r.overallAcceptance}</td>
-                <td className="px-3 py-2">{r.masterCard || "—"}</td>
+                <td className="px-3 py-2">{asText(r.overallAcceptance)}</td>
+                <td className="px-3 py-2">{asText(r.masterCard) || "—"}</td>
               </tr>
             ))}
           </tbody>
