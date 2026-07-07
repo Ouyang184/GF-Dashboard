@@ -526,6 +526,118 @@ function StatCard({
 }
 
 function AvailabilityScrapChart() {
+  return <AvailabilityScrapChartImpl />;
+}
+
+function LiveDashboardSection() {
+  const { data, isLoading, error, lastFetchedAt } = useDashboardData();
+  return (
+    <section className="space-y-4">
+      {error && (
+        <div className="rounded-sm border border-danger/50 bg-danger/10 text-danger px-4 py-3 text-sm">
+          Cannot reach dashboard API ({error}). Make sure the local backend is running at{" "}
+          <code className="font-mono">{(import.meta as unknown as { env?: Record<string, string | undefined> }).env?.VITE_API_BASE_URL ?? "http://localhost:3001"}</code>.
+        </div>
+      )}
+      {isLoading && !data && (
+        <div className="rounded-sm border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
+          Loading live dashboard data…
+        </div>
+      )}
+      {data && <LiveKpiRow data={data} lastFetchedAt={lastFetchedAt} />}
+      {data && <LiveLatestRowsTable data={data} />}
+    </section>
+  );
+}
+
+function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedAt: Date | null }) {
+  const pct = (n: number) => `${Math.round(n)}%`;
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Live from SharePoint → Backend API
+        </h2>
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          Updated {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : data.updatedAt} · auto-refresh 30s
+        </div>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatCard label="Total Rows" value={String(data.totalRows)} icon={Activity} />
+        <StatCard
+          label="Availability"
+          value={pct(data.availabilityPercent)}
+          sub={`${data.availabilityCount} / ${data.totalRows} (Yes+Comparable)`}
+          icon={BadgeCheck}
+          tone="ok"
+        />
+        <StatCard
+          label="MasterCard Yes"
+          value={String(data.mastercardYes)}
+          sub={`Comparable ${data.mastercardComparable} · No ${data.mastercardNo}`}
+          icon={Shield}
+        />
+        <StatCard
+          label="Compliance"
+          value={pct(data.compliancePercent)}
+          sub={`${data.complianceYes} Yes · ${data.complianceNo} No`}
+          icon={Gauge}
+          tone="ok"
+        />
+      </div>
+    </div>
+  );
+}
+
+function LiveLatestRowsTable({ data }: { data: DashboardData }) {
+  if (!data.latestRows?.length) return null;
+  return (
+    <div className="rounded-sm border border-border bg-card shadow-[var(--shadow-card)] overflow-hidden">
+      <div className="px-4 py-3 border-b border-border flex items-center justify-between">
+        <h3 className="text-sm font-semibold">Latest Records</h3>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {data.latestRows.length} rows
+        </span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead className="bg-background/50 text-muted-foreground uppercase tracking-wider text-[10px]">
+            <tr>
+              <th className="px-3 py-2 text-left">ID</th>
+              <th className="px-3 py-2 text-left">Date</th>
+              <th className="px-3 py-2 text-left">Work Order</th>
+              <th className="px-3 py-2 text-left">Machine</th>
+              <th className="px-3 py-2 text-left">Part</th>
+              <th className="px-3 py-2 text-left">Description</th>
+              <th className="px-3 py-2 text-left">Type</th>
+              <th className="px-3 py-2 text-left">Tech</th>
+              <th className="px-3 py-2 text-left">Accept</th>
+              <th className="px-3 py-2 text-left">MC</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.latestRows.map((r) => (
+              <tr key={r.id} className="border-t border-border/60">
+                <td className="px-3 py-2 font-mono">{r.id}</td>
+                <td className="px-3 py-2">{r.dateCreated}</td>
+                <td className="px-3 py-2 font-mono">{r.workOrder}</td>
+                <td className="px-3 py-2">{r.machine}</td>
+                <td className="px-3 py-2 font-mono">{r.partNumber}</td>
+                <td className="px-3 py-2">{r.partDescription}</td>
+                <td className="px-3 py-2">{r.restartMoldChange}</td>
+                <td className="px-3 py-2">{r.productionTech}</td>
+                <td className="px-3 py-2">{r.overallAcceptance}</td>
+                <td className="px-3 py-2">{r.masterCard || "—"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function AvailabilityScrapChartImpl() {
   const data = useMemo(() => {
     const today = new Date();
     const points: { day: string; availability: number; scrap: number }[] = [];
