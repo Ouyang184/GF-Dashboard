@@ -641,110 +641,125 @@ function KpiTree({
   reproComplete: string;
   onReproChange: (v: string) => void;
 }) {
+  const CONN = "bg-border";
   return (
-    <div className="flex flex-col items-center gap-0 pt-2">
-      {/* Level 1 — Root */}
-      <div className="w-full max-w-xs">
+    <div className="mx-auto w-full max-w-5xl pt-2">
+      {/* Level 1 — Root, centered */}
+      <div className="grid grid-cols-3">
+        <div />
         <StatCard
           label="Machines Running"
           value={String(denom)}
           sub={`${data.totalRows} raw rows · unique Machine+Part`}
           icon={Gauge}
         />
+        <div />
       </div>
 
-      {/* Trunk down to level 2 */}
-      <div className="h-6 w-px bg-border" aria-hidden="true" />
-
-      {/* Horizontal branch bar spanning level-2 children */}
-      <div className="w-full max-w-5xl px-4 grid grid-cols-3 items-start">
-        <div className="col-span-3 h-px bg-border" aria-hidden="true" />
+      {/* Trunk + branch bar to level 2 */}
+      <div className="grid grid-cols-3">
+        <div />
+        <div className={`mx-auto h-6 w-px ${CONN}`} />
+        <div />
+      </div>
+      <div className="grid grid-cols-3">
+        {/* Half bars on outer columns + full bar in middle to create a T that spans all 3 */}
+        <div className="flex justify-end">
+          <div className={`h-px w-1/2 ${CONN}`} />
+        </div>
+        <div className={`h-px w-full ${CONN}`} />
+        <div className="flex justify-start">
+          <div className={`h-px w-1/2 ${CONN}`} />
+        </div>
+      </div>
+      <div className="grid grid-cols-3">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex justify-center">
+            <div className={`h-6 w-px ${CONN}`} />
+          </div>
+        ))}
       </div>
 
       {/* Level 2 */}
-      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
-        <TreeChild>
-          <StatCard
-            label="MC Available"
-            value={pct(data.mcAvailablePercent ?? 0)}
-            sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
-            icon={BadgeCheck}
-            tone="ok"
-          />
-        </TreeChild>
-        <TreeChild>
-          <StatCard
-            label="Missing / No MC"
-            value={String(data.missingCount ?? 0)}
-            sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
-            icon={AlertTriangle}
-            tone="fail"
-          />
-        </TreeChild>
-        <TreeChild>
-          <StatCard
-            label="Compliance"
-            value={pct(data.compliancePercent)}
-            sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
-            icon={Gauge}
-            tone="ok"
-          />
-        </TreeChild>
+      <div className="grid grid-cols-3 gap-4">
+        <StatCard
+          label="MC Available"
+          value={pct(data.mcAvailablePercent ?? 0)}
+          sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
+          icon={BadgeCheck}
+          tone="ok"
+        />
+        <StatCard
+          label="Missing / No MC"
+          value={String(data.missingCount ?? 0)}
+          sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
+          icon={AlertTriangle}
+          tone="fail"
+        />
+        <StatCard
+          label="Compliance"
+          value={pct(data.compliancePercent)}
+          sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
+          icon={Gauge}
+          tone="ok"
+        />
       </div>
 
-      {/* Sub-branch under MC Available (column 1 of 3) */}
-      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 px-4 mt-2">
-        <div className="flex flex-col items-center">
-          <div className="h-6 w-px bg-border" aria-hidden="true" />
-          <div className="w-2/3 grid grid-cols-2">
-            <div className="h-px bg-border" aria-hidden="true" />
-            <div className="h-px bg-border" aria-hidden="true" />
+      {/* Trunks down from column 1 and column 3 to level 3 */}
+      <div className="grid grid-cols-3">
+        <div className="flex justify-center">
+          <div className={`h-6 w-px ${CONN}`} />
+        </div>
+        <div />
+        <div className="flex justify-center">
+          <div className={`h-6 w-px ${CONN}`} />
+        </div>
+      </div>
+
+      {/* Under MC Available: branch bar for two children */}
+      <div className="grid grid-cols-3">
+        <div className="px-[12.5%]">
+          <div className={`h-px w-full ${CONN}`} />
+        </div>
+        <div />
+        <div />
+      </div>
+      <div className="grid grid-cols-3">
+        <div className="grid grid-cols-2">
+          <div className="flex justify-center">
+            <div className={`h-6 w-px ${CONN}`} />
           </div>
-          <div className="w-2/3 grid grid-cols-2 gap-3 pt-3">
-            <TreeLeaf>
-              <StatCard
-                label="Matching"
-                value={String(data.matchingCount ?? 0)}
-                sub={`${pct(data.matchingPercent ?? 0)} · Exact match`}
-                icon={Shield}
-                tone="ok"
-              />
-            </TreeLeaf>
-            <TreeLeaf>
-              <StatCard
-                label="Comparable"
-                value={String(data.comparableCount ?? 0)}
-                sub={`${pct(data.comparablePercent ?? 0)} · Comparable`}
-                icon={Shield}
-                tone="warn"
-              />
-            </TreeLeaf>
+          <div className="flex justify-center">
+            <div className={`h-6 w-px ${CONN}`} />
           </div>
         </div>
-        {/* Sub-branch under Compliance (column 3 of 3) — Repro Complete */}
-        <div className="hidden md:block" aria-hidden="true" />
-        <div className="flex flex-col items-center">
-          <div className="h-6 w-px bg-border" aria-hidden="true" />
-          <div className="w-full pt-3">
-            <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
-          </div>
+        <div />
+        <div />
+      </div>
+
+      {/* Level 3 */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-3">
+          <StatCard
+            label="Matching"
+            value={String(data.matchingCount ?? 0)}
+            sub={`${pct(data.matchingPercent ?? 0)} · Exact match`}
+            icon={Shield}
+            tone="ok"
+          />
+          <StatCard
+            label="Comparable"
+            value={String(data.comparableCount ?? 0)}
+            sub={`${pct(data.comparablePercent ?? 0)} · Comparable`}
+            icon={Shield}
+            tone="warn"
+          />
         </div>
+        <div />
+        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
       </div>
     </div>
   );
-}
-
-function TreeChild({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative flex flex-col items-center">
-      <div className="h-6 w-px bg-border" aria-hidden="true" />
-      <div className="w-full">{children}</div>
-    </div>
-  );
-}
-
-function TreeLeaf({ children }: { children: React.ReactNode }) {
-  return <div className="w-full">{children}</div>;
 }
 
 function ReproCompleteCard({
