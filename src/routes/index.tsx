@@ -559,13 +559,19 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
             Live from SharePoint → Backend API
           </h2>
-          <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-            <CalendarDays className="size-3.5" />
-            Latest record: {data.latestDate ? data.latestDate : "—"}
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <CalendarDays className="size-3.5" />
+              Latest record: {data.latestDate ? data.latestDate : "—"}
+            </span>
+            <span className="flex items-center gap-1.5" title="API updatedAt timestamp">
+              <Activity className="size-3.5" />
+              API updated: {data.updatedAt ? data.updatedAt : "—"}
+            </span>
           </div>
         </div>
         <div className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">
-          Updated {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : data.updatedAt} · auto-refresh 30s
+          Fetched {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"} · auto-refresh 30s
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
