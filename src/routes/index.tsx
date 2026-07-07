@@ -1848,12 +1848,14 @@ function PillarDetailOverlay({
   detail,
   dots,
   shifts,
+  qualityIssues,
   onClose,
 }: {
   pillar: Pillar;
   detail: PillarDetail;
   dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
+  qualityIssues?: QualityIssue[];
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
