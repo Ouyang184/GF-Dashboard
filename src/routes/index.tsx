@@ -578,6 +578,7 @@ function Index() {
                       : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
               }
               shifts={shiftStatuses[i]}
+              qualityIssues={p.key === "Q" ? qualityIssues : undefined}
             />
           ))}
         </section>
