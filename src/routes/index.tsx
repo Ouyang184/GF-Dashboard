@@ -66,6 +66,13 @@ export const Route = createFileRoute("/")({
 
 type Status = "ok" | "warn" | "fail" | "na";
 
+type QualityIssue = {
+  machine: string;
+  status: "missing" | "comparable" | "no data";
+  when: string;
+  partNumber?: string;
+};
+
 type Pillar = {
   key: "S" | "Q" | "D" | "I" | "P";
   label: string;
