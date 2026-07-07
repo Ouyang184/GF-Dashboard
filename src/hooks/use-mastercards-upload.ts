@@ -94,11 +94,11 @@ export function useMastercardsUploader() {
     }
     console.info("[mastercards] using date column:", bestCol, "with", bestHits, "parsed dates");
 
-    // Determine current fiscal year (starts December).
+    // Determine current fiscal year (starts November).
     const now = new Date();
-    const fiscalYearStart = now.getMonth() === 11 ? now.getFullYear() : now.getFullYear() - 1;
+    const fiscalYearStart = now.getMonth() >= 10 ? now.getFullYear() : now.getFullYear() - 1;
 
-    // Bucket by fiscal month index: Dec(fiscalYearStart)=0, Jan..Nov(fiscalYearStart+1)=1..11
+    // Bucket by fiscal month index: Nov(fiscalYearStart)=0, Dec=1, Jan..Oct(fiscalYearStart+1)=2..11
     const counts = new Array(12).fill(0);
     for (const r of rowsAll) {
       const d = parseDate(r[bestCol]);
@@ -106,8 +106,9 @@ export function useMastercardsUploader() {
       const y = d.getFullYear();
       const m = d.getMonth();
       let fyIdx = -1;
-      if (y === fiscalYearStart && m === 11) fyIdx = 0;
-      else if (y === fiscalYearStart + 1 && m <= 10) fyIdx = m + 1;
+      if (y === fiscalYearStart && m === 10) fyIdx = 0;
+      else if (y === fiscalYearStart && m === 11) fyIdx = 1;
+      else if (y === fiscalYearStart + 1 && m <= 9) fyIdx = m + 2;
       if (fyIdx >= 0) counts[fyIdx]++;
     }
 
