@@ -1021,7 +1021,17 @@ function PillarCard({
         {/* Day dots grid */}
         <div className="mt-4 grid grid-cols-8 gap-1.5">
           {displayDots.map((d) => {
-            const isSafetyToday = pillar.key === "S" && d.day === today;
+            const isSafetyToday = pillar.key === "S" && d.day === today && !d.weekend;
+            if (d.weekend) {
+              return (
+                <div
+                  key={d.day}
+                  title={`Day ${d.day} — weekend`}
+                  aria-hidden="true"
+                  className="size-5 rounded-full bg-muted/30"
+                />
+              );
+            }
             return (
               <button
                 key={d.day}
