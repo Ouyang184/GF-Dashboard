@@ -1875,12 +1875,12 @@ function PillarDetailOverlay({
               <>
                 {pillar.key === "Q" && (
                   <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                    <AvailabilityScrapChart />
+                    <MoldingScrapSection />
                   </section>
                 )}
                 {pillar.key === "Q" && (
                   <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                    <MoldingScrapSection />
+                    <AvailabilityScrapChart />
                   </section>
                 )}
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
