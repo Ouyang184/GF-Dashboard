@@ -216,7 +216,7 @@ function buildMonthDots(pillarIdx: number, daysInMonth: number) {
  *  - Delivery  (D): >3 deviations → red
  */
 function applyDeviationRule(
-  dots: { day: number; status: Status }[],
+  dots: { day: number; status: Status; weekend?: boolean }[],
   pillarKey: string,
   deviationCount: number,
 ) {
@@ -226,9 +226,7 @@ function applyDeviationRule(
     (pillarKey === "D" && deviationCount > 3);
   if (!trigger) return dots;
   return dots.map((d) =>
-    d.day === today && !(d as { weekend?: boolean }).weekend
-      ? { ...d, status: "fail" as Status }
-      : d,
+    d.day === today && !d.weekend ? { ...d, status: "fail" as Status } : d,
   );
 }
 
