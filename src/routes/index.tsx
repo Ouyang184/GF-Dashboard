@@ -638,20 +638,12 @@ function MastercardsProductionChart() {
 
   const data = useMemo(() => {
     return MONTHS.map((m, i) => {
-      // Map fiscal index i back to calendar month/year: Dec of fiscalYearStart, then Jan..Nov of following year
-      const calM = i === 0 ? 11 : i - 1;
-      const yr = i === 0 ? fiscalYearStart : fiscalYearStart + 1;
-      const rng = mulberry32(dateSeed(new Date(yr, calM, 1), 7700 + i));
-      // Target ~120k units/month; actuals vary; future months null
-      const target = 120000;
-      let actual: number | null =
-        i <= currentMonth ? Math.round(target * (0.82 + rng() * 0.28)) : null;
+      let actual: number | null = null;
       if (uploaded && uploaded.fiscalYearStart === fiscalYearStart) {
         actual = i <= currentMonth ? uploaded.counts[i] ?? 0 : null;
       }
-      return { month: m, actual, target };
+      return { month: m, actual };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMonth, fiscalYearStart, uploaded]);
 
   const monthlyTarget = 120000;
