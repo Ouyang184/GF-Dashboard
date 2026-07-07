@@ -1347,10 +1347,12 @@ function PillarCard({
   pillar,
   dots,
   shifts,
+  qualityIssues,
 }: {
   pillar: Pillar;
   dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
+  qualityIssues?: QualityIssue[];
 }) {
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
