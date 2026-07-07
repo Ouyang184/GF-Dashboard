@@ -870,6 +870,57 @@ function ReproCompleteCard({
 }
 
 function LiveLatestRowsTable({ data }: { data: DashboardData }) {
+  return _LiveLatestRowsTableImpl({ data });
+}
+
+function MissingMcList({ data }: { data: DashboardData }) {
+  const jobs = (data.machineJobs ?? data.latestRows ?? []).filter((r) => {
+    const mc = String(r.masterCard ?? "").toLowerCase().trim();
+    return mc === "" || mc === "no" || mc === "n" || mc === "missing";
+  });
+  if (!jobs.length) return null;
+  return (
+    <div className="rounded-sm border border-danger/50 bg-danger/5 shadow-[var(--shadow-card)] overflow-hidden">
+      <div className="px-4 py-3 border-b border-danger/40 flex items-center justify-between">
+        <h3 className="text-sm font-semibold flex items-center gap-2 text-danger">
+          <AlertTriangle className="size-4" />
+          Missing MasterCard — {jobs.length} {jobs.length === 1 ? "job" : "jobs"}
+        </h3>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          Machine + Part
+        </span>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-xs">
+          <thead className="bg-background/50 text-muted-foreground uppercase tracking-wider text-[10px]">
+            <tr>
+              <th className="px-3 py-2 text-left">Machine</th>
+              <th className="px-3 py-2 text-left">Part Number</th>
+              <th className="px-3 py-2 text-left">Description</th>
+              <th className="px-3 py-2 text-left">Work Order</th>
+              <th className="px-3 py-2 text-left">Tech</th>
+              <th className="px-3 py-2 text-left">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {jobs.map((r) => (
+              <tr key={`${r.id}-${r.machine}-${r.partNumber}`} className="border-t border-border/60">
+                <td className="px-3 py-2 font-semibold">{r.machine}</td>
+                <td className="px-3 py-2 font-mono">{r.partNumber}</td>
+                <td className="px-3 py-2">{r.partDescription}</td>
+                <td className="px-3 py-2 font-mono">{r.workOrder}</td>
+                <td className="px-3 py-2">{r.productionTech}</td>
+                <td className="px-3 py-2">{r.dateCreated}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
   if (!data.latestRows?.length) return null;
   const asText = (v: unknown): string => {
     if (v == null) return "";
