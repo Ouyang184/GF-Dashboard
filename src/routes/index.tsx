@@ -5,6 +5,7 @@ import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
+import { useDashboardData, type DashboardData } from "@/hooks/use-dashboard-data";
 import {
   Activity,
   AlertTriangle,
@@ -444,6 +445,7 @@ function Index() {
       </header>
 
       <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-8">
+        <LiveDashboardSection />
         {/* Top stats row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
