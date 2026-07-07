@@ -617,52 +617,134 @@ function LiveKpiRow({
           Fetched {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"} · auto-refresh 30s
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
+      <KpiTree
+        data={data}
+        denom={denom}
+        pct={pct}
+        reproComplete={reproComplete}
+        onReproChange={onReproChange}
+      />
+    </div>
+  );
+}
+
+function KpiTree({
+  data,
+  denom,
+  pct,
+  reproComplete,
+  onReproChange,
+}: {
+  data: DashboardData;
+  denom: number;
+  pct: (n: number) => string;
+  reproComplete: string;
+  onReproChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-0 pt-2">
+      {/* Level 1 — Root */}
+      <div className="w-full max-w-xs">
         <StatCard
           label="Machines Running"
           value={String(denom)}
           sub={`${data.totalRows} raw rows · unique Machine+Part`}
           icon={Gauge}
         />
-        <StatCard
-          label="MC Available"
-          value={pct(data.mcAvailablePercent ?? 0)}
-          sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
-          icon={BadgeCheck}
-          tone="ok"
-        />
-        <StatCard
-          label="Matching"
-          value={String(data.matchingCount ?? 0)}
-          sub={`${pct(data.matchingPercent ?? 0)} · Exact MasterCard match`}
-          icon={Shield}
-          tone="ok"
-        />
-        <StatCard
-          label="Comparable"
-          value={String(data.comparableCount ?? 0)}
-          sub={`${pct(data.comparablePercent ?? 0)} · MasterCard = Comparable`}
-          icon={Shield}
-          tone="warn"
-        />
-        <StatCard
-          label="Missing / No MC"
-          value={String(data.missingCount ?? 0)}
-          sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
-          icon={AlertTriangle}
-          tone="fail"
-        />
-        <StatCard
-          label="Compliance"
-          value={pct(data.compliancePercent)}
-          sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
-          icon={Gauge}
-          tone="ok"
-        />
-        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
+      </div>
+
+      {/* Trunk down to level 2 */}
+      <div className="h-6 w-px bg-border" aria-hidden="true" />
+
+      {/* Horizontal branch bar spanning level-2 children */}
+      <div className="w-full max-w-5xl px-4 grid grid-cols-3 items-start">
+        <div className="col-span-3 h-px bg-border" aria-hidden="true" />
+      </div>
+
+      {/* Level 2 */}
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+        <TreeChild>
+          <StatCard
+            label="MC Available"
+            value={pct(data.mcAvailablePercent ?? 0)}
+            sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
+            icon={BadgeCheck}
+            tone="ok"
+          />
+        </TreeChild>
+        <TreeChild>
+          <StatCard
+            label="Missing / No MC"
+            value={String(data.missingCount ?? 0)}
+            sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
+            icon={AlertTriangle}
+            tone="fail"
+          />
+        </TreeChild>
+        <TreeChild>
+          <StatCard
+            label="Compliance"
+            value={pct(data.compliancePercent)}
+            sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
+            icon={Gauge}
+            tone="ok"
+          />
+        </TreeChild>
+      </div>
+
+      {/* Sub-branch under MC Available (column 1 of 3) */}
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-3 px-4 mt-2">
+        <div className="flex flex-col items-center">
+          <div className="h-6 w-px bg-border" aria-hidden="true" />
+          <div className="w-2/3 grid grid-cols-2">
+            <div className="h-px bg-border" aria-hidden="true" />
+            <div className="h-px bg-border" aria-hidden="true" />
+          </div>
+          <div className="w-2/3 grid grid-cols-2 gap-3 pt-3">
+            <TreeLeaf>
+              <StatCard
+                label="Matching"
+                value={String(data.matchingCount ?? 0)}
+                sub={`${pct(data.matchingPercent ?? 0)} · Exact match`}
+                icon={Shield}
+                tone="ok"
+              />
+            </TreeLeaf>
+            <TreeLeaf>
+              <StatCard
+                label="Comparable"
+                value={String(data.comparableCount ?? 0)}
+                sub={`${pct(data.comparablePercent ?? 0)} · Comparable`}
+                icon={Shield}
+                tone="warn"
+              />
+            </TreeLeaf>
+          </div>
+        </div>
+        {/* Sub-branch under Compliance (column 3 of 3) — Repro Complete */}
+        <div className="hidden md:block" aria-hidden="true" />
+        <div className="flex flex-col items-center">
+          <div className="h-6 w-px bg-border" aria-hidden="true" />
+          <div className="w-full pt-3">
+            <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
+          </div>
+        </div>
       </div>
     </div>
   );
+}
+
+function TreeChild({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative flex flex-col items-center">
+      <div className="h-6 w-px bg-border" aria-hidden="true" />
+      <div className="w-full">{children}</div>
+    </div>
+  );
+}
+
+function TreeLeaf({ children }: { children: React.ReactNode }) {
+  return <div className="w-full">{children}</div>;
 }
 
 function ReproCompleteCard({
@@ -1362,14 +1444,10 @@ function PillarDetailOverlay({
             {pillar.key === "P" && (
               <>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                    <div className="lg:col-span-3">
-                      <LiveDashboardSection />
-                    </div>
-                    <div className="lg:col-span-2 lg:border-l lg:border-border/60 lg:pl-6">
-                      <MastercardsProductionChart />
-                    </div>
-                  </div>
+                  <LiveDashboardSection />
+                </section>
+                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                  <MastercardsProductionChart />
                 </section>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <IntouchFloor />
