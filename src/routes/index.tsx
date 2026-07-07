@@ -195,12 +195,16 @@ function statusColor(s: Status) {
 function buildMonthDots(pillarIdx: number, daysInMonth: number) {
   const today = new Date();
   const rng = mulberry32(dateSeed(today, pillarIdx * 31));
-  const dots: { day: number; status: Status }[] = [];
+  const dots: { day: number; status: Status; weekend: boolean }[] = [];
   for (let d = 1; d <= daysInMonth; d++) {
-    if (d > today.getDate()) {
-      dots.push({ day: d, status: "na" });
+    const dow = new Date(today.getFullYear(), today.getMonth(), d).getDay();
+    const weekend = dow === 0 || dow === 6;
+    if (weekend) {
+      dots.push({ day: d, status: "na", weekend: true });
+    } else if (d > today.getDate()) {
+      dots.push({ day: d, status: "na", weekend: false });
     } else {
-      dots.push({ day: d, status: pickStatus(rng) });
+      dots.push({ day: d, status: pickStatus(rng), weekend: false });
     }
   }
   return dots;
