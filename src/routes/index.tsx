@@ -5,7 +5,7 @@ import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
-import { useDashboardData, type DashboardData } from "@/hooks/use-dashboard-data";
+import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import {
   Activity,
   AlertTriangle,
@@ -1193,22 +1193,35 @@ function PillarCard({
   );
 }
 
-function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
+function FloorMap({
+  ocr,
+  floorMap,
+}: {
+  ocr?: IntouchSnapshot | null;
+  floorMap?: Record<string, FloorMapEntry>;
+}) {
   const overrides = useFloorOverrides();
   const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
 
-  // Default every tile to green (ok); users flip individual tiles to red
-  // via click, which feeds the Delivery / Inventory deviation counters.
-  const fallback = (_id: string): Status => "ok";
-
-  const statusFor = (id: string): Status | "qc" => {
-    if (overrides[id]) return overrides[id];
-    const live = ocr?.results[id]?.status;
-    if (!live) return fallback(id);
-    return live;
+  // Map the backend floorMap status ("matching"|"comparable"|"missing") into
+  // the tile Status vocabulary. Tiles with no backend entry are "na" (gray).
+  const backendStatusFor = (id: string): { status: Status | "na"; entry?: FloorMapEntry } => {
+    const key = displayId(id);
+    const entry = floorMap?.[key];
+    if (!entry) return { status: "na" };
+    if (entry.worstStatus === "matching") return { status: "ok", entry };
+    if (entry.worstStatus === "comparable") return { status: "warn", entry };
+    return { status: "fail", entry };
   };
 
-  const tileColor = (s: Status | "qc") => {
+  const statusFor = (id: string): { status: Status | "qc" | "na"; entry?: FloorMapEntry } => {
+    if (overrides[id]) return { status: overrides[id] };
+    const live = ocr?.results[id]?.status;
+    if (live) return { status: live };
+    return backendStatusFor(id);
+  };
+
+  const tileColor = (s: Status | "qc" | "na") => {
     switch (s) {
       case "ok":
         return "bg-success/80 border-success";
@@ -1218,26 +1231,44 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
         return "bg-danger/80 border-danger";
       case "qc":
         return "bg-purple-500/70 border-purple-400";
+      case "na":
+        return "bg-muted/60 border-border text-muted-foreground";
       default:
         return "bg-sky-500/70 border-sky-400";
     }
   };
 
   const Tile = ({ id }: { id: string }) => {
-    const s = statusFor(id);
+    const { status: s, entry } = statusFor(id);
     const cycle = () => {
       // Toggle green ↔ red so it directly drives the deviation rule:
       // Inventory day turns red at ≥1 red tile, Delivery at >3.
       setFloorOverride(id, s === "fail" ? "ok" : "fail");
     };
+    const tooltip = entry
+      ? entry.jobs
+          .map(
+            (j) =>
+              `Machine ${j.machine}\nPart ${j.partNumber}${j.partDescription ? ` — ${j.partDescription}` : ""}\nMasterCard ${j.masterCard || "—"}\nTech ${j.productionTech || "—"}\nWO ${j.workOrder || "—"}`,
+          )
+          .join("\n\n")
+      : `${id} — not running / no data`;
     return (
       <button
         type="button"
         onClick={cycle}
-        title={`${id} — click to change status`}
+        title={tooltip}
         className={`relative rounded-sm border px-1 py-1 font-mono font-bold text-background leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${tileColor(s)}`}
       >
         <span className="truncate">{displayId(id)}</span>
+        {entry && entry.jobCount > 1 && (
+          <span
+            className="absolute -top-1 -right-1 rounded-full bg-background text-foreground border border-border text-[9px] leading-none font-semibold px-1.5 py-0.5"
+            aria-label={`${entry.jobCount} jobs`}
+          >
+            {entry.jobCount}
+          </span>
+        )}
       </button>
     );
   };
@@ -1361,10 +1392,37 @@ function FloorMap({ ocr }: { ocr?: IntouchSnapshot | null }) {
 
 function IntouchFloor() {
   const sync = useIntouchSnapshot();
+  const { data } = useDashboardData();
   return (
     <div>
       <CopilotSyncPanel {...sync} />
-      <FloorMap ocr={sync.snapshot} />
+      <FloorMap ocr={sync.snapshot} floorMap={data?.floorMap} />
+      <FloorMapLegend />
+    </div>
+  );
+}
+
+function FloorMapLegend() {
+  const items: { label: string; className: string }[] = [
+    { label: "Matching (MC = Yes)", className: "bg-success/80 border-success" },
+    { label: "Comparable", className: "bg-warning/80 border-warning" },
+    { label: "Missing / No MC", className: "bg-danger/80 border-danger" },
+    { label: "Not running / No data", className: "bg-muted/60 border-border" },
+  ];
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+      {items.map((i) => (
+        <span key={i.label} className="flex items-center gap-1.5">
+          <span className={`inline-block size-3 rounded-sm border ${i.className}`} />
+          {i.label}
+        </span>
+      ))}
+      <span className="ml-2 flex items-center gap-1.5">
+        <span className="inline-block rounded-full border border-border bg-background text-foreground text-[9px] font-semibold px-1.5 py-0.5">
+          2
+        </span>
+        Job count badge
+      </span>
     </div>
   );
 }

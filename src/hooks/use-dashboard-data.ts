@@ -13,6 +13,24 @@ export type DashboardRow = {
   masterCard: string;
 };
 
+export type FloorMapJob = {
+  machine: string;
+  partNumber: string;
+  partDescription: string;
+  workOrder: string;
+  productionTech: string;
+  masterCard: string;
+  status: "matching" | "comparable" | "missing";
+  dateCreated: string;
+};
+
+export type FloorMapEntry = {
+  machine: string; // normalized (e.g. "301")
+  jobCount: number;
+  worstStatus: "matching" | "comparable" | "missing";
+  jobs: FloorMapJob[];
+};
+
 export type DashboardData = {
   updatedAt: string;
   latestDate: string;
@@ -44,6 +62,8 @@ export type DashboardData = {
   comparable?: number;
   missing?: number;
   latestRows: DashboardRow[];
+  machineJobs?: DashboardRow[];
+  floorMap?: Record<string, FloorMapEntry>;
 };
 
 export type DashboardState = {
