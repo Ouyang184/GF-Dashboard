@@ -6,6 +6,7 @@ import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
+import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
 import {
   Activity,
   AlertTriangle,
@@ -904,26 +905,21 @@ function LiveLatestRowsTable({ data }: { data: DashboardData }) {
 }
 
 function AvailabilityScrapChartImpl() {
+  // Monthly scrap rate is real data from T2_Monthly_Scrap_Sheet2.csv.
+  // MasterCard availability is not in that source yet, so it stays synthetic
+  // per-month (trending up) until a real feed is wired in.
   const data = useMemo(() => {
-    const today = new Date();
-    const points: { day: string; availability: number; scrap: number }[] = [];
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const rng = mulberry32(dateSeed(d, 4242));
-      // Clear divergence: availability trends UP, scrap trends DOWN over 30 days
-      const t = (29 - i) / 29; // 0 -> 1 across the window
+    return MONTHLY_SCRAP.map((p, i, arr) => {
+      const t = arr.length === 1 ? 1 : i / (arr.length - 1);
+      const rng = mulberry32(p.year * 100 + p.monthIndex);
       const availNoise = (rng() - 0.5) * 1.4;
-      const scrapNoise = (rng() - 0.5) * 0.5;
-      const availability = Math.round((82 + t * 13 + availNoise) * 10) / 10; // ~82 -> ~95
-      const scrap = Math.max(0.6, Math.round((6.2 - t * 4.8 + scrapNoise) * 10) / 10); // ~6.2 -> ~1.4
-      points.push({
-        day: `${d.getMonth() + 1}/${d.getDate()}`,
+      const availability = Math.round((82 + t * 13 + availNoise) * 10) / 10;
+      return {
+        month: p.month,
         availability,
-        scrap,
-      });
-    }
-    return points;
+        scrap: p.scrapRate,
+      };
+    });
   }, []);
 
   const avgAvail = (data.reduce((s, p) => s + p.availability, 0) / data.length).toFixed(1);
@@ -936,7 +932,7 @@ function AvailabilityScrapChartImpl() {
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
             MasterCard Availability vs Scrap Rate
           </h3>
-          <p className="text-xs text-muted-foreground mt-1">Rolling 30 days · inverse correlation</p>
+          <p className="text-xs text-muted-foreground mt-1">Monthly · scrap = scrap / (yield + scrap)</p>
         </div>
         <div className="flex gap-4 text-xs">
           <div>
@@ -953,7 +949,7 @@ function AvailabilityScrapChartImpl() {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis dataKey="day" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
+            <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
             <YAxis
               yAxisId="left"
               domain={[70, 100]}
@@ -964,7 +960,7 @@ function AvailabilityScrapChartImpl() {
             <YAxis
               yAxisId="right"
               orientation="right"
-              domain={[0, 10]}
+              domain={[0, 12]}
               tick={{ fontSize: 11 }}
               stroke="var(--danger)"
               label={{ value: "Scrap %", angle: 90, position: "insideRight", fontSize: 11, fill: "var(--danger)" }}
