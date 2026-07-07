@@ -370,7 +370,7 @@ function Index() {
       <input
         ref={uploadInputRef}
         type="file"
-        accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        accept=".xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         onChange={onUploadChange}
         className="hidden"
         aria-hidden="true"
