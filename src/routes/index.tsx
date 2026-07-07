@@ -1486,14 +1486,8 @@ function PillarDetailOverlay({
             </button>
           </div>
 
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {detail.stats.map((s) => (
-              <div key={s.label} className="rounded-xl border border-border/60 bg-card p-4">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
-                <div className="mt-1 text-2xl font-bold">{s.value}</div>
-              </div>
-            ))}
-            <div className="rounded-xl border border-border/60 bg-card p-4">
+          <div className="mt-8">
+            <div className="rounded-xl border border-border/60 bg-card p-4 inline-block min-w-[200px]">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Month Score</div>
               <div className="mt-1 flex items-baseline gap-2 text-sm">
                 <span className="text-success font-bold">{okCount} ok</span>
