@@ -314,13 +314,16 @@ function useQualityIssues(data: DashboardData | null): QualityIssue[] {
       : Object.values(data.floorMap);
     const issues: QualityIssue[] = [];
     for (const e of entries) {
-      if (!e.worstStatus || e.worstStatus === "matching") continue;
+      const rawStatus = (e.worstStatus ?? e.status ?? "").toString().toLowerCase().trim();
+      if (!rawStatus || rawStatus === "matching") continue;
+      const issueStatus: QualityIssue["status"] =
+        rawStatus === "missing" ? "missing" : rawStatus === "comparable" ? "comparable" : "no data";
       const latest = e.jobs
         .filter((j) => j.dateCreated)
         .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())[0];
       issues.push({
         machine: e.machine,
-        status: e.worstStatus,
+        status: issueStatus,
         when: latest?.dateCreated ?? data.latestDate ?? "—",
         partNumber: latest?.partNumber,
       });
