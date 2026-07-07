@@ -1489,6 +1489,115 @@ function FloorMapLegend() {
   );
 }
 
+function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
+  const deviations = useDeviationMap(pillarKey);
+  const count = Object.keys(deviations).length;
+  const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
+
+  const label = pillarKey === "D" ? "Delivery" : "Inventory";
+  const rule =
+    pillarKey === "D"
+      ? "Red when > 3 new process deviations"
+      : "Red on ≥ 1 new product deviation";
+
+  const Tile = ({ id }: { id: string }) => {
+    const flagged = !!deviations[id];
+    return (
+      <button
+        type="button"
+        onClick={() => toggleDeviation(pillarKey, id)}
+        title={`${id} — click to ${flagged ? "clear" : "flag"} deviation`}
+        className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 cursor-pointer transition hover:brightness-110 text-sm sm:text-base ${
+          flagged
+            ? "bg-danger/80 border-danger text-background"
+            : "bg-muted/60 border-border text-muted-foreground"
+        }`}
+      >
+        <span className="truncate">{displayId(id)}</span>
+      </button>
+    );
+  };
+
+  const Zone = ({
+    name,
+    machines,
+    className,
+    cols = 2,
+  }: {
+    name: string;
+    machines: string[];
+    className?: string;
+    cols?: number;
+  }) => (
+    <div
+      className={`absolute rounded-md border p-1.5 flex flex-col min-h-0 overflow-hidden border-border/60 bg-secondary/20 ${className ?? ""}`}
+    >
+      <div className="text-[8px] uppercase tracking-wider text-muted-foreground mb-1 font-semibold truncate">
+        {name}
+      </div>
+      <div
+        className="flex-1 grid gap-1 min-h-0"
+        style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+      >
+        {machines.map((m) => <Tile key={m} id={m} />)}
+      </div>
+    </div>
+  );
+
+  const zoneFor = (z: string) => FLOOR_LAYOUT.find((f) => f.zone === z)!.machines;
+
+  return (
+    <div>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            {label} — Deviation Map
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">
+            Manual input. Click a machine to flag / clear a deviation. {rule}.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="rounded-md border border-border/60 bg-card px-2 py-1 text-xs font-semibold">
+            {count} flagged
+          </span>
+          <button
+            type="button"
+            onClick={() => clearDeviations(pillarKey)}
+            disabled={count === 0}
+            className="rounded-md border border-border/60 bg-card px-2 py-1 text-xs font-semibold hover:bg-secondary transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Clear all
+          </button>
+        </div>
+      </div>
+      <div
+        className="relative w-full h-[640px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
+        aria-label={`${label} deviation floor map`}
+      >
+        <Zone name="ENG. Extrusion" machines={zoneFor("ENG. Extrusion")} cols={1} className="top-[1%] left-[1%] w-[15%] h-[52%]" />
+        <Zone name="Coil & Collar" machines={zoneFor("Coil & Collar")} cols={2} className="top-[54%] left-[1%] w-[22%] h-[45%]" />
+        <Zone name="Vinyls Extrusion" machines={zoneFor("Vinyls Extrusion")} cols={1} className="top-[1%] left-[40%] w-[12%] h-[22%]" />
+        <Zone name="Fuseal Cell" machines={zoneFor("Fuseal Cell")} cols={2} className="top-[26%] left-[24%] w-[30%] h-[73%]" />
+        <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} cols={1} className="top-[16%] left-[55%] w-[14%] h-[52%]" />
+        <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={1} className="top-[12%] left-[70%] w-[14%] h-[75%]" />
+        <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[1%] left-[85%] w-[14%] h-[45%]" />
+        <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[48%] left-[85%] w-[14%] h-[51%]" />
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-3 rounded-sm border bg-danger/80 border-danger" />
+          Deviation flagged
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="inline-block size-3 rounded-sm border bg-muted/60 border-border" />
+          No deviation
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function PillarDetailOverlay({
   pillar,
   detail,
