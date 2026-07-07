@@ -626,13 +626,13 @@ function AvailabilityScrapChart() {
 }
 
 function MastercardsProductionChart() {
-  // Fiscal year starts in December
-  const MONTHS = ["Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"];
+  // Fiscal year starts in November
+  const MONTHS = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
   const now = new Date();
   const calMonth = now.getMonth(); // 0=Jan..11=Dec
-  // Index within fiscal year (Dec=0, Jan=1, ..., Nov=11)
-  const currentMonth = (calMonth + 1) % 12;
-  const fiscalYearStart = calMonth === 11 ? now.getFullYear() : now.getFullYear() - 1;
+  // Index within fiscal year (Nov=0, Dec=1, Jan=2, ..., Oct=11)
+  const currentMonth = (calMonth - 10 + 12) % 12;
+  const fiscalYearStart = calMonth >= 10 ? now.getFullYear() : now.getFullYear() - 1;
 
   const uploaded = useMastercardsData();
 
