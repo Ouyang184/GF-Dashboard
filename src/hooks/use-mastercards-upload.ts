@@ -75,18 +75,39 @@ export function useMastercardsUploader() {
     if (rowsAll.length === 0) throw new Error("Workbook is empty");
 
     // Find the column whose values parse as dates most often.
-    const columns = Object.keys(rowsAll[0] ?? {});
-    // Prefer columns whose name looks date-y; otherwise fall back to best hit rate.
-    const preferred = columns.filter((c) => /date|proc|day|time|completed|created/i.test(c));
-    const ordered = [...preferred, ...columns.filter((c) => !preferred.includes(c))];
+    const columns = Array.from(
+      new Set(rowsAll.flatMap((r) => Object.keys(r ?? {})))
+    );
+    // Prefer "Proc Date" (or any proc-date-ish column) first, then other date-y
+    // names, then everything else as a fallback.
+    const procCols = columns.filter((c) => /proc.*date|proc_date|procdate/i.test(c));
+    const dateyCols = columns.filter(
+      (c) => !procCols.includes(c) && /date|day|time|completed|created/i.test(c),
+    );
+    const rest = columns.filter((c) => !procCols.includes(c) && !dateyCols.includes(c));
+    const ordered = [...procCols, ...dateyCols, ...rest];
+
     let bestCol: string | null = null;
     let bestHits = 0;
-    for (const col of ordered) {
+    // If a proc-date column exists and has any parseable dates, use it outright
+    // instead of letting a larger column win on hit count.
+    for (const col of procCols) {
       let hits = 0;
       for (const r of rowsAll) if (parseDate(r[col])) hits++;
-      if (hits > bestHits) {
-        bestHits = hits;
+      if (hits > 0) {
         bestCol = col;
+        bestHits = hits;
+        break;
+      }
+    }
+    if (!bestCol) {
+      for (const col of ordered) {
+        let hits = 0;
+        for (const r of rowsAll) if (parseDate(r[col])) hits++;
+        if (hits > bestHits) {
+          bestHits = hits;
+          bestCol = col;
+        }
       }
     }
     if (!bestCol || bestHits === 0) {
