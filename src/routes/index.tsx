@@ -554,6 +554,17 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
   const pct = (n: number) => `${Math.round(n)}%`;
   return (
     <div className="space-y-2">
+      <div className="rounded-sm border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span className="flex items-center gap-1.5">
+          <CalendarDays className="size-4 text-primary" />
+          Production Window: {data.productionWindowStart || "7:00 AM"} – {data.productionWindowEnd || "7:00 AM"}
+        </span>
+        {data.productionDate && (
+          <span className="text-xs font-normal text-muted-foreground">
+            Production date: {data.productionDate}
+          </span>
+        )}
+      </div>
       <div className="flex items-start justify-between gap-4">
         <div>
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
@@ -575,7 +586,12 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard label="Total Rows" value={String(data.totalRows)} icon={Activity} />
+        <StatCard
+          label="Machines Running"
+          value={String(data.machinesRunning ?? 0)}
+          sub={`${data.totalRows} records in window`}
+          icon={Gauge}
+        />
         <StatCard
           label="Availability"
           value={pct(data.availabilityPercent)}
@@ -592,7 +608,7 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
         <StatCard
           label="Compliance"
           value={pct(data.compliancePercent)}
-          sub={`${data.complianceYes} Yes · ${data.complianceNo} No`}
+          sub={`${data.complianceCount} of ${data.totalRows} compliant`}
           icon={Gauge}
           tone="ok"
         />
@@ -603,6 +619,15 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
 
 function LiveLatestRowsTable({ data }: { data: DashboardData }) {
   if (!data.latestRows?.length) return null;
+  const asText = (v: unknown): string => {
+    if (v == null) return "";
+    if (typeof v === "string" || typeof v === "number") return String(v);
+    if (typeof v === "object") {
+      const o = v as Record<string, unknown>;
+      return String(o.Value ?? o.value ?? o.Title ?? o.LookupValue ?? o.DisplayName ?? "");
+    }
+    return String(v);
+  };
   return (
     <div className="rounded-sm border border-border bg-card shadow-[var(--shadow-card)] overflow-hidden">
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
@@ -633,13 +658,13 @@ function LiveLatestRowsTable({ data }: { data: DashboardData }) {
                 <td className="px-3 py-2 font-mono">{r.id}</td>
                 <td className="px-3 py-2">{r.dateCreated}</td>
                 <td className="px-3 py-2 font-mono">{r.workOrder}</td>
-                <td className="px-3 py-2">{r.machine}</td>
+                <td className="px-3 py-2">{asText(r.machine)}</td>
                 <td className="px-3 py-2 font-mono">{r.partNumber}</td>
                 <td className="px-3 py-2">{r.partDescription}</td>
-                <td className="px-3 py-2">{r.restartMoldChange}</td>
+                <td className="px-3 py-2">{asText(r.restartMoldChange)}</td>
                 <td className="px-3 py-2">{r.productionTech}</td>
-                <td className="px-3 py-2">{r.overallAcceptance}</td>
-                <td className="px-3 py-2">{r.masterCard || "—"}</td>
+                <td className="px-3 py-2">{asText(r.overallAcceptance)}</td>
+                <td className="px-3 py-2">{asText(r.masterCard) || "—"}</td>
               </tr>
             ))}
           </tbody>
