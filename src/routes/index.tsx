@@ -66,6 +66,13 @@ export const Route = createFileRoute("/")({
 
 type Status = "ok" | "warn" | "fail" | "na";
 
+type QualityIssue = {
+  machine: string;
+  status: "missing" | "comparable" | "no data";
+  when: string;
+  partNumber?: string;
+};
+
 type Pillar = {
   key: "S" | "Q" | "D" | "I" | "P";
   label: string;
@@ -299,6 +306,32 @@ function applyQualityWeeklyScrapRule(
   });
 }
 
+function useQualityIssues(data: DashboardData | null): QualityIssue[] {
+  return useMemo(() => {
+    if (!data?.floorMap) return [];
+    const entries: FloorMapEntry[] = Array.isArray(data.floorMap)
+      ? data.floorMap
+      : Object.values(data.floorMap);
+    const issues: QualityIssue[] = [];
+    for (const e of entries) {
+      const rawStatus = (e.status ?? e.worstStatus ?? "").toString().toLowerCase().trim();
+      if (!rawStatus || rawStatus.startsWith("match")) continue;
+      const issueStatus: QualityIssue["status"] =
+        rawStatus.startsWith("miss") ? "missing" : rawStatus === "comparable" ? "comparable" : "no data";
+      const latest = e.jobs
+        .filter((j) => j.dateCreated)
+        .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())[0];
+      issues.push({
+        machine: e.machine,
+        status: issueStatus,
+        when: latest?.dateCreated ?? data.latestDate ?? "—",
+        partNumber: latest?.partNumber,
+      });
+    }
+    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime());
+  }, [data]);
+}
+
 const DAILY_QUOTES: { text: string; author: string }[] = [
   { text: "Quality is never an accident; it is always the result of intelligent effort.", author: "John Ruskin" },
   { text: "The most dangerous kind of waste is the waste we do not recognize.", author: "Shigeo Shingo" },
@@ -440,6 +473,10 @@ function Index() {
     return SHIFTS.map(() => pickStatus(rng));
   });
 
+  const { data: dashboardData } = useDashboardData();
+  const qualityIssues = useQualityIssues(dashboardData);
+  console.log("[debug] dashboardData", dashboardData?.floorMap?.length, "qualityIssues", qualityIssues.length);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_oklch(0.27_0.04_200/0.35),transparent_60%),radial-gradient(ellipse_at_bottom_right,_oklch(0.4_0.12_160/0.18),transparent_55%)]" />
@@ -545,6 +582,7 @@ function Index() {
                       : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
               }
               shifts={shiftStatuses[i]}
+              qualityIssues={p.key === "Q" ? qualityIssues : undefined}
             />
           ))}
         </section>
@@ -1313,25 +1351,26 @@ function PillarCard({
   pillar,
   dots,
   shifts,
+  qualityIssues,
 }: {
   pillar: Pillar;
   dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
+  qualityIssues?: QualityIssue[];
 }) {
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const [safetyOverride, setSafetyOverride] = useState<Status | null>(() => {
-    if (typeof window === "undefined") return null;
-    const raw = window.localStorage.getItem("safety-today-override");
-    if (!raw) return null;
-    try {
-      const parsed = JSON.parse(raw) as { day: number; status: Status };
-      if (parsed.day === new Date().getDate()) return parsed.status;
-    } catch {}
-    return null;
-  });
+  const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("safety-today-override");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { day: number; status: Status };
+      if (parsed.day === today) setSafetyOverride(parsed.status);
+    } catch {}
+  }, [today]);
   const displayDots =
     pillar.key === "S" && safetyOverride
       ? dots.map((d) => (d.day === today ? { ...d, status: safetyOverride } : d))
@@ -1342,12 +1381,10 @@ function PillarCard({
       safetyOverride ?? displayDots.find((d) => d.day === today)?.status ?? "ok";
     const next = order[(order.indexOf(current as Status) + 1) % order.length];
     setSafetyOverride(next);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        "safety-today-override",
-        JSON.stringify({ day: today, status: next }),
-      );
-    }
+    window.localStorage.setItem(
+      "safety-today-override",
+      JSON.stringify({ day: today, status: next }),
+    );
   };
   const okCount = displayDots.filter((d) => d.status === "ok").length;
   const failCount = displayDots.filter((d) => d.status === "fail").length;
@@ -1443,6 +1480,36 @@ function PillarCard({
               </div>
             </div>
           ))}
+          {pillar.key === "Q" && qualityIssues && qualityIssues.length > 0 && (
+            <div className="pt-2 border-t border-dashed border-border/60">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                Current quality issues
+              </div>
+              <div className="space-y-1.5">
+                {qualityIssues.slice(0, 3).map((issue) => (
+                  <div key={issue.machine} className="flex items-center justify-between text-xs gap-2">
+                    <span className="font-semibold truncate">{issue.machine}</span>
+                    <span
+                      className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded-full border ${
+                        issue.status === "missing"
+                          ? "bg-danger/10 border-danger/40 text-danger"
+                          : issue.status === "comparable"
+                            ? "bg-warning/10 border-warning/40 text-warning"
+                            : "bg-muted border-border text-muted-foreground"
+                      }`}
+                    >
+                      {issue.status}
+                    </span>
+                  </div>
+                ))}
+                {qualityIssues.length > 3 && (
+                  <div className="text-[10px] text-muted-foreground">
+                    +{qualityIssues.length - 3} more
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {expanded && (
@@ -1451,6 +1518,7 @@ function PillarCard({
           detail={detail}
           dots={displayDots}
           shifts={shifts}
+          qualityIssues={qualityIssues}
           onClose={() => setExpanded(false)}
         />
       )}
@@ -1781,12 +1849,14 @@ function PillarDetailOverlay({
   detail,
   dots,
   shifts,
+  qualityIssues,
   onClose,
 }: {
   pillar: Pillar;
   detail: PillarDetail;
   dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
+  qualityIssues?: QualityIssue[];
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
@@ -1905,18 +1975,52 @@ function PillarDetailOverlay({
                 </section>
 
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="space-y-3">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-sm gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
-                          <span className="font-semibold w-12 shrink-0">{s}</span>
-                          <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+                    {pillar.key === "Q" && qualityIssues ? "Shift Quality Issues" : "Shifts"}
+                  </h3>
+                  {pillar.key === "Q" && qualityIssues && qualityIssues.length > 0 ? (
+                    <div className="space-y-3 max-h-[260px] overflow-y-auto pr-1">
+                      {qualityIssues.map((issue) => (
+                        <div key={issue.machine} className="rounded-lg bg-secondary/40 p-3 text-sm">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-bold">{issue.machine}</span>
+                            <span
+                              className={`text-[10px] px-2 py-0.5 rounded-full border font-semibold ${
+                                issue.status === "missing"
+                                  ? "bg-danger/10 border-danger/40 text-danger"
+                                  : issue.status === "comparable"
+                                    ? "bg-warning/10 border-warning/40 text-warning"
+                                    : "bg-muted border-border text-muted-foreground"
+                              }`}
+                            >
+                              {issue.status}
+                            </span>
+                          </div>
+                          {issue.partNumber && (
+                            <div className="mt-1 text-xs text-muted-foreground font-mono">
+                              {issue.partNumber}
+                            </div>
+                          )}
+                          <div className="mt-1 text-[11px] text-muted-foreground flex items-center gap-1">
+                            <Activity className="size-3" />
+                            {issue.when}
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {SHIFTS.map((s, i) => (
+                        <div key={s} className="flex items-center justify-between text-sm gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
+                            <span className="font-semibold w-12 shrink-0">{s}</span>
+                            <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </section>
               </>
             )}
