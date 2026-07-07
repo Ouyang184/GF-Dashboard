@@ -953,7 +953,7 @@ function PillarCard({
   shifts,
 }: {
   pillar: Pillar;
-  dots: { day: number; status: Status }[];
+  dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
 }) {
   const Icon = pillar.icon;
