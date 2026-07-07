@@ -5,7 +5,7 @@ import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
-import { useDashboardData, type DashboardData } from "@/hooks/use-dashboard-data";
+import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import {
   Activity,
   AlertTriangle,
