@@ -641,19 +641,20 @@ function KpiTree({
   reproComplete: string;
   onReproChange: (v: string) => void;
 }) {
-  const CONN = "bg-border";
+  const CONN = "bg-border/70";
+  const rawRows = Number.isFinite(data.totalRows) ? data.totalRows : denom;
   return (
     <div className="mx-auto w-full max-w-5xl pt-2">
-      {/* Level 1 — Root, centered */}
-      <div className="grid grid-cols-3">
+      {/* Level 1 — Root centered, Repro Complete aligned to the right */}
+      <div className="grid grid-cols-3 gap-4 items-start">
         <div />
         <StatCard
           label="Machines Running"
           value={String(denom)}
-          sub={`${data.totalRows} raw rows · unique Machine+Part`}
+          sub={`${rawRows} rows · unique Machine + Part`}
           icon={Gauge}
         />
-        <div />
+        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
       </div>
 
       {/* Trunk + branch bar to level 2 */}
@@ -663,7 +664,6 @@ function KpiTree({
         <div />
       </div>
       <div className="grid grid-cols-3">
-        {/* Half bars on outer columns + full bar in middle to create a T that spans all 3 */}
         <div className="flex justify-end">
           <div className={`h-px w-1/2 ${CONN}`} />
         </div>
@@ -685,40 +685,36 @@ function KpiTree({
         <StatCard
           label="MC Available"
           value={pct(data.mcAvailablePercent ?? 0)}
-          sub={`${data.mcAvailableCount ?? 0} / ${denom} MasterCard = Yes`}
+          sub={`${data.mcAvailableCount ?? 0} of ${denom} · MasterCard = Yes`}
           icon={BadgeCheck}
           tone="ok"
         />
         <StatCard
           label="Missing / No MC"
           value={String(data.missingCount ?? 0)}
-          sub={`${pct(data.missingPercent ?? 0)} · No, blank, or missing`}
+          sub={`${pct(data.missingPercent ?? 0)} · No / blank / missing`}
           icon={AlertTriangle}
           tone="fail"
         />
         <StatCard
           label="Compliance"
           value={pct(data.compliancePercent)}
-          sub={`${data.complianceCount} of ${denom} (Yes + Comparable)`}
+          sub={`${data.complianceCount} of ${denom} · Yes + Comparable`}
           icon={Gauge}
           tone="ok"
         />
       </div>
 
-      {/* Trunks down from column 1 and column 3 to level 3 */}
+      {/* Trunk under MC Available -> branch bar -> two children */}
       <div className="grid grid-cols-3">
         <div className="flex justify-center">
           <div className={`h-6 w-px ${CONN}`} />
         </div>
         <div />
-        <div className="flex justify-center">
-          <div className={`h-6 w-px ${CONN}`} />
-        </div>
+        <div />
       </div>
-
-      {/* Under MC Available: branch bar for two children */}
       <div className="grid grid-cols-3">
-        <div className="px-[12.5%]">
+        <div className="px-[16.6%]">
           <div className={`h-px w-full ${CONN}`} />
         </div>
         <div />
@@ -737,7 +733,7 @@ function KpiTree({
         <div />
       </div>
 
-      {/* Level 3 */}
+      {/* Level 3 — children of MC Available only */}
       <div className="grid grid-cols-3 gap-4">
         <div className="grid grid-cols-2 gap-3">
           <StatCard
@@ -756,7 +752,7 @@ function KpiTree({
           />
         </div>
         <div />
-        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
+        <div />
       </div>
     </div>
   );
