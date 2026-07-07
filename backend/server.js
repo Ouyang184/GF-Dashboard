@@ -120,14 +120,17 @@ function readDataFile() {
 // ---------- KPI computation ----------
 
 function getProductionWindow(now = new Date()) {
-  // 7:00 AM local -> next day 7:00 AM local
-  const start = new Date(now);
-  start.setHours(7, 0, 0, 0);
-  if (now.getTime() < start.getTime()) {
-    start.setDate(start.getDate() - 1);
+  // Last completed production day: yesterday 7:00 AM -> today 7:00 AM local.
+  // Dashboard is presented every morning ~8:25 AM and should show the day that
+  // just ended, not the shift currently in progress.
+  const end = new Date(now);
+  end.setHours(7, 0, 0, 0);
+  if (now.getTime() < end.getTime()) {
+    // Before 7 AM: the window that just closed ended at 7 AM yesterday.
+    end.setDate(end.getDate() - 1);
   }
-  const end = new Date(start);
-  end.setDate(end.getDate() + 1);
+  const start = new Date(end);
+  start.setDate(start.getDate() - 1);
   return { start, end };
 }
 
@@ -204,10 +207,13 @@ function computeSummary(rows) {
     mcAvailableCount,
     mcAvailablePercent: pct(mcAvailableCount),
 
-    // Breakdown
-    matching,
-    comparable,
-    missing,
+    // Breakdown (count + percent of machinesRunning)
+    matchingCount: matching,
+    matchingPercent: pct(matching),
+    comparableCount: comparable,
+    comparablePercent: pct(comparable),
+    missingCount: missing,
+    missingPercent: pct(missing),
 
     // Compliance (Yes OR Comparable)
     complianceCount,
@@ -224,6 +230,9 @@ function computeSummary(rows) {
     mastercardNo: missing,
     complianceYes: matching,
     complianceNo: missing,
+    matching,
+    comparable,
+    missing,
 
     latestRows,
   };
