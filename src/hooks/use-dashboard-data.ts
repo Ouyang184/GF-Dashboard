@@ -23,9 +23,12 @@ export type DashboardData = {
   totalRows: number;
   mcAvailableCount: number;
   mcAvailablePercent: number;
-  matching: number;
-  comparable: number;
-  missing: number;
+  matchingCount: number;
+  matchingPercent: number;
+  comparableCount: number;
+  comparablePercent: number;
+  missingCount: number;
+  missingPercent: number;
   complianceCount: number;
   compliancePercent: number;
   reproComplete: number | null;
@@ -37,6 +40,9 @@ export type DashboardData = {
   mastercardNo: number;
   complianceYes: number;
   complianceNo: number;
+  matching?: number;
+  comparable?: number;
+  missing?: number;
   latestRows: DashboardRow[];
 };
 
