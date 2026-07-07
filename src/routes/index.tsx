@@ -1357,17 +1357,16 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const [safetyOverride, setSafetyOverride] = useState<Status | null>(() => {
-    if (typeof window === "undefined") return null;
-    const raw = window.localStorage.getItem("safety-today-override");
-    if (!raw) return null;
-    try {
-      const parsed = JSON.parse(raw) as { day: number; status: Status };
-      if (parsed.day === new Date().getDate()) return parsed.status;
-    } catch {}
-    return null;
-  });
+  const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem("safety-today-override");
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as { day: number; status: Status };
+      if (parsed.day === today) setSafetyOverride(parsed.status);
+    } catch {}
+  }, [today]);
   const displayDots =
     pillar.key === "S" && safetyOverride
       ? dots.map((d) => (d.day === today ? { ...d, status: safetyOverride } : d))
@@ -1378,12 +1377,10 @@ function PillarCard({
       safetyOverride ?? displayDots.find((d) => d.day === today)?.status ?? "ok";
     const next = order[(order.indexOf(current as Status) + 1) % order.length];
     setSafetyOverride(next);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        "safety-today-override",
-        JSON.stringify({ day: today, status: next }),
-      );
-    }
+    window.localStorage.setItem(
+      "safety-today-override",
+      JSON.stringify({ day: today, status: next }),
+    );
   };
   const okCount = displayDots.filter((d) => d.status === "ok").length;
   const failCount = displayDots.filter((d) => d.status === "fail").length;
