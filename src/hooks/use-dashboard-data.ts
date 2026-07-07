@@ -60,6 +60,7 @@ export function useDashboardData(): DashboardState {
       try {
         const res = await fetch(`${getBaseUrl()}/api/dashboard`, {
           signal: controller.signal,
+          cache: "no-store",
           headers: { Accept: "application/json" },
         });
         if (!res.ok) throw new Error(`API ${res.status}`);
