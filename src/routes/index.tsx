@@ -4,6 +4,7 @@ import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-sn
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
+import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import {
   Activity,
   AlertTriangle,
@@ -306,12 +307,18 @@ function Index() {
   const deviationCount = useDeviationCount();
   const uploadMastercards = useMastercardsUploader();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadCompliance = useComplianceUploader();
+  const complianceInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "u") {
         e.preventDefault();
         uploadInputRef.current?.click();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        complianceInputRef.current?.click();
       }
     };
     window.addEventListener("keydown", handler);
@@ -327,6 +334,18 @@ function Index() {
       console.info("[mastercards] uploaded", result);
     } catch (err) {
       console.error("[mastercards] upload failed", err);
+    }
+  };
+
+  const onComplianceUploadChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const result = await uploadCompliance(file);
+      console.info("[compliance] uploaded", result);
+    } catch (err) {
+      console.error("[compliance] upload failed", err);
     }
   };
 
@@ -363,6 +382,24 @@ function Index() {
         aria-label="Upload MasterCards Excel"
         title="Upload MasterCards Excel (Ctrl+Shift+U)"
         className="fixed top-0 left-0 h-6 w-6 z-50 opacity-0"
+      />
+
+      {/* Hidden Compliance checklist upload — Ctrl/Cmd+Shift+C or click top-right corner */}
+      <input
+        ref={complianceInputRef}
+        type="file"
+        accept=".xlsx,.xlsm,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12"
+        onChange={onComplianceUploadChange}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
+        onClick={() => complianceInputRef.current?.click()}
+        aria-label="Upload Compliance Checklist Excel"
+        title="Upload Compliance Checklist (Ctrl+Shift+C)"
+        className="fixed top-0 right-0 h-6 w-6 z-50 opacity-0"
       />
 
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
@@ -1399,79 +1436,67 @@ function NotesCard({
 }
 
 function CompliancePanel() {
-  const availabilityLeaves = [
-    "Matching: 7",
-    "Comparable: 3",
-    "Downtime alerts",
-  ];
-  const complianceLeaves = [
-    "6 of 10 available",
-    "Repro: 6/18 (33%)",
-    "2 MC in cabinet",
-  ];
+  const data = useComplianceData();
+
+  const dateStr = data?.date
+    ? new Date(data.date).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+    : "—";
+
+  const pct = (v: number) => `${Math.round(v * 100)}%`;
+  const pctTone = (v: number) =>
+    v >= 0.85 ? "text-success" : v >= 0.6 ? "text-warning" : "text-destructive";
+  const barTone = (v: number) =>
+    v >= 0.85 ? "bg-success" : v >= 0.6 ? "bg-warning" : "bg-destructive";
+
+  const metrics = data
+    ? [
+        { label: "Machines Running", count: data.machinesRunning, pct: data.machinesRunningPct },
+        { label: "MC Available", count: data.mcAvailable, pct: data.mcAvailablePct },
+        { label: "MC Compliance", count: data.mcCompliance, pct: Math.min(1, data.mcCompliancePct) },
+      ]
+    : [
+        { label: "Machines Running", count: 0, pct: 0 },
+        { label: "MC Available", count: 0, pct: 0 },
+        { label: "MC Compliance", count: 0, pct: 0 },
+      ];
+
   return (
     <div>
-      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-6">
-        Availability vs Compliance
-      </h3>
-      <div className="flex flex-col items-center">
-        {/* Root */}
-        <div className="rounded-xl border border-border/60 bg-card px-6 py-3 shadow-[var(--shadow-card)] text-center">
-          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Pillar</div>
-          <div className="text-lg font-bold text-primary">Productivity</div>
-        </div>
-
-        {/* Vertical trunk */}
-        <div className="h-6 w-px bg-border" />
-
-        {/* Horizontal bar spanning both branches */}
-        <div className="relative w-full max-w-2xl">
-          <div className="absolute top-0 left-1/4 right-1/4 h-px bg-border" />
-          <div className="grid grid-cols-2">
-            {/* Availability branch */}
-            <div className="flex flex-col items-center">
-              <div className="h-6 w-px bg-border" />
-              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-warning">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Availability</div>
-                <div className="text-xl font-bold text-warning">55%</div>
-              </div>
-              <div className="h-4 w-px bg-border" />
-              <ul className="w-full max-w-[240px] space-y-2">
-                {availabilityLeaves.map((leaf) => (
-                  <li
-                    key={leaf}
-                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
-                  >
-                    <span className="size-1.5 rounded-full bg-warning shrink-0" />
-                    <span>{leaf}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Compliance branch */}
-            <div className="flex flex-col items-center">
-              <div className="h-6 w-px bg-border" />
-              <div className="rounded-xl border border-border/60 bg-card px-5 py-3 shadow-[var(--shadow-card)] text-center border-t-2 border-t-success">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Compliance</div>
-                <div className="text-xl font-bold text-success">80%</div>
-              </div>
-              <div className="h-4 w-px bg-border" />
-              <ul className="w-full max-w-[240px] space-y-2">
-                {complianceLeaves.map((leaf) => (
-                  <li
-                    key={leaf}
-                    className="flex items-center gap-2 rounded-md border border-border/40 bg-background/60 px-3 py-1.5 text-xs"
-                  >
-                    <span className="size-1.5 rounded-full bg-success shrink-0" />
-                    <span>{leaf}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+      <div className="flex items-baseline justify-between mb-4">
+        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+          Availability vs Compliance
+        </h3>
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+          {data ? `Latest · ${dateStr}` : "No data — upload checklist (Ctrl+Shift+C)"}
         </div>
       </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            className="rounded-xl border border-border/60 bg-card p-4 shadow-[var(--shadow-card)]"
+          >
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{m.label}</div>
+            <div className="mt-1 flex items-baseline gap-2">
+              <div className="text-2xl font-bold tabular-nums">{m.count}</div>
+              <div className={`text-sm font-semibold ${pctTone(m.pct)}`}>{pct(m.pct)}</div>
+            </div>
+            <div className="mt-3 h-1.5 rounded-full bg-background/60 overflow-hidden">
+              <div
+                className={`h-full ${barTone(m.pct)}`}
+                style={{ width: `${Math.min(100, Math.round(m.pct * 100))}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {data && (
+        <div className="mt-3 text-[10px] text-muted-foreground">
+          Source: {data.fileName} · SubmittedChecklistLog
+        </div>
+      )}
     </div>
   );
 }
