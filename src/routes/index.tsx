@@ -314,10 +314,10 @@ function useQualityIssues(data: DashboardData | null): QualityIssue[] {
       : Object.values(data.floorMap);
     const issues: QualityIssue[] = [];
     for (const e of entries) {
-      const rawStatus = (e.worstStatus ?? e.status ?? "").toString().toLowerCase().trim();
-      if (!rawStatus || rawStatus === "matching") continue;
+      const rawStatus = (e.status ?? e.worstStatus ?? "").toString().toLowerCase().trim();
+      if (!rawStatus || rawStatus.startsWith("match")) continue;
       const issueStatus: QualityIssue["status"] =
-        rawStatus === "missing" ? "missing" : rawStatus === "comparable" ? "comparable" : "no data";
+        rawStatus.startsWith("miss") ? "missing" : rawStatus === "comparable" ? "comparable" : "no data";
       const latest = e.jobs
         .filter((j) => j.dateCreated)
         .sort((a, b) => new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime())[0];
@@ -328,7 +328,7 @@ function useQualityIssues(data: DashboardData | null): QualityIssue[] {
         partNumber: latest?.partNumber,
       });
     }
-    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.when).getTime());
+    return issues.sort((a, b) => new Date(b.when).getTime() - new Date(a.dateCreated).getTime());
   }, [data]);
 }
 
