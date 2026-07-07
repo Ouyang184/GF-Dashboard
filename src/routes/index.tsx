@@ -1517,6 +1517,7 @@ function PillarCard({
           detail={detail}
           dots={displayDots}
           shifts={shifts}
+          qualityIssues={qualityIssues}
           onClose={() => setExpanded(false)}
         />
       )}
