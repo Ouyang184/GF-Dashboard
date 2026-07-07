@@ -225,7 +225,11 @@ function applyDeviationRule(
     (pillarKey === "I" && deviationCount >= 1) ||
     (pillarKey === "D" && deviationCount > 3);
   if (!trigger) return dots;
-  return dots.map((d) => (d.day === today ? { ...d, status: "fail" as Status } : d));
+  return dots.map((d) =>
+    d.day === today && !(d as { weekend?: boolean }).weekend
+      ? { ...d, status: "fail" as Status }
+      : d,
+  );
 }
 
 const DAILY_QUOTES: { text: string; author: string }[] = [
