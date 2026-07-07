@@ -1281,7 +1281,7 @@ function PillarDetailOverlay({
 }: {
   pillar: Pillar;
   detail: PillarDetail;
-  dots: { day: number; status: Status }[];
+  dots: { day: number; status: Status; weekend?: boolean }[];
   shifts: Status[];
   onClose: () => void;
 }) {
@@ -1390,12 +1390,16 @@ function PillarDetailOverlay({
                     {dots.map((d) => (
                       <div
                         key={d.day}
-                        title={`Day ${d.day}`}
+                        title={d.weekend ? `Day ${d.day} — weekend` : `Day ${d.day}`}
                         className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
-                          d.status === "na" ? "bg-secondary text-muted-foreground" : statusColor(d.status)
+                          d.weekend
+                            ? "bg-muted/30"
+                            : d.status === "na"
+                              ? "bg-secondary text-muted-foreground"
+                              : statusColor(d.status)
                         }`}
                       >
-                        {d.day}
+                        {d.weekend ? "" : d.day}
                       </div>
                     ))}
                   </div>
