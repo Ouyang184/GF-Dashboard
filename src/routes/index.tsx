@@ -4,6 +4,7 @@ import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-sn
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
 import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
+import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import {
   Activity,
   AlertTriangle,
@@ -306,12 +307,18 @@ function Index() {
   const deviationCount = useDeviationCount();
   const uploadMastercards = useMastercardsUploader();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
+  const uploadCompliance = useComplianceUploader();
+  const complianceInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "u") {
         e.preventDefault();
         uploadInputRef.current?.click();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "c") {
+        e.preventDefault();
+        complianceInputRef.current?.click();
       }
     };
     window.addEventListener("keydown", handler);
@@ -327,6 +334,18 @@ function Index() {
       console.info("[mastercards] uploaded", result);
     } catch (err) {
       console.error("[mastercards] upload failed", err);
+    }
+  };
+
+  const onComplianceUploadChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const result = await uploadCompliance(file);
+      console.info("[compliance] uploaded", result);
+    } catch (err) {
+      console.error("[compliance] upload failed", err);
     }
   };
 
@@ -363,6 +382,24 @@ function Index() {
         aria-label="Upload MasterCards Excel"
         title="Upload MasterCards Excel (Ctrl+Shift+U)"
         className="fixed top-0 left-0 h-6 w-6 z-50 opacity-0"
+      />
+
+      {/* Hidden Compliance checklist upload — Ctrl/Cmd+Shift+C or click top-right corner */}
+      <input
+        ref={complianceInputRef}
+        type="file"
+        accept=".xlsx,.xlsm,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel.sheet.macroEnabled.12"
+        onChange={onComplianceUploadChange}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
+        onClick={() => complianceInputRef.current?.click()}
+        aria-label="Upload Compliance Checklist Excel"
+        title="Upload Compliance Checklist (Ctrl+Shift+C)"
+        className="fixed top-0 right-0 h-6 w-6 z-50 opacity-0"
       />
 
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
