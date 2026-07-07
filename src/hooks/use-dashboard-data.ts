@@ -21,13 +21,20 @@ export type DashboardData = {
   productionWindowEnd: string;
   machinesRunning: number;
   totalRows: number;
+  mcAvailableCount: number;
+  mcAvailablePercent: number;
+  matching: number;
+  comparable: number;
+  missing: number;
+  complianceCount: number;
+  compliancePercent: number;
+  reproComplete: number | null;
+  // Legacy aliases (still returned by backend)
   availabilityCount: number;
   availabilityPercent: number;
   mastercardYes: number;
   mastercardComparable: number;
   mastercardNo: number;
-  complianceCount: number;
-  compliancePercent: number;
   complianceYes: number;
   complianceNo: number;
   latestRows: DashboardRow[];
