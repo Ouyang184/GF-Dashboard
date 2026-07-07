@@ -26,14 +26,20 @@ function parseDate(v: unknown): Date | null {
   if (v == null || v === "") return null;
   if (v instanceof Date) return isNaN(v.getTime()) ? null : v;
   if (typeof v === "number") {
-    // Excel serial date
+    // Excel serial dates are large (>= ~10000 for year 1927+). Reject small ints
+    // like machine IDs that would otherwise parse as epoch-1970 dates.
+    if (v < 10000 || v > 100000) return null;
     const d = XLSX.SSF.parse_date_code(v);
     if (!d) return null;
     return new Date(Date.UTC(d.y, d.m - 1, d.d));
   }
   if (typeof v === "string") {
+    // Require an ISO-ish date shape to avoid matching random strings.
+    if (!/\d{4}[-/]\d{1,2}[-/]\d{1,2}|\d{1,2}[-/]\d{1,2}[-/]\d{2,4}/.test(v)) return null;
     const d = new Date(v);
-    return isNaN(d.getTime()) ? null : d;
+    if (isNaN(d.getTime())) return null;
+    const y = d.getUTCFullYear();
+    return y >= 1990 && y <= 2100 ? d : null;
   }
   return null;
 }
@@ -70,9 +76,12 @@ export function useMastercardsUploader() {
 
     // Find the column whose values parse as dates most often.
     const columns = Object.keys(rowsAll[0] ?? {});
+    // Prefer columns whose name looks date-y; otherwise fall back to best hit rate.
+    const preferred = columns.filter((c) => /date|proc|day|time|completed|created/i.test(c));
+    const ordered = [...preferred, ...columns.filter((c) => !preferred.includes(c))];
     let bestCol: string | null = null;
     let bestHits = 0;
-    for (const col of columns) {
+    for (const col of ordered) {
       let hits = 0;
       for (const r of rowsAll) if (parseDate(r[col])) hits++;
       if (hits > bestHits) {
@@ -83,6 +92,7 @@ export function useMastercardsUploader() {
     if (!bestCol || bestHits === 0) {
       throw new Error("No date column detected in workbook");
     }
+    console.info("[mastercards] using date column:", bestCol, "with", bestHits, "parsed dates");
 
     // Determine current fiscal year (starts December).
     const now = new Date();
