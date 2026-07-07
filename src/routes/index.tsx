@@ -470,6 +470,9 @@ function Index() {
     return SHIFTS.map(() => pickStatus(rng));
   });
 
+  const { data: dashboardData } = useDashboardData();
+  const qualityIssues = useQualityIssues(dashboardData);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_oklch(0.27_0.04_200/0.35),transparent_60%),radial-gradient(ellipse_at_bottom_right,_oklch(0.4_0.12_160/0.18),transparent_55%)]" />
