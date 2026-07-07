@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
+import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import {
   Activity,
   AlertTriangle,
@@ -303,6 +304,31 @@ function Index() {
   const weather = useWeather();
   const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
+  const uploadMastercards = useMastercardsUploader();
+  const uploadInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "u") {
+        e.preventDefault();
+        uploadInputRef.current?.click();
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  const onUploadChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    try {
+      const result = await uploadMastercards(file);
+      console.info("[mastercards] uploaded", result);
+    } catch (err) {
+      console.error("[mastercards] upload failed", err);
+    }
+  };
 
   const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
   const monthName = liveNow ? now.toLocaleString(undefined, { month: "long" }) : "";
@@ -320,6 +346,24 @@ function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="pointer-events-none fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_oklch(0.27_0.04_200/0.35),transparent_60%),radial-gradient(ellipse_at_bottom_right,_oklch(0.4_0.12_160/0.18),transparent_55%)]" />
+
+      {/* Hidden MasterCards upload — trigger with Ctrl/Cmd+Shift+U or click the top-left corner */}
+      <input
+        ref={uploadInputRef}
+        type="file"
+        accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        onChange={onUploadChange}
+        className="hidden"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+      <button
+        type="button"
+        onClick={() => uploadInputRef.current?.click()}
+        aria-label="Upload MasterCards Excel"
+        title="Upload MasterCards Excel (Ctrl+Shift+U)"
+        className="fixed top-0 left-0 h-6 w-6 z-50 opacity-0"
+      />
 
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
         <div className="mx-auto max-w-[1600px] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
@@ -551,6 +595,8 @@ function MastercardsProductionChart() {
   const currentMonth = (calMonth + 1) % 12;
   const fiscalYearStart = calMonth === 11 ? now.getFullYear() : now.getFullYear() - 1;
 
+  const uploaded = useMastercardsData();
+
   const data = useMemo(() => {
     return MONTHS.map((m, i) => {
       // Map fiscal index i back to calendar month/year: Dec of fiscalYearStart, then Jan..Nov of following year
@@ -559,13 +605,15 @@ function MastercardsProductionChart() {
       const rng = mulberry32(dateSeed(new Date(yr, calM, 1), 7700 + i));
       // Target ~120k units/month; actuals vary; future months null
       const target = 120000;
-      const actual = i <= currentMonth
-        ? Math.round(target * (0.82 + rng() * 0.28))
-        : null;
+      let actual: number | null =
+        i <= currentMonth ? Math.round(target * (0.82 + rng() * 0.28)) : null;
+      if (uploaded && uploaded.fiscalYearStart === fiscalYearStart) {
+        actual = i <= currentMonth ? uploaded.counts[i] ?? 0 : null;
+      }
       return { month: m, actual, target };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentMonth, fiscalYearStart]);
+  }, [currentMonth, fiscalYearStart, uploaded]);
 
   const monthlyTarget = 120000;
   const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
