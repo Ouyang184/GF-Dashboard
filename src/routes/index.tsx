@@ -60,7 +60,7 @@ type Pillar = {
 
 const PILLARS: Pillar[] = [
   { key: "S", label: "Safety", kpi: "0 Equip Safety Issues", icon: Shield, accent: "from-primary/20 to-primary/0" },
-  { key: "Q", label: "Quality", kpi: "Weekly Scrap ≥ 5%", icon: BadgeCheck, accent: "from-primary/20 to-primary/0" },
+  { key: "Q", label: "Quality", kpi: "Weekly Scrap < 3.5%", icon: BadgeCheck, accent: "from-primary/20 to-primary/0" },
   { key: "D", label: "Delivery", kpi: "≥ 3 New Process Deviations", icon: Truck, accent: "from-primary/20 to-primary/0" },
   { key: "I", label: "Inventory", kpi: "0 New Product Deviations", icon: Box, accent: "from-primary/20 to-primary/0" },
   { key: "P", label: "Productivity", kpi: "Machine Downtime", icon: Gauge, accent: "from-primary/20 to-primary/0" },
