@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
 import { useFloorOverrides, setFloorOverride, useDeviationCount } from "@/hooks/use-floor-overrides";
+import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
+import { useRef } from "react";
 import {
   Activity,
   AlertTriangle,
