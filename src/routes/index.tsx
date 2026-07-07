@@ -2173,6 +2173,7 @@ function NotesCardImpl({
     if (!hydrated) return;
     try {
       localStorage.setItem(storageKey, JSON.stringify(items));
+      window.dispatchEvent(new Event(`notes-updated:${storageKey}`));
     } catch {}
   }, [items, storageKey, hydrated]);
 
