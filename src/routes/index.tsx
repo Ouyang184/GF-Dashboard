@@ -646,6 +646,7 @@ function LiveDashboardSection() {
         />
       )}
       {data && <LiveLatestRowsTable data={data} />}
+      {data && <MissingMcList data={data} />}
     </section>
   );
 }
