@@ -517,7 +517,11 @@ function Index() {
             <PillarCard
               key={p.key}
               pillar={p}
-              dots={applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)}
+              dots={
+                p.key === "Q"
+                  ? applyQualityWeeklyScrapRule(buildMonthDots(i, daysInMonth))
+                  : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
+              }
               shifts={shiftStatuses[i]}
             />
           ))}
