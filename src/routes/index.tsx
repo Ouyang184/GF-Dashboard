@@ -1566,7 +1566,7 @@ function PillarDetailOverlay({
           <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {(pillar.key === "D" || pillar.key === "I") && (
               <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <IntouchFloor />
+                <DeviationFloor pillarKey={pillar.key as DeviationPillarKey} />
               </section>
             )}
 
