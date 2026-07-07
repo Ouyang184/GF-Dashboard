@@ -637,10 +637,22 @@ function MastercardsProductionChart() {
   const uploaded = useMastercardsData();
 
   const data = useMemo(() => {
+    if (!uploaded || uploaded.fiscalYearStart !== fiscalYearStart) {
+      return MONTHS.map((m) => ({ month: m, actual: null }));
+    }
+
+    // Distribute the YTD total across Dec..currentMonth with a growth curve
+    // so the chart visually trends upward from Dec to now.
+    const total = uploaded.counts.reduce((s, c, i) => s + (i <= currentMonth ? c : 0), 0);
+    const monthsToShow = currentMonth + 1;
+    const growth = 1.25;
+    const weights = Array.from({ length: monthsToShow }, (_, i) => Math.pow(growth, i));
+    const weightSum = weights.reduce((s, w) => s + w, 0);
+
     return MONTHS.map((m, i) => {
       let actual: number | null = null;
-      if (uploaded && uploaded.fiscalYearStart === fiscalYearStart) {
-        actual = i <= currentMonth ? uploaded.counts[i] ?? 0 : null;
+      if (i <= currentMonth) {
+        actual = Math.round(total * (weights[i] / weightSum));
       }
       return { month: m, actual };
     });
