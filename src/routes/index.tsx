@@ -554,11 +554,17 @@ function LiveKpiRow({ data, lastFetchedAt }: { data: DashboardData; lastFetchedA
   const pct = (n: number) => `${Math.round(n)}%`;
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Live from SharePoint → Backend API
-        </h2>
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+            Live from SharePoint → Backend API
+          </h2>
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <CalendarDays className="size-3.5" />
+            Latest record: {data.latestDate ? data.latestDate : "—"}
+          </div>
+        </div>
+        <div className="text-[10px] uppercase tracking-wider text-muted-foreground shrink-0">
           Updated {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : data.updatedAt} · auto-refresh 30s
         </div>
       </div>
