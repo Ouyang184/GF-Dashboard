@@ -1428,23 +1428,23 @@ function FloorMap({
 }
 
 function IntouchFloor() {
-  const sync = useIntouchSnapshot();
-  const { data } = useDashboardData();
+  const { data, lastFetchedAt } = useDashboardData();
   return (
     <div>
-      <CopilotSyncPanel {...sync} />
-      <FloorMap ocr={sync.snapshot} floorMap={data?.floorMap} />
+      <FloorMap floorMap={data?.floorMap} />
       <FloorMapLegend />
+      <div className="mt-2 text-[11px] text-muted-foreground">
+        Last updated:{" "}
+        {data?.updatedAt || (lastFetchedAt ? lastFetchedAt.toLocaleString() : "—")}
+      </div>
     </div>
   );
 }
 
 function FloorMapLegend() {
   const items: { label: string; className: string }[] = [
-    { label: "Matching (MC = Yes)", className: "bg-success/80 border-success" },
-    { label: "Comparable", className: "bg-warning/80 border-warning" },
-    { label: "Missing / No MC", className: "bg-danger/80 border-danger" },
-    { label: "Not running / No data", className: "bg-muted/60 border-border" },
+    { label: "Running", className: "bg-success/80 border-success" },
+    { label: "Not running / no data", className: "bg-muted/60 border-border" },
   ];
   return (
     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
