@@ -525,7 +525,7 @@ function Index() {
         {/* Top stats row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
-          <StatCard label="Open Escalations" value="2" sub="1 active · 1 monitoring" icon={AlertTriangle} tone="warn" />
+          <OpenEscalationsStat />
           <QuoteCard text={quote.text} author={quote.author} />
         </section>
 
