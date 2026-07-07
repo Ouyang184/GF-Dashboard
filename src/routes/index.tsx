@@ -1348,7 +1348,7 @@ function PillarDetailOverlay({
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
                     <div className="lg:col-span-3">
-                      <CompliancePanel />
+                      <LiveDashboardSection />
                     </div>
                     <div className="lg:col-span-2 lg:border-l lg:border-border/60 lg:pl-6">
                       <MastercardsProductionChart />
