@@ -2096,6 +2096,59 @@ function Legend({ tone, label }: { tone: Status; label: string }) {
 }
 
 function NotesCard({
+  ...args
+}: Parameters<typeof NotesCardImpl>[0]) {
+  return <NotesCardImpl {...args} />;
+}
+
+const OPEN_ESCALATIONS_KEY = "notes:open-escalations";
+const OPEN_ESCALATIONS_DEFAULT = [
+  "Mold lockers not being returned",
+  "PVL/LPVL grinder blades damaged by metal tools",
+];
+
+function useNotesItems(storageKey: string, defaultItems: string[]) {
+  const [items, setItems] = useState<string[]>(defaultItems);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) setItems(JSON.parse(raw));
+        else setItems(defaultItems);
+      } catch {}
+    };
+    read();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === storageKey) read();
+    };
+    const onCustom = () => read();
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(`notes-updated:${storageKey}`, onCustom);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(`notes-updated:${storageKey}`, onCustom);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
+  return items;
+}
+
+function OpenEscalationsStat() {
+  const items = useNotesItems(OPEN_ESCALATIONS_KEY, OPEN_ESCALATIONS_DEFAULT);
+  const count = items.length;
+  const preview = items[0] ?? "No open escalations";
+  return (
+    <StatCard
+      label="Open Escalations"
+      value={String(count)}
+      sub={count === 0 ? "All clear" : preview}
+      icon={AlertTriangle}
+      tone={count === 0 ? "ok" : "warn"}
+    />
+  );
+}
+
+function NotesCardImpl({
   title,
   storageKey,
   defaultItems,
