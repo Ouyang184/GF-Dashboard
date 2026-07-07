@@ -147,8 +147,13 @@ function computeSummary(rows) {
     })
     .slice(0, 25);
 
+  const latestDate = rows.length
+    ? rows.reduce((max, r) => (r.dateCreated > max ? r.dateCreated : max), rows[0].dateCreated)
+    : "";
+
   return {
     updatedAt: new Date().toLocaleString(),
+    latestDate,
     totalRows,
     availabilityCount,
     availabilityPercent: pct(availabilityCount),
