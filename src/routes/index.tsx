@@ -15,6 +15,14 @@ import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
 import {
+  MOLDING_CELL_TOTAL,
+  MOLDING_WEEKLY_SCRAP,
+  MOLDING_TOP_PRODUCTS,
+  MOLDING_TOP_PRODUCTS_TOTAL,
+  MOLDING_TOP_REASONS,
+  MOLDING_TOP_REASONS_TOTAL,
+} from "@/data/molding-scrap";
+import {
   Activity,
   AlertTriangle,
   Box,
@@ -1014,6 +1022,149 @@ function AvailabilityScrapChartImpl() {
   );
 }
 
+function fmtInt(n: number) {
+  return n.toLocaleString();
+}
+function fmtPct(n: number, digits = 2) {
+  return `${(n * 100).toFixed(digits)}%`;
+}
+function scrapTone(rate: number): string {
+  if (rate < 0.035) return "text-success";
+  if (rate < 0.06) return "text-warning";
+  return "text-danger";
+}
+
+function MoldingScrapSection() {
+  const maxCell = Math.max(...MOLDING_WEEKLY_SCRAP.map((c) => c.scrapRate));
+  const maxProd = Math.max(...MOLDING_TOP_PRODUCTS.map((p) => p.scrap));
+  const maxReason = Math.max(...MOLDING_TOP_REASONS.map((r) => r.scrap));
+  return (
+    <div>
+      <div className="flex items-end justify-between mb-4 gap-4 flex-wrap">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+            Molding — Weekly Scrap
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1">Source: T2_Scrap.xlsm · Molding sheet</p>
+        </div>
+        <div className="flex gap-6 text-xs">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cell Yield</div>
+            <div className="text-lg font-bold">{fmtInt(MOLDING_CELL_TOTAL.yield)}</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cell Scrap</div>
+            <div className="text-lg font-bold text-danger">{fmtInt(MOLDING_CELL_TOTAL.scrap)}</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Scrap Rate</div>
+            <div className={`text-lg font-bold ${scrapTone(MOLDING_CELL_TOTAL.scrapRate)}`}>
+              {fmtPct(MOLDING_CELL_TOTAL.scrapRate)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Weekly scrap by cell */}
+        <div className="rounded-xl border border-border/60 bg-background/40 p-4">
+          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+            Weekly Scrap by Cell
+          </div>
+          <div className="space-y-3">
+            {MOLDING_WEEKLY_SCRAP.map((c) => (
+              <div key={c.cell}>
+                <div className="flex items-baseline justify-between text-xs">
+                  <span className="font-semibold">{c.cell}</span>
+                  <span className={`font-mono ${scrapTone(c.scrapRate)}`}>{fmtPct(c.scrapRate)}</span>
+                </div>
+                <div className="mt-1 h-2 rounded-full bg-muted/50 overflow-hidden">
+                  <div
+                    className={`h-full ${c.scrapRate < 0.035 ? "bg-success" : c.scrapRate < 0.06 ? "bg-warning" : "bg-danger"}`}
+                    style={{ width: `${Math.max(4, (c.scrapRate / maxCell) * 100)}%` }}
+                  />
+                </div>
+                <div className="mt-1 flex justify-between text-[10px] text-muted-foreground font-mono">
+                  <span>Yield {fmtInt(c.yield)}</span>
+                  <span>Scrap {fmtInt(c.scrap)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top 5 scrap products */}
+        <div className="rounded-xl border border-border/60 bg-background/40 p-4">
+          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+            Top 5 Scrap Products
+          </div>
+          <div className="space-y-2">
+            {MOLDING_TOP_PRODUCTS.map((p) => (
+              <div key={p.product}>
+                <div className="flex items-baseline justify-between text-xs gap-2">
+                  <span className="truncate" title={p.product}>{p.product}</span>
+                  <span className={`font-mono shrink-0 ${scrapTone(p.scrapRate)}`}>{fmtPct(p.scrapRate)}</span>
+                </div>
+                <div className="mt-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                  <div
+                    className="h-full bg-danger"
+                    style={{ width: `${Math.max(4, (p.scrap / maxProd) * 100)}%` }}
+                  />
+                </div>
+                <div className="mt-0.5 flex justify-between text-[10px] text-muted-foreground font-mono">
+                  <span>Yield {fmtInt(p.yield)}</span>
+                  <span>Scrap {fmtInt(p.scrap)}</span>
+                </div>
+              </div>
+            ))}
+            <div className="pt-2 mt-1 border-t border-border/60 flex justify-between text-[11px] font-semibold">
+              <span>Grand Total</span>
+              <span className="font-mono">
+                {fmtInt(MOLDING_TOP_PRODUCTS_TOTAL.scrap)} scrap ·{" "}
+                <span className={scrapTone(MOLDING_TOP_PRODUCTS_TOTAL.scrapRate)}>
+                  {fmtPct(MOLDING_TOP_PRODUCTS_TOTAL.scrapRate)}
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Top 5 scrap reasons */}
+        <div className="rounded-xl border border-border/60 bg-background/40 p-4">
+          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+            Top 5 Scrap Reasons
+          </div>
+          <div className="space-y-2">
+            {MOLDING_TOP_REASONS.map((r) => (
+              <div key={r.reason}>
+                <div className="flex items-baseline justify-between text-xs">
+                  <span>{r.reason}</span>
+                  <span className="font-mono text-muted-foreground">{fmtPct(r.pctOfTotal, 1)}</span>
+                </div>
+                <div className="mt-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
+                  <div
+                    className="h-full bg-primary"
+                    style={{ width: `${Math.max(4, (r.scrap / maxReason) * 100)}%` }}
+                  />
+                </div>
+                <div className="mt-0.5 text-[10px] text-muted-foreground font-mono">
+                  {fmtInt(r.scrap)} pcs
+                </div>
+              </div>
+            ))}
+            <div className="pt-2 mt-1 border-t border-border/60 flex justify-between text-[11px] font-semibold">
+              <span>Top 5 / Total</span>
+              <span className="font-mono">
+                {fmtInt(MOLDING_TOP_REASONS_TOTAL.scrap)} / {fmtInt(MOLDING_TOP_REASONS_TOTAL.totalScrap)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MastercardsProductionChart() {
   // Fiscal year starts in November
   const MONTHS = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
@@ -1673,6 +1824,11 @@ function PillarDetailOverlay({
                 {pillar.key === "Q" && (
                   <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                     <AvailabilityScrapChart />
+                  </section>
+                )}
+                {pillar.key === "Q" && (
+                  <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                    <MoldingScrapSection />
                   </section>
                 )}
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
