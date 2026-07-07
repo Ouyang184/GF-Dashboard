@@ -638,25 +638,15 @@ function MastercardsProductionChart() {
 
   const data = useMemo(() => {
     return MONTHS.map((m, i) => {
-      // Map fiscal index i back to calendar month/year: Dec of fiscalYearStart, then Jan..Nov of following year
-      const calM = i === 0 ? 11 : i - 1;
-      const yr = i === 0 ? fiscalYearStart : fiscalYearStart + 1;
-      const rng = mulberry32(dateSeed(new Date(yr, calM, 1), 7700 + i));
-      // Target ~120k units/month; actuals vary; future months null
-      const target = 120000;
-      let actual: number | null =
-        i <= currentMonth ? Math.round(target * (0.82 + rng() * 0.28)) : null;
+      let actual: number | null = null;
       if (uploaded && uploaded.fiscalYearStart === fiscalYearStart) {
         actual = i <= currentMonth ? uploaded.counts[i] ?? 0 : null;
       }
-      return { month: m, actual, target };
+      return { month: m, actual };
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentMonth, fiscalYearStart, uploaded]);
 
-  const monthlyTarget = 120000;
   const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
-  const ytdTarget = monthlyTarget * (currentMonth + 1);
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(0)}k` : `${n}`;
 
   return (
@@ -666,16 +656,12 @@ function MastercardsProductionChart() {
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
             MasterCards Production by Month
           </h3>
-          <p className="text-xs text-muted-foreground mt-1">Units produced vs monthly target</p>
+          <p className="text-xs text-muted-foreground mt-1">Units produced</p>
         </div>
         <div className="flex gap-4 text-xs">
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">YTD Actual</div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">YTD Produced</div>
             <div className="text-lg font-bold text-primary">{fmt(ytdActual)}</div>
-          </div>
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">YTD Target</div>
-            <div className="text-lg font-bold text-foreground">{fmt(ytdTarget)}</div>
           </div>
         </div>
       </div>
@@ -694,9 +680,7 @@ function MastercardsProductionChart() {
               }}
               formatter={(v) => (v == null ? "—" : Number(v).toLocaleString())}
             />
-            <RcLegend wrapperStyle={{ fontSize: 12 }} />
-            <Bar dataKey="target" name="Target" fill="color-mix(in oklch, var(--muted-foreground) 55%, transparent)" radius={[2, 2, 0, 0]} />
-            <Bar dataKey="actual" name="Actual" fill="var(--primary)" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="actual" name="Produced" fill="var(--primary)" radius={[2, 2, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>
