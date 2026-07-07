@@ -188,6 +188,46 @@ function computeSummary(rows) {
     .slice(0, 25)
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
 
+  // Full list of unique Machine+Part jobs (unbounded) for the floor map.
+  const machineJobs = [...uniqueJobs]
+    .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
+    .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
+
+  // Normalize a Machine value like "301IM30" / "443IM" to floor-tile "301" / "443".
+  const normalizeMachine = (m) =>
+    String(m || "").replace(/(IM|EM|AM)\d*$/i, "").trim();
+
+  // Group jobs by normalized machine number for the floor map.
+  const floorMap = {};
+  for (const j of machineJobs) {
+    const key = normalizeMachine(j.machine);
+    if (!key) continue;
+    const mc = (j.masterCard || "").toLowerCase();
+    let status;
+    if (mc === "yes") status = "matching";
+    else if (mc.startsWith("compar")) status = "comparable";
+    else status = "missing";
+    if (!floorMap[key]) {
+      floorMap[key] = { machine: key, jobCount: 0, worstStatus: "matching", jobs: [] };
+    }
+    floorMap[key].jobCount += 1;
+    floorMap[key].jobs.push({
+      machine: j.machine,
+      partNumber: j.partNumber,
+      partDescription: j.partDescription,
+      workOrder: j.workOrder,
+      productionTech: j.productionTech,
+      masterCard: j.masterCard,
+      status,
+      dateCreated: j.dateCreated,
+    });
+    // worst status: missing > comparable > matching
+    const rank = { matching: 0, comparable: 1, missing: 2 };
+    if (rank[status] > rank[floorMap[key].worstStatus]) {
+      floorMap[key].worstStatus = status;
+    }
+  }
+
   const latestDate = uniqueJobs.length
     ? uniqueJobs.reduce((max, r) => (r.dateCreated > max ? r.dateCreated : max), uniqueJobs[0].dateCreated)
     : "";
@@ -235,6 +275,8 @@ function computeSummary(rows) {
     missing,
 
     latestRows,
+    machineJobs,
+    floorMap,
   };
 }
 
