@@ -229,6 +229,25 @@ function computeSummary(rows) {
     ? uniqueJobs.reduce((max, r) => (r.dateCreated > max ? r.dateCreated : max), uniqueJobs[0].dateCreated)
     : "";
 
+  // -------- Monthly MasterCards production (fiscal year: Nov..Oct) --------
+  const fyMonths = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
+  const nowFY = new Date();
+  const fiscalYearStart = nowFY.getMonth() >= 10 ? nowFY.getFullYear() : nowFY.getFullYear() - 1;
+  const monthCounts = new Array(12).fill(0);
+  for (const r of rows) {
+    if (!r._ts) continue;
+    const d = new Date(r._ts);
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    let idx = -1;
+    if (y === fiscalYearStart && m === 10) idx = 0;
+    else if (y === fiscalYearStart && m === 11) idx = 1;
+    else if (y === fiscalYearStart + 1 && m <= 9) idx = m + 2;
+    if (idx >= 0) monthCounts[idx] += 1;
+  }
+  const monthlyMastercards = fyMonths.map((month, i) => ({ month, count: monthCounts[i] }));
+  const ytdProduced = monthCounts.reduce((s, n) => s + n, 0);
+
   return {
     updatedAt: new Date().toLocaleString(),
     productionDate: fmtDate(start),
@@ -274,6 +293,9 @@ function computeSummary(rows) {
     latestRows,
     machineJobs,
     floorMap,
+    monthlyMastercards,
+    ytdProduced,
+    fiscalYearStart,
   };
 }
 

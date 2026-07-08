@@ -10,7 +10,7 @@ import {
   clearDeviations,
   type PillarKey as DeviationPillarKey,
 } from "@/hooks/use-deviation-map";
-import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
+import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
@@ -1251,39 +1251,16 @@ function MoldingScrapSection() {
 }
 
 function MastercardsProductionChart() {
-  // Fiscal year starts in November
   const MONTHS = ["Nov", "Dec", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct"];
-  const now = new Date();
-  const calMonth = now.getMonth(); // 0=Jan..11=Dec
-  // Index within fiscal year (Nov=0, Dec=1, Jan=2, ..., Oct=11)
-  const currentMonth = (calMonth - 10 + 12) % 12;
-  const fiscalYearStart = calMonth >= 10 ? now.getFullYear() : now.getFullYear() - 1;
-
-  const uploaded = useMastercardsData();
+  const { data: dash } = useDashboardData();
 
   const data = useMemo(() => {
-    if (!uploaded || uploaded.fiscalYearStart !== fiscalYearStart) {
-      return MONTHS.map((m) => ({ month: m, actual: null }));
-    }
+    const byMonth = new Map<string, number>();
+    for (const m of dash?.monthlyMastercards ?? []) byMonth.set(m.month, m.count);
+    return MONTHS.map((month) => ({ month, actual: byMonth.get(month) ?? 0 }));
+  }, [dash?.monthlyMastercards]);
 
-    // Distribute the YTD total across Dec..currentMonth with a growth curve
-    // so the chart visually trends upward from Dec to now.
-    const total = uploaded.counts.reduce((s, c, i) => s + (i <= currentMonth ? c : 0), 0);
-    const monthsToShow = currentMonth + 1;
-    const growth = 1.25;
-    const weights = Array.from({ length: monthsToShow }, (_, i) => Math.pow(growth, i));
-    const weightSum = weights.reduce((s, w) => s + w, 0);
-
-    return MONTHS.map((m, i) => {
-      let actual: number | null = null;
-      if (i <= currentMonth) {
-        actual = Math.round(total * (weights[i] / weightSum));
-      }
-      return { month: m, actual };
-    });
-  }, [currentMonth, fiscalYearStart, uploaded]);
-
-  const ytdActual = data.reduce((s, d) => s + (d.actual ?? 0), 0);
+  const ytdActual = dash?.ytdProduced ?? data.reduce((s, d) => s + (d.actual ?? 0), 0);
   const fmt = (n: number) => n >= 1000 ? `${(n / 1000).toFixed(0)}k` : `${n}`;
 
   return (
