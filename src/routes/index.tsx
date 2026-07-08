@@ -10,7 +10,7 @@ import {
   clearDeviations,
   type PillarKey as DeviationPillarKey,
 } from "@/hooks/use-deviation-map";
-import { useMastercardsData, useMastercardsUploader } from "@/hooks/use-mastercards-upload";
+import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
