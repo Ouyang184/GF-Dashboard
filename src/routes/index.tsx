@@ -762,7 +762,7 @@ function KpiTree({
       <div className="grid grid-cols-3 gap-4 items-start">
         <div />
         <StatCard
-          label="Machines Running"
+          label="New Buy Off"
           value={String(denom)}
           sub={`${rawRows} rows · unique Machine + Part`}
           icon={Gauge}
