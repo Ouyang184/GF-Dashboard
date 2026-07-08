@@ -178,7 +178,7 @@ function computeSummary(rows) {
   }
 
   const machinesRunning = uniqueJobs.length;
-  const mcAvailableCount = matching; // MC Available = MasterCard "Yes"
+  const mcAvailableCount = matching + comparable; // MC Available = MasterCard "Yes" or "Comparable"
   const complianceCount = matching + comparable; // Compliant if MC exists
   const pct = (n) =>
     machinesRunning === 0 ? 0 : Math.round((n / machinesRunning) * 100);
