@@ -259,7 +259,7 @@ function computeSummary(rows) {
     totalRows: inWindow.length, // raw rows in the window (before dedupe)
     machinesRunning,             // unique Machine + PartNumber pairs
 
-    // MC Available (exact match)
+    // MC Available (Yes or Comparable)
     mcAvailableCount,
     mcAvailablePercent: pct(mcAvailableCount),
 
