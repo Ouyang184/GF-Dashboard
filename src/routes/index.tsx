@@ -798,7 +798,7 @@ function KpiTree({
         <StatCard
           label="MC Available"
           value={pct(data.mcAvailablePercent ?? 0)}
-          sub={`${data.mcAvailableCount ?? 0} of ${denom} · MasterCard = Yes`}
+          sub={`${data.mcAvailableCount ?? 0} of ${denom} · MasterCard = Yes or Comparable`}
           icon={BadgeCheck}
           tone="ok"
         />
