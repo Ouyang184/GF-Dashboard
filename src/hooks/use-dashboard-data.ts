@@ -67,6 +67,9 @@ export type DashboardData = {
   machineJobs?: DashboardRow[];
   // API returns an array; older builds returned an object keyed by machine.
   floorMap?: FloorMapEntry[] | Record<string, FloorMapEntry>;
+  monthlyMastercards?: { month: string; count: number }[];
+  ytdProduced?: number;
+  fiscalYearStart?: number;
 };
 
 export type DashboardState = {
