@@ -350,11 +350,42 @@ const DAILY_QUOTES: { text: string; author: string }[] = [
 ];
 
 function useDailyQuote() {
-  return useMemo(() => {
+  const [quote, setQuote] = useState(() => {
     const today = new Date();
     const idx = dateSeed(today, 42) % DAILY_QUOTES.length;
     return DAILY_QUOTES[idx];
+  });
+
+  useEffect(() => {
+    const selectQuote = () => {
+      const today = new Date();
+      const dateKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+      const storageKey = "amg-daily-quote";
+      try {
+        const stored = JSON.parse(localStorage.getItem(storageKey) || "null");
+        if (stored?.dateKey === dateKey && stored?.quote) {
+          setQuote(stored.quote);
+          return;
+        }
+      } catch {
+        /* noop */
+      }
+      const idx = dateSeed(today, 42) % DAILY_QUOTES.length;
+      const selected = DAILY_QUOTES[idx];
+      setQuote(selected);
+      try {
+        localStorage.setItem(storageKey, JSON.stringify({ dateKey, quote: selected }));
+      } catch {
+        /* noop */
+      }
+    };
+
+    selectQuote();
+    const id = setInterval(selectQuote, 60 * 1000);
+    return () => clearInterval(id);
   }, []);
+
+  return quote;
 }
 
 
