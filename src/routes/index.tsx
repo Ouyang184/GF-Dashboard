@@ -133,9 +133,9 @@ const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
     ],
     shiftNotes: { LD: "Within spec", MD: "Spike 04:20", SD1: "Recovered", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
     stats: [
-      { label: "Weekly scrap", value: "5.4%" },
-      { label: "First pass yield", value: "94%" },
-      { label: "Open NCRs", value: "3" },
+      { label: "Weekly scrap", value: fmtPct(MOLDING_CELL_TOTAL.scrapRate) },
+      { label: "Cell yield", value: fmtInt(MOLDING_CELL_TOTAL.yield) },
+      { label: "Cell scrap", value: fmtInt(MOLDING_CELL_TOTAL.scrap) },
     ],
   },
   D: {
