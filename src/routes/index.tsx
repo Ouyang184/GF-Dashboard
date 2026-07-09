@@ -438,8 +438,11 @@ function Index() {
   const weather = useWeather();
   const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
-  const deliveryDeviations = useDeviationCountFor("D");
-  const inventoryDeviations = useDeviationCountFor("I");
+  const deliveryDeviations = useDeviationMap("D");
+  const inventoryDeviations = useDeviationMap("I");
+  const deliveryDeviationCount = useDeviationCountFor("D");
+  const inventoryDeviationCount = useDeviationCountFor("I");
+
   const uploadMastercards = useMastercardsUploader();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const uploadCompliance = useComplianceUploader();
