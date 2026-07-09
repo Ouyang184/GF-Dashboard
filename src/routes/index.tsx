@@ -1151,57 +1151,30 @@ function MoldingScrapSection() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Weekly scrap rates — vertical bar chart */}
+        {/* Weekly scrap by cell */}
         <div className="rounded-xl border border-border/60 bg-background/40 p-4">
-          <div className="text-center text-sm font-bold text-foreground mb-3">
-            Weekly Scrap Rates
+          <div className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+            Weekly Scrap by Cell
           </div>
-          <div className="flex">
-            <div className="flex flex-col justify-center pr-2 text-[10px] text-muted-foreground [writing-mode:vertical-rl] rotate-180">
-              Scrap Rate %
-            </div>
-            <div className="flex-1">
-              <div className="relative h-56 border-l border-b border-border/60">
-                {/* gridlines */}
-                {[0.2, 0.4, 0.6, 0.8].map((f) => (
+          <div className="space-y-3">
+            {MOLDING_WEEKLY_SCRAP.map((c) => (
+              <div key={c.cell}>
+                <div className="flex items-baseline justify-between text-xs">
+                  <span className="font-semibold">{c.cell}</span>
+                  <span className={`font-mono ${scrapTone(c.scrapRate)}`}>{fmtPct(c.scrapRate)}</span>
+                </div>
+                <div className="mt-1 h-2 rounded-full bg-muted/50 overflow-hidden">
                   <div
-                    key={f}
-                    className="absolute left-0 right-0 border-t border-border/30"
-                    style={{ bottom: `${f * 100}%` }}
+                    className={`h-full ${c.scrapRate < 0.035 ? "bg-success" : c.scrapRate < 0.06 ? "bg-warning" : "bg-danger"}`}
+                    style={{ width: `${Math.max(4, (c.scrapRate / maxCell) * 100)}%` }}
                   />
-                ))}
-                <div className="absolute inset-0 flex items-end justify-around px-2">
-                  {MOLDING_WEEKLY_SCRAP.map((c) => {
-                    const colors: Record<string, string> = {
-                      LD: "#ea7a2b",
-                      MD: "#1f6fd0",
-                      SD1: "#e2231a",
-                      SD2: "#1fa84c",
-                      FS: "#111111",
-                    };
-                    const heightPct = Math.max(3, (c.scrapRate / maxCell) * 95);
-                    return (
-                      <div key={c.cell} className="flex flex-col items-center justify-end h-full w-full">
-                        <div
-                          className="w-10 md:w-12 flex items-center justify-center text-white text-xs font-bold rounded-sm"
-                          style={{ height: `${heightPct}%`, backgroundColor: colors[c.cell] ?? "#666" }}
-                        >
-                          {(c.scrapRate * 100).toFixed(c.scrapRate < 0.01 ? 1 : 1)}%
-                        </div>
-                      </div>
-                    );
-                  })}
+                </div>
+                <div className="mt-1 flex justify-between text-[10px] text-muted-foreground font-mono">
+                  <span>Yield {fmtInt(c.yield)}</span>
+                  <span>Scrap {fmtInt(c.scrap)}</span>
                 </div>
               </div>
-              <div className="flex justify-around px-2 mt-1">
-                {MOLDING_WEEKLY_SCRAP.map((c) => (
-                  <div key={c.cell} className="w-10 md:w-12 text-center text-xs font-semibold">
-                    {c.cell}
-                  </div>
-                ))}
-              </div>
-              <div className="text-center text-[10px] text-muted-foreground mt-1">Molding Cells</div>
-            </div>
+            ))}
           </div>
         </div>
 
