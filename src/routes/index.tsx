@@ -1060,24 +1060,14 @@ function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
 }
 
 function AvailabilityScrapChartImpl() {
-  // Monthly scrap rate is real data from T2_Monthly_Scrap_Sheet2.csv.
-  // MasterCard availability is not in that source yet, so it stays synthetic
-  // per-month (trending up) until a real feed is wired in.
+  // Monthly scrap rate only (MasterCard availability removed).
   const data = useMemo(() => {
-    return MONTHLY_SCRAP.map((p, i, arr) => {
-      const t = arr.length === 1 ? 1 : i / (arr.length - 1);
-      const rng = mulberry32(p.year * 100 + p.monthIndex);
-      const availNoise = (rng() - 0.5) * 1.4;
-      const availability = Math.round((82 + t * 13 + availNoise) * 10) / 10;
-      return {
-        month: p.month,
-        availability,
-        scrap: p.scrapRate,
-      };
-    });
+    return MONTHLY_SCRAP.map((p) => ({
+      month: p.month,
+      scrap: p.scrapRate,
+    }));
   }, []);
 
-  const avgAvail = (data.reduce((s, p) => s + p.availability, 0) / data.length).toFixed(1);
   const avgScrap = (data.reduce((s, p) => s + p.scrap, 0) / data.length).toFixed(2);
 
   return (
@@ -1085,15 +1075,11 @@ function AvailabilityScrapChartImpl() {
       <div className="flex items-end justify-between mb-4 gap-4 flex-wrap">
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
-            MasterCard Availability vs Scrap Rate
+            Scrap Rate
           </h3>
           <p className="text-xs text-muted-foreground mt-1">Monthly · scrap = scrap / (yield + scrap)</p>
         </div>
         <div className="flex gap-4 text-xs">
-          <div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Avg Availability</div>
-            <div className="text-lg font-bold text-primary">{avgAvail}%</div>
-          </div>
           <div>
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Avg Scrap</div>
             <div className="text-lg font-bold text-danger">{avgScrap}%</div>
@@ -1106,19 +1092,10 @@ function AvailabilityScrapChartImpl() {
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="var(--muted-foreground)" />
             <YAxis
-              yAxisId="left"
-              domain={[70, 100]}
-              tick={{ fontSize: 11 }}
-              stroke="var(--primary)"
-              label={{ value: "Availability %", angle: -90, position: "insideLeft", fontSize: 11, fill: "var(--primary)" }}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
               domain={[0, 12]}
               tick={{ fontSize: 11 }}
               stroke="var(--danger)"
-              label={{ value: "Scrap %", angle: 90, position: "insideRight", fontSize: 11, fill: "var(--danger)" }}
+              label={{ value: "Scrap %", angle: -90, position: "insideLeft", fontSize: 11, fill: "var(--danger)" }}
             />
             <Tooltip
               contentStyle={{
@@ -1130,17 +1107,6 @@ function AvailabilityScrapChartImpl() {
             />
             <RcLegend wrapperStyle={{ fontSize: 12 }} />
             <Line
-              yAxisId="left"
-              type="monotone"
-              dataKey="availability"
-              name="Availability %"
-              stroke="var(--primary)"
-              strokeWidth={2.5}
-              dot={false}
-              activeDot={{ r: 4 }}
-            />
-            <Line
-              yAxisId="right"
               type="monotone"
               dataKey="scrap"
               name="Scrap %"
