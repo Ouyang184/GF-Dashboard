@@ -603,12 +603,19 @@ function Index() {
                 p.key === "Q"
                   ? applyQualityWeeklyScrapRule(buildMonthDots(i, daysInMonth))
                   : p.key === "D"
-                    ? applyDeviationRule(buildMonthDots(i, daysInMonth), "D", deliveryDeviations)
+                    ? applyDeviationRule(buildMonthDots(i, daysInMonth), "D", deliveryDeviationCount)
                     : p.key === "I"
-                      ? applyDeviationRule(buildMonthDots(i, daysInMonth), "I", inventoryDeviations)
+                      ? applyDeviationRule(buildMonthDots(i, daysInMonth), "I", inventoryDeviationCount)
                       : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
               }
-              shifts={shiftStatuses[i]}
+              shifts={
+                p.key === "D"
+                  ? computeDeviationShiftStatuses(deliveryDeviations)
+                  : p.key === "I"
+                    ? computeDeviationShiftStatuses(inventoryDeviations)
+                    : shiftStatuses[i]
+              }
+
               qualityIssues={p.key === "Q" ? qualityIssues : undefined}
             />
           ))}
