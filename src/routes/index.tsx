@@ -1966,27 +1966,6 @@ function PillarDetailOverlay({
                     <AvailabilityScrapChart />
                   </section>
                 )}
-                <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Month Status</h3>
-                  <div className="grid grid-cols-10 sm:grid-cols-16 gap-2">
-                    {dots.map((d) => (
-                      <div
-                        key={d.day}
-                        title={d.weekend ? `Day ${d.day} — weekend` : `Day ${d.day}`}
-                        className={`aspect-square rounded-md grid place-items-center text-[10px] font-bold text-background ${
-                          d.weekend
-                            ? "bg-muted/30"
-                            : d.status === "na"
-                              ? "bg-secondary text-muted-foreground"
-                              : statusColor(d.status)
-                        }`}
-                      >
-                        {d.weekend ? "" : d.day}
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
                     {pillar.key === "Q" && qualityIssues ? "Shift Quality Issues" : "Shifts"}
