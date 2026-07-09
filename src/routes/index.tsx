@@ -723,6 +723,10 @@ function LiveDashboardSection() {
   );
 }
 
+function isFriday() {
+  return new Date().getDay() === 5;
+}
+
 function LiveKpiRow({
   data,
   lastFetchedAt,
