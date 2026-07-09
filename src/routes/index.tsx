@@ -748,6 +748,12 @@ function LiveKpiRow({
             Production date: {data.productionDate}
           </span>
         )}
+        {isFriday() && (
+          <span className="ml-auto flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground">
+            <span aria-hidden>🍦</span>
+            Ice Cream Friday!
+          </span>
+        )}
       </div>
       <div className="flex items-start justify-between gap-4">
         <div>
