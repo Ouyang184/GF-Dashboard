@@ -91,6 +91,17 @@ const PILLARS: Pillar[] = [
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
 
+const SHIFT_ZONE_MAP: Record<(typeof SHIFTS)[number], string[]> = {
+  LD: ["LD Cell"],
+  MD: ["MD Cell"],
+  SD1: ["SD Cell 1"],
+  SD2: ["SD Cell 2"],
+  FS: ["Fuseal Cell"],
+  "PA&F": ["Coil & Collar"],
+  EXT: ["ENG. Extrusion", "Vinyls Extrusion"],
+};
+
+
 const FLOOR_LAYOUT: { zone: string; machines: string[] }[] = [
   { zone: "ENG. Extrusion", machines: ["11EM00", "2EM20", "10EM00", "4EM20"] },
   { zone: "Vinyls Extrusion", machines: ["1EM10"] },
