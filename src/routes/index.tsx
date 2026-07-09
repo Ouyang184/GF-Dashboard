@@ -1522,14 +1522,14 @@ function PillarCard({
               </div>
             </div>
           ) : (
-            SHIFTS.map((s, i) => (
-              <div key={s} className="flex items-center justify-between text-xs">
-                <span className="font-medium text-muted-foreground">{s}</span>
-                <div className="flex items-center gap-2">
-                  <span className={`size-3 rounded-full ${statusColor(shifts[i])}`} />
+            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+              {SHIFTS.map((s, i) => (
+                <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+                  <span className="font-medium text-muted-foreground">{s}</span>
+                  <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
           {pillar.key === "Q" && (
             <div className="pt-2 border-t border-dashed border-border/60">
