@@ -1422,8 +1422,7 @@ function PillarCard({
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
           </div>
-          <div className="flex flex-col items-end gap-2">
-            <span className="font-black text-5xl text-primary/15 leading-none">{pillar.key === "S" ? "+" : pillar.key}</span>
+          <div className="flex flex-col items-end">
             <ChevronDown
               className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""} group-hover:text-foreground`}
             />
