@@ -91,6 +91,17 @@ const PILLARS: Pillar[] = [
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
 
+const SHIFT_ZONE_MAP: Record<(typeof SHIFTS)[number], string[]> = {
+  LD: ["LD Cell"],
+  MD: ["MD Cell"],
+  SD1: ["SD Cell 1"],
+  SD2: ["SD Cell 2"],
+  FS: ["Fuseal Cell"],
+  "PA&F": ["Coil & Collar"],
+  EXT: ["ENG. Extrusion", "Vinyls Extrusion"],
+};
+
+
 const FLOOR_LAYOUT: { zone: string; machines: string[] }[] = [
   { zone: "ENG. Extrusion", machines: ["11EM00", "2EM20", "10EM00", "4EM20"] },
   { zone: "Vinyls Extrusion", machines: ["1EM10"] },
@@ -254,7 +265,25 @@ function applyDeviationRule(
 }
 
 /**
+ * Map a Delivery/Inventory deviation map to per-shift statuses.
+ * A shift is red if any machine in its mapped floor zone is flagged.
+ */
+function computeDeviationShiftStatuses(
+  deviations: Record<string, boolean>,
+): Status[] {
+  return SHIFTS.map((shift) => {
+    const zones = SHIFT_ZONE_MAP[shift];
+    const machines = zones.flatMap(
+      (z) => FLOOR_LAYOUT.find((f) => f.zone === z)?.machines ?? [],
+    );
+    const hasDeviation = machines.some((m) => deviations[m]);
+    return hasDeviation ? "fail" : "ok";
+  });
+}
+
+/**
  * Quality pillar rule:
+
  *   Use the actual Molding Weekly Scrap cell-total scrap rate.
  *   If the rate is < 3.5% → every weekday dot up to today is green.
  *   Otherwise → red. Weekend and future days stay "na".
@@ -409,8 +438,11 @@ function Index() {
   const weather = useWeather();
   const quote = useDailyQuote();
   const deviationCount = useDeviationCount();
-  const deliveryDeviations = useDeviationCountFor("D");
-  const inventoryDeviations = useDeviationCountFor("I");
+  const deliveryDeviations = useDeviationMap("D");
+  const inventoryDeviations = useDeviationMap("I");
+  const deliveryDeviationCount = useDeviationCountFor("D");
+  const inventoryDeviationCount = useDeviationCountFor("I");
+
   const uploadMastercards = useMastercardsUploader();
   const uploadInputRef = useRef<HTMLInputElement | null>(null);
   const uploadCompliance = useComplianceUploader();
@@ -571,12 +603,19 @@ function Index() {
                 p.key === "Q"
                   ? applyQualityWeeklyScrapRule(buildMonthDots(i, daysInMonth))
                   : p.key === "D"
-                    ? applyDeviationRule(buildMonthDots(i, daysInMonth), "D", deliveryDeviations)
+                    ? applyDeviationRule(buildMonthDots(i, daysInMonth), "D", deliveryDeviationCount)
                     : p.key === "I"
-                      ? applyDeviationRule(buildMonthDots(i, daysInMonth), "I", inventoryDeviations)
+                      ? applyDeviationRule(buildMonthDots(i, daysInMonth), "I", inventoryDeviationCount)
                       : applyDeviationRule(buildMonthDots(i, daysInMonth), p.key, deviationCount)
               }
-              shifts={shiftStatuses[i]}
+              shifts={
+                p.key === "D"
+                  ? computeDeviationShiftStatuses(deliveryDeviations)
+                  : p.key === "I"
+                    ? computeDeviationShiftStatuses(inventoryDeviations)
+                    : shiftStatuses[i]
+              }
+
               qualityIssues={p.key === "Q" ? qualityIssues : undefined}
             />
           ))}
