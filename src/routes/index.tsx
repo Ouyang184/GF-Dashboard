@@ -265,7 +265,25 @@ function applyDeviationRule(
 }
 
 /**
+ * Map a Delivery/Inventory deviation map to per-shift statuses.
+ * A shift is red if any machine in its mapped floor zone is flagged.
+ */
+function computeDeviationShiftStatuses(
+  deviations: Record<string, boolean>,
+): Status[] {
+  return SHIFTS.map((shift) => {
+    const zones = SHIFT_ZONE_MAP[shift];
+    const machines = zones.flatMap(
+      (z) => FLOOR_LAYOUT.find((f) => f.zone === z)?.machines ?? [],
+    );
+    const hasDeviation = machines.some((m) => deviations[m]);
+    return hasDeviation ? "fail" : "ok";
+  });
+}
+
+/**
  * Quality pillar rule:
+
  *   Use the actual Molding Weekly Scrap cell-total scrap rate.
  *   If the rate is < 3.5% → every weekday dot up to today is green.
  *   Otherwise → red. Weekend and future days stay "na".
