@@ -183,9 +183,9 @@ const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
     ],
     shiftNotes: { LD: "OEE 82%", MD: "OEE 76%", SD1: "OEE 71%", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
     stats: [
-      { label: "OEE", value: "78%" },
-      { label: "Downtime (MTD)", value: "14.2h" },
-      { label: "Short stops", value: "21" },
+      { label: "Machines Running", value: "—" },
+      { label: "MC Available", value: "—" },
+      { label: "Compliance", value: "—" },
     ],
   },
 };
