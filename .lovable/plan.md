@@ -1,28 +1,25 @@
-Update all five pillar cards so each one surfaces both quick KPIs and open issues on the face of the card, like the Quality pillar already does.
+## Problem
+The KPI mini-cards on each pillar face (and inside the Safety overlay) use `truncate` on the label with a very small font (9–10px), so labels like "Machines Running", "MC Available", "Recordable Incidents", "On-Time Delivery" get cut off with an ellipsis and users can't tell what the number represents.
 
-## What will change
+## Fix (single file: `src/routes/index.tsx`)
 
-1. **Pillar card KPI row**
-   - Render the existing `PILLAR_DETAILS[pillar.key].stats` as a compact row of 3 mini stat badges under the KPI line for every pillar.
-   - For **Productivity**, also pull live API numbers (`machinesRunning`, `mcAvailablePercent`, `compliancePercent`) so the card reflects the current backend state.
-   - Keep the existing monthly dot grid and shift/scrap section unchanged.
+1. **`PillarKpiRow` (pillar card face)**
+   - Remove `truncate` from the label.
+   - Allow labels to wrap onto 2 lines with `leading-tight` and `min-h` so all 3 cards line up.
+   - Bump label size from `text-[9px]` to `text-[10px]`, keep tracking-wide but drop uppercase to `normal-case` (uppercase + narrow width is what's causing the cutoff feel).
+   - Slightly reduce value size (`text-sm` → `text-[13px]` bold) so label has room; keep the card compact.
+   - Increase padding a touch (`px-2 py-2` → `px-2 py-1.5`) and use `gap-1.5` between cards.
 
-2. **Top Issues on every card**
-   - Add a small `TopIssuesCard` (the same editable component used inside the Quality overlay) directly on each pillar card, below the shift/scrap section.
-   - Use `pillarKey` values `S`, `D`, `I`, `P` for their own localStorage keys so each pillar keeps its own list.
-   - Keep Quality's existing Top Issues card as-is.
+2. **`PillarKpiCard` (inside Safety overlay, under Monthly Status)**
+   - Same treatment: no `truncate`, wrap to 2 lines, keep label readable (`text-[11px]`, normal case, `leading-tight`, `min-h`).
+   - Keep the larger value (`text-lg`) since there's more room in the overlay.
 
-3. **Overlay consistency**
-   - Safety overlay currently only shows a full-width Monthly Status section. Re-layout it to match Quality/D/I/P: full-width main content on top, then a two-column row with Top Issues and Action Items.
-   - Leave the special main sections untouched: Productivity keeps Live KPI tree + charts, Quality keeps Molding Scrap + Scrap Rate chart, Delivery/Inventory keep DeviationFloor.
-
-4. **Styling guardrails**
-   - Use the existing card tokens (`bg-card`, `border-border`, `text-muted-foreground`, etc.).
-   - Keep the compact size so the 5-card grid still fits without excessive vertical growth.
-
-## Files to edit
-- `src/routes/index.tsx` — update `PillarCard`, `PillarDetailOverlay`, and the `PILLAR_DETAILS` stats where needed.
+3. **Shorten a couple of stat labels in `PILLAR_DETAILS`** where the full phrase is long and a shorter version reads the same:
+   - Safety: "Recordable Incidents" → "Recordables", keep others.
+   - Delivery: "On-Time Delivery" → "On-Time %".
+   - Inventory: keep as-is if they already fit after wrapping.
+   - Only trim where needed to avoid awkward 3-line wraps; keep meaning obvious.
 
 ## Out of scope
-- No backend changes; Productivity live KPIs already come from `useDashboardData()`.
-- No new routes or data sources.
+- No changes to data sources, overlay structure, or Top Issues cards.
+- No layout changes to the 5-card grid.
