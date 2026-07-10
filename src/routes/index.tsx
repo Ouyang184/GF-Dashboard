@@ -1445,7 +1445,7 @@ function PillarCard({
           aria-expanded={expanded}
           className="flex w-full items-start justify-between text-left cursor-pointer group"
         >
-          <div>
+          <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="grid place-items-center shrink-0 size-9 rounded-sm bg-primary text-primary-foreground">
                 <Icon className="size-5" />
