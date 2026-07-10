@@ -2006,7 +2006,7 @@ function PillarDetailOverlay({
 
             {pillar.key === "S" && (
               <>
-                <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
+                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
                   <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
                     {dots.map((d) => (
@@ -2037,6 +2037,9 @@ function PillarDetailOverlay({
                       <span className="size-3 rounded-full bg-danger" />
                       {failCount} miss
                     </span>
+                  </div>
+                  <div className="mt-5 pt-5 border-t border-dashed border-border/60">
+                    <PillarKpiCard pillar={pillar} data={null} />
                   </div>
                 </section>
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
