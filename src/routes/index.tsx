@@ -1929,6 +1929,7 @@ function PillarDetailOverlay({
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
+  const { data: liveData } = useDashboardData();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -2018,61 +2019,48 @@ function PillarDetailOverlay({
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <AvailabilityScrapChart />
                 </section>
+                <WeeklyScrapRates />
               </>
             )}
 
             {pillar.key === "S" && (
-              <>
-                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
-                  <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
-                    {dots.map((d) => (
-                      <div
-                        key={d.day}
-                        className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
-                          d.weekend
-                            ? "bg-muted/30 text-muted-foreground"
-                            : d.status === "na"
-                              ? "bg-secondary text-muted-foreground"
-                              : `text-background ${statusColor(d.status)}`
-                        }`}
-                      >
-                        {d.day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-success" />
-                      {okCount} ok
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-warning" />
-                      {warnCount} warn
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-danger" />
-                      {failCount} miss
-                    </span>
-                  </div>
-                  <div className="mt-5 pt-5 border-t border-dashed border-border/60">
-                    <PillarKpiCard pillar={pillar} data={null} />
-                  </div>
-                </section>
-                <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                        <span className="font-medium text-muted-foreground">{s}</span>
-                        <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </>
+              <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
+                <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
+                  {dots.map((d) => (
+                    <div
+                      key={d.day}
+                      className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
+                        d.weekend
+                          ? "bg-muted/30 text-muted-foreground"
+                          : d.status === "na"
+                            ? "bg-secondary text-muted-foreground"
+                            : `text-background ${statusColor(d.status)}`
+                      }`}
+                    >
+                      {d.day}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-success" />
+                    {okCount} ok
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-warning" />
+                    {warnCount} warn
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-danger" />
+                    {failCount} miss
+                  </span>
+                </div>
+              </section>
             )}
 
+            <PillarKpiCard pillar={pillar} data={liveData} />
+            <ShiftsCard shifts={shifts} />
             <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
             <ActionItemsCard pillarKey={pillar.key} defaultItems={detail.actions} />
           </div>
@@ -2081,6 +2069,7 @@ function PillarDetailOverlay({
     </div>
   );
 }
+
 
 type ActionItem = { task: string; owner: string; due: string };
 
