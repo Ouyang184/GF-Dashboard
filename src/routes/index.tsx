@@ -1354,12 +1354,14 @@ function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | 
       {stats.map((s) => (
         <div
           key={s.label}
-          className="rounded-lg border border-border/60 bg-card px-1.5 py-1.5 text-center shadow-[var(--shadow-card)] flex flex-col items-center justify-between"
+          className="grid grid-rows-[1fr_auto] rounded-lg border border-border/60 bg-card px-1.5 py-2 text-center shadow-[var(--shadow-card)]"
         >
-          <div className="text-[10px] leading-tight text-muted-foreground min-h-[2.2em] flex items-center justify-center">
-            {s.label}
+          <div className="flex items-center justify-center text-[10px] font-medium leading-[1.15] tracking-tight text-muted-foreground">
+            <span className="line-clamp-2">{s.label}</span>
           </div>
-          <div className="text-[13px] font-bold text-foreground mt-1">{s.value}</div>
+          <div className="mt-1 font-bold tabular-nums leading-none text-foreground text-[15px]">
+            {s.value}
+          </div>
         </div>
       ))}
     </div>
@@ -1375,12 +1377,14 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border/60 bg-secondary/30 p-3 text-center flex flex-col items-center justify-between"
+            className="grid grid-rows-[1fr_auto] rounded-xl border border-border/60 bg-secondary/30 p-3 text-center"
           >
-            <div className="text-[11px] leading-tight text-muted-foreground min-h-[2.4em] flex items-center justify-center">
-              {s.label}
+            <div className="flex items-center justify-center text-[11px] font-medium leading-[1.2] tracking-tight text-muted-foreground">
+              <span className="line-clamp-2">{s.label}</span>
             </div>
-            <div className="text-lg font-bold text-foreground mt-1">{s.value}</div>
+            <div className="mt-2 text-xl font-bold tabular-nums leading-none text-foreground">
+              {s.value}
+            </div>
           </div>
         ))}
       </div>
