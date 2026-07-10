@@ -1530,11 +1530,9 @@ function PillarCard({
               ))}
             </div>
           )}
-          {pillar.key === "Q" && (
-            <div className="pt-2 border-t border-dashed border-border/60">
-              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} />
-            </div>
-          )}
+          <div className="pt-2 border-t border-dashed border-border/60">
+            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
+          </div>
         </div>
       </div>
       {expanded && (
