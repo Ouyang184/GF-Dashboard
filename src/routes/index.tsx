@@ -1334,24 +1334,53 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
+function usePillarStats(pillar: Pillar, data: DashboardData | null) {
+  return useMemo(() => {
+    if (pillar.key === "P" && data) {
+      return [
+        { label: "Machines Running", value: String(data.machinesRunning ?? 0) },
+        { label: "MC Available", value: `${Math.round(data.mcAvailablePercent ?? 0)}%` },
+        { label: "Compliance", value: `${Math.round(data.compliancePercent ?? 0)}%` },
+      ];
+    }
+    return PILLAR_DETAILS[pillar.key].stats;
+  }, [pillar.key, data]);
+}
+
 function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
-  const stats =
-    pillar.key === "P" && data
-      ? [
-          { label: "Machines Running", value: String(data.machinesRunning ?? 0) },
-          { label: "MC Available", value: `${Math.round(data.mcAvailablePercent ?? 0)}%` },
-          { label: "Compliance", value: `${Math.round(data.compliancePercent ?? 0)}%` },
-        ]
-      : PILLAR_DETAILS[pillar.key].stats;
+  const stats = usePillarStats(pillar, data);
   return (
-    <div className="mt-3 flex flex-wrap gap-2">
+    <div className="mt-3 grid grid-cols-3 gap-2">
       {stats.map((s) => (
-        <div key={s.label} className="rounded-md border border-border/60 bg-secondary/30 px-2 py-1">
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
-          <div className="text-xs font-bold text-foreground">{s.value}</div>
+        <div
+          key={s.label}
+          className="rounded-lg border border-border/60 bg-card px-2 py-2 text-center shadow-[var(--shadow-card)]"
+        >
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground truncate">{s.label}</div>
+          <div className="text-sm font-bold text-foreground mt-0.5">{s.value}</div>
         </div>
       ))}
     </div>
+  );
+}
+
+function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
+  const stats = usePillarStats(pillar, data);
+  return (
+    <section className="rounded-2xl border border-border/60 bg-card p-5">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">KPIs</h3>
+      <div className="grid grid-cols-3 gap-3">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="rounded-xl border border-border/60 bg-secondary/30 p-3 text-center"
+          >
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground truncate">{s.label}</div>
+            <div className="text-lg font-bold text-foreground mt-1">{s.value}</div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
