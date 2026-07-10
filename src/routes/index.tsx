@@ -1419,6 +1419,7 @@ function PillarCard({
               </div>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
+            <PillarKpiRow pillar={pillar} data={liveData} />
           </div>
           <div className="flex flex-col items-end">
             <ChevronDown
