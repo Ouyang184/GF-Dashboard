@@ -1464,7 +1464,6 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const { data: liveData } = useDashboardData();
   const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
   useEffect(() => {
@@ -1514,7 +1513,6 @@ function PillarCard({
               </div>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
-            <PillarKpiRow pillar={pillar} data={liveData} />
           </div>
           <div className="flex flex-col items-end">
             <ChevronDown
@@ -1574,61 +1572,13 @@ function PillarCard({
           <Legend tone="fail" label={`${failCount} miss`} />
         </div>
 
-        {/* Shifts */}
-        <div className="mt-4 border-t border-border/60 pt-4 space-y-2">
-          {pillar.key === "Q" ? (
-            <div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 text-center">
-                Weekly Scrap Rates
-              </div>
-              <div className="relative h-32 border-l border-b border-border/60">
-                <div className="absolute inset-0 flex items-end justify-around px-1 gap-1">
-                  {MOLDING_WEEKLY_SCRAP.map((c) => {
-                    const colors: Record<string, string> = {
-                      LD: "#ea7a2b",
-                      MD: "#1f6fd0",
-                      SD1: "#e2231a",
-                      SD2: "#1fa84c",
-                      FS: "#111111",
-                    };
-                    const maxRate = Math.max(...MOLDING_WEEKLY_SCRAP.map((x) => x.scrapRate));
-                    const heightPct = Math.max(4, (c.scrapRate / maxRate) * 92);
-                    return (
-                      <div key={c.cell} className="flex flex-col items-center justify-end h-full flex-1">
-                        <span className="text-[9px] font-semibold text-foreground mb-0.5">
-                          {(c.scrapRate * 100).toFixed(1)}%
-                        </span>
-                        <div
-                          className="w-full max-w-[22px] rounded-sm"
-                          style={{ height: `${heightPct}%`, backgroundColor: colors[c.cell] ?? "#666" }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="flex justify-around px-1 gap-1 mt-1">
-                {MOLDING_WEEKLY_SCRAP.map((c) => (
-                  <div key={c.cell} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">
-                    {c.cell}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
-              {SHIFTS.map((s, i) => (
-                <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                  <span className="font-medium text-muted-foreground">{s}</span>
-                  <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="pt-2 border-t border-dashed border-border/60">
-            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
-          </div>
-        </div>
+        {/* Compact Top Issues preview */}
+        <TopIssuesCard
+          pillarKey={pillar.key}
+          defaultItems={detail.issues}
+          compact
+          onExpand={() => setExpanded(true)}
+        />
       </div>
       {expanded && (
         <PillarDetailOverlay
@@ -1643,6 +1593,7 @@ function PillarCard({
     </div>
   );
 }
+
 
 function FloorMap({
  floorMap,
