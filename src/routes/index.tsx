@@ -183,9 +183,9 @@ const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
     ],
     shiftNotes: { LD: "OEE 82%", MD: "OEE 76%", SD1: "OEE 71%", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
     stats: [
-      { label: "OEE", value: "78%" },
-      { label: "Downtime (MTD)", value: "14.2h" },
-      { label: "Short stops", value: "21" },
+      { label: "Machines Running", value: "—" },
+      { label: "MC Available", value: "—" },
+      { label: "Compliance", value: "—" },
     ],
   },
 };
@@ -1334,6 +1334,27 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
+function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
+  const stats =
+    pillar.key === "P" && data
+      ? [
+          { label: "Machines Running", value: String(data.machinesRunning ?? 0) },
+          { label: "MC Available", value: `${Math.round(data.mcAvailablePercent ?? 0)}%` },
+          { label: "Compliance", value: `${Math.round(data.compliancePercent ?? 0)}%` },
+        ]
+      : PILLAR_DETAILS[pillar.key].stats;
+  return (
+    <div className="mt-3 flex flex-wrap gap-2">
+      {stats.map((s) => (
+        <div key={s.label} className="rounded-md border border-border/60 bg-secondary/30 px-2 py-1">
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+          <div className="text-xs font-bold text-foreground">{s.value}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PillarCard({
   pillar,
   dots,
@@ -1348,6 +1369,7 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
+  const { data: liveData } = useDashboardData();
   const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
   useEffect(() => {
@@ -1397,6 +1419,7 @@ function PillarCard({
               </div>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
+            <PillarKpiRow pillar={pillar} data={liveData} />
           </div>
           <div className="flex flex-col items-end">
             <ChevronDown
@@ -1507,11 +1530,9 @@ function PillarCard({
               ))}
             </div>
           )}
-          {pillar.key === "Q" && (
-            <div className="pt-2 border-t border-dashed border-border/60">
-              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} />
-            </div>
-          )}
+          <div className="pt-2 border-t border-dashed border-border/60">
+            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
+          </div>
         </div>
       </div>
       {expanded && (
@@ -1955,39 +1976,52 @@ function PillarDetailOverlay({
             )}
 
             {pillar.key === "S" && (
-              <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
-                <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
-                  {dots.map((d) => (
-                    <div
-                      key={d.day}
-                      className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
-                        d.weekend
-                          ? "bg-muted/30 text-muted-foreground"
-                          : d.status === "na"
-                            ? "bg-secondary text-muted-foreground"
-                            : `text-background ${statusColor(d.status)}`
-                      }`}
-                    >
-                      {d.day}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded-full bg-success" />
-                    {okCount} ok
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded-full bg-warning" />
-                    {warnCount} warn
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <span className="size-3 rounded-full bg-danger" />
-                    {failCount} miss
-                  </span>
-                </div>
-              </section>
+              <>
+                <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
+                  <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
+                    {dots.map((d) => (
+                      <div
+                        key={d.day}
+                        className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
+                          d.weekend
+                            ? "bg-muted/30 text-muted-foreground"
+                            : d.status === "na"
+                              ? "bg-secondary text-muted-foreground"
+                              : `text-background ${statusColor(d.status)}`
+                        }`}
+                      >
+                        {d.day}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <span className="size-3 rounded-full bg-success" />
+                      {okCount} ok
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="size-3 rounded-full bg-warning" />
+                      {warnCount} warn
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="size-3 rounded-full bg-danger" />
+                      {failCount} miss
+                    </span>
+                  </div>
+                </section>
+                <section className="rounded-2xl border border-border/60 bg-card p-6">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {SHIFTS.map((s, i) => (
+                      <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+                        <span className="font-medium text-muted-foreground">{s}</span>
+                        <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </>
             )}
 
             <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
