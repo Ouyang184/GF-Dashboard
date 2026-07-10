@@ -157,7 +157,7 @@ const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
     ],
     shiftNotes: { LD: "On schedule", MD: "−2 units", SD1: "Caught up", SD2: "—", FS: "—", "PA&F": "—", EXT: "Delay" },
     stats: [
-      { label: "OTIF", value: "96%" },
+      { label: "On-Time %", value: "96%" },
       { label: "Backlog", value: "12" },
       { label: "Deviations", value: "3" },
     ],
@@ -170,8 +170,8 @@ const PILLAR_DETAILS: Record<Pillar["key"], PillarDetail> = {
     ],
     shiftNotes: { LD: "Counts ok", MD: "1 short", SD1: "Reconciled", SD2: "—", FS: "—", "PA&F": "—", EXT: "—" },
     stats: [
-      { label: "Inventory accuracy", value: "98.1%" },
-      { label: "Days on hand", value: "11" },
+      { label: "Inv. Accuracy", value: "98.1%" },
+      { label: "Days on Hand", value: "11" },
       { label: "Variances", value: "2" },
     ],
   },
@@ -1350,14 +1350,16 @@ function usePillarStats(pillar: Pillar, data: DashboardData | null) {
 function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
   const stats = usePillarStats(pillar, data);
   return (
-    <div className="mt-3 grid grid-cols-3 gap-2">
+    <div className="mt-3 grid grid-cols-3 gap-1.5">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="rounded-lg border border-border/60 bg-card px-2 py-2 text-center shadow-[var(--shadow-card)]"
+          className="rounded-lg border border-border/60 bg-card px-1.5 py-1.5 text-center shadow-[var(--shadow-card)] flex flex-col items-center justify-between"
         >
-          <div className="text-[9px] uppercase tracking-wider text-muted-foreground truncate">{s.label}</div>
-          <div className="text-sm font-bold text-foreground mt-0.5">{s.value}</div>
+          <div className="text-[10px] leading-tight text-muted-foreground min-h-[2.2em] flex items-center justify-center">
+            {s.label}
+          </div>
+          <div className="text-[13px] font-bold text-foreground mt-1">{s.value}</div>
         </div>
       ))}
     </div>
@@ -1373,9 +1375,11 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-xl border border-border/60 bg-secondary/30 p-3 text-center"
+            className="rounded-xl border border-border/60 bg-secondary/30 p-3 text-center flex flex-col items-center justify-between"
           >
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground truncate">{s.label}</div>
+            <div className="text-[11px] leading-tight text-muted-foreground min-h-[2.4em] flex items-center justify-center">
+              {s.label}
+            </div>
             <div className="text-lg font-bold text-foreground mt-1">{s.value}</div>
           </div>
         ))}
