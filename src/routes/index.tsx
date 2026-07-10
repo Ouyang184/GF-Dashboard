@@ -2103,7 +2103,17 @@ function useLocalState<T>(storageKey: string, defaultValue: T) {
   return [value, setValue] as const;
 }
 
-function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: string[] }) {
+function TopIssuesCard({
+  pillarKey,
+  defaultItems,
+  compact,
+  onExpand,
+}: {
+  pillarKey: string;
+  defaultItems: string[];
+  compact?: boolean;
+  onExpand?: () => void;
+}) {
   const [items, setItems] = useLocalState<string[]>(`pillar:${pillarKey}:issues`, defaultItems);
   const [draft, setDraft] = useState("");
   const update = (i: number, v: string) => setItems((p) => p.map((it, idx) => (idx === i ? v : it)));
@@ -2114,6 +2124,31 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
     setItems((p) => [...p, v]);
     setDraft("");
   };
+
+  if (compact) {
+    const count = items.length;
+    const preview = items[0] ?? "No issues";
+    return (
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onExpand?.();
+        }}
+        className="mt-3 rounded-xl border border-border/60 bg-card p-3 hover:bg-secondary/30 transition cursor-pointer"
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Top Issues</span>
+          {count > 1 && (
+            <span className="text-[10px] font-semibold text-muted-foreground">+{count - 1} more</span>
+          )}
+        </div>
+        <div className="mt-1 text-xs text-foreground truncate" title={preview}>
+          {preview}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="group/card rounded-2xl border border-border/60 bg-card p-6">
       <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
@@ -2155,6 +2190,7 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
     </section>
   );
 }
+
 
 function ActionItemsCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: ActionItem[] }) {
   const [items, setItems] = useLocalState<ActionItem[]>(`pillar:${pillarKey}:actions`, defaultItems);
