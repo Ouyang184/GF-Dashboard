@@ -1350,18 +1350,18 @@ function usePillarStats(pillar: Pillar, data: DashboardData | null) {
 function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
   const stats = usePillarStats(pillar, data);
   return (
-    <div className="mt-3 grid grid-cols-3 gap-1.5">
+    <div className="mt-3 flex flex-col gap-1.5">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="grid grid-rows-[1fr_auto] rounded-lg border border-border/60 bg-card px-1.5 py-2 text-center shadow-[var(--shadow-card)]"
+          className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 shadow-[var(--shadow-card)]"
         >
-          <div className="flex items-center justify-center text-[10px] font-medium leading-[1.15] tracking-tight text-muted-foreground">
-            <span className="line-clamp-2">{s.label}</span>
-          </div>
-          <div className="mt-1 font-bold tabular-nums leading-none text-foreground text-[15px]">
+          <span className="text-[11px] font-medium leading-tight text-muted-foreground">
+            {s.label}
+          </span>
+          <span className="font-bold tabular-nums leading-none text-foreground text-[15px]">
             {s.value}
-          </div>
+          </span>
         </div>
       ))}
     </div>
@@ -1373,18 +1373,18 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
   return (
     <section className="rounded-2xl border border-border/60 bg-card p-5">
       <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">KPIs</h3>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col gap-3">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="grid grid-rows-[1fr_auto] rounded-xl border border-border/60 bg-secondary/30 p-3 text-center"
+            className="flex items-center justify-between rounded-xl border border-border/60 bg-secondary/30 px-4 py-3"
           >
-            <div className="flex items-center justify-center text-[11px] font-medium leading-[1.2] tracking-tight text-muted-foreground">
-              <span className="line-clamp-2">{s.label}</span>
-            </div>
-            <div className="mt-2 text-xl font-bold tabular-nums leading-none text-foreground">
+            <span className="text-[12px] font-medium leading-tight text-muted-foreground">
+              {s.label}
+            </span>
+            <span className="text-xl font-bold tabular-nums leading-none text-foreground">
               {s.value}
-            </div>
+            </span>
           </div>
         ))}
       </div>
