@@ -1392,6 +1392,64 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
   );
 }
 
+function ShiftsCard({ shifts }: { shifts: Status[] }) {
+  return (
+    <section className="rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
+      <div className="grid grid-cols-2 gap-2">
+        {SHIFTS.map((s, i) => (
+          <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+            <span className="font-medium text-muted-foreground">{s}</span>
+            <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WeeklyScrapRates() {
+  const colors: Record<string, string> = {
+    LD: "#ea7a2b",
+    MD: "#1f6fd0",
+    SD1: "#e2231a",
+    SD2: "#1fa84c",
+    FS: "#111111",
+  };
+  const maxRate = Math.max(...MOLDING_WEEKLY_SCRAP.map((x) => x.scrapRate));
+  return (
+    <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Weekly Scrap Rates</h3>
+      <div className="relative h-32 border-l border-b border-border/60">
+        <div className="absolute inset-0 flex items-end justify-around px-1 gap-1">
+          {MOLDING_WEEKLY_SCRAP.map((c) => {
+            const heightPct = Math.max(4, (c.scrapRate / maxRate) * 92);
+            return (
+              <div key={c.cell} className="flex flex-col items-center justify-end h-full flex-1">
+                <span className="text-[9px] font-semibold text-foreground mb-0.5">
+                  {(c.scrapRate * 100).toFixed(1)}%
+                </span>
+                <div
+                  className="w-full max-w-[22px] rounded-sm"
+                  style={{ height: `${heightPct}%`, backgroundColor: colors[c.cell] ?? "#666" }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex justify-around px-1 gap-1 mt-1">
+        {MOLDING_WEEKLY_SCRAP.map((c) => (
+          <div key={c.cell} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">
+            {c.cell}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
 function PillarCard({
   pillar,
   dots,
