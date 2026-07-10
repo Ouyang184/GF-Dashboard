@@ -1392,6 +1392,64 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
   );
 }
 
+function ShiftsCard({ shifts }: { shifts: Status[] }) {
+  return (
+    <section className="rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
+      <div className="grid grid-cols-2 gap-2">
+        {SHIFTS.map((s, i) => (
+          <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+            <span className="font-medium text-muted-foreground">{s}</span>
+            <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function WeeklyScrapRates() {
+  const colors: Record<string, string> = {
+    LD: "#ea7a2b",
+    MD: "#1f6fd0",
+    SD1: "#e2231a",
+    SD2: "#1fa84c",
+    FS: "#111111",
+  };
+  const maxRate = Math.max(...MOLDING_WEEKLY_SCRAP.map((x) => x.scrapRate));
+  return (
+    <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Weekly Scrap Rates</h3>
+      <div className="relative h-32 border-l border-b border-border/60">
+        <div className="absolute inset-0 flex items-end justify-around px-1 gap-1">
+          {MOLDING_WEEKLY_SCRAP.map((c) => {
+            const heightPct = Math.max(4, (c.scrapRate / maxRate) * 92);
+            return (
+              <div key={c.cell} className="flex flex-col items-center justify-end h-full flex-1">
+                <span className="text-[9px] font-semibold text-foreground mb-0.5">
+                  {(c.scrapRate * 100).toFixed(1)}%
+                </span>
+                <div
+                  className="w-full max-w-[22px] rounded-sm"
+                  style={{ height: `${heightPct}%`, backgroundColor: colors[c.cell] ?? "#666" }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="flex justify-around px-1 gap-1 mt-1">
+        {MOLDING_WEEKLY_SCRAP.map((c) => (
+          <div key={c.cell} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">
+            {c.cell}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+
 function PillarCard({
   pillar,
   dots,
@@ -1406,7 +1464,6 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const { data: liveData } = useDashboardData();
   const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
   useEffect(() => {
@@ -1456,7 +1513,6 @@ function PillarCard({
               </div>
             </div>
             <p className="mt-3 text-xs text-muted-foreground">KPI: {pillar.kpi}</p>
-            <PillarKpiRow pillar={pillar} data={liveData} />
           </div>
           <div className="flex flex-col items-end">
             <ChevronDown
@@ -1516,61 +1572,13 @@ function PillarCard({
           <Legend tone="fail" label={`${failCount} miss`} />
         </div>
 
-        {/* Shifts */}
-        <div className="mt-4 border-t border-border/60 pt-4 space-y-2">
-          {pillar.key === "Q" ? (
-            <div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 text-center">
-                Weekly Scrap Rates
-              </div>
-              <div className="relative h-32 border-l border-b border-border/60">
-                <div className="absolute inset-0 flex items-end justify-around px-1 gap-1">
-                  {MOLDING_WEEKLY_SCRAP.map((c) => {
-                    const colors: Record<string, string> = {
-                      LD: "#ea7a2b",
-                      MD: "#1f6fd0",
-                      SD1: "#e2231a",
-                      SD2: "#1fa84c",
-                      FS: "#111111",
-                    };
-                    const maxRate = Math.max(...MOLDING_WEEKLY_SCRAP.map((x) => x.scrapRate));
-                    const heightPct = Math.max(4, (c.scrapRate / maxRate) * 92);
-                    return (
-                      <div key={c.cell} className="flex flex-col items-center justify-end h-full flex-1">
-                        <span className="text-[9px] font-semibold text-foreground mb-0.5">
-                          {(c.scrapRate * 100).toFixed(1)}%
-                        </span>
-                        <div
-                          className="w-full max-w-[22px] rounded-sm"
-                          style={{ height: `${heightPct}%`, backgroundColor: colors[c.cell] ?? "#666" }}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              <div className="flex justify-around px-1 gap-1 mt-1">
-                {MOLDING_WEEKLY_SCRAP.map((c) => (
-                  <div key={c.cell} className="flex-1 text-center text-[10px] font-semibold text-muted-foreground">
-                    {c.cell}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-x-3 gap-y-2">
-              {SHIFTS.map((s, i) => (
-                <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                  <span className="font-medium text-muted-foreground">{s}</span>
-                  <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                </div>
-              ))}
-            </div>
-          )}
-          <div className="pt-2 border-t border-dashed border-border/60">
-            <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
-          </div>
-        </div>
+        {/* Compact Top Issues preview */}
+        <TopIssuesCard
+          pillarKey={pillar.key}
+          defaultItems={detail.issues}
+          compact
+          onExpand={() => setExpanded(true)}
+        />
       </div>
       {expanded && (
         <PillarDetailOverlay
@@ -1585,6 +1593,7 @@ function PillarCard({
     </div>
   );
 }
+
 
 function FloorMap({
  floorMap,
@@ -1920,6 +1929,7 @@ function PillarDetailOverlay({
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
+  const { data: liveData } = useDashboardData();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -2009,61 +2019,48 @@ function PillarDetailOverlay({
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <AvailabilityScrapChart />
                 </section>
+                <WeeklyScrapRates />
               </>
             )}
 
             {pillar.key === "S" && (
-              <>
-                <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
-                  <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
-                    {dots.map((d) => (
-                      <div
-                        key={d.day}
-                        className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
-                          d.weekend
-                            ? "bg-muted/30 text-muted-foreground"
-                            : d.status === "na"
-                              ? "bg-secondary text-muted-foreground"
-                              : `text-background ${statusColor(d.status)}`
-                        }`}
-                      >
-                        {d.day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-success" />
-                      {okCount} ok
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-warning" />
-                      {warnCount} warn
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="size-3 rounded-full bg-danger" />
-                      {failCount} miss
-                    </span>
-                  </div>
-                  <div className="mt-5 pt-5 border-t border-dashed border-border/60">
-                    <PillarKpiCard pillar={pillar} data={null} />
-                  </div>
-                </section>
-                <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                        <span className="font-medium text-muted-foreground">{s}</span>
-                        <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </>
+              <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
+                <div className="grid grid-cols-7 sm:grid-cols-14 gap-2">
+                  {dots.map((d) => (
+                    <div
+                      key={d.day}
+                      className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
+                        d.weekend
+                          ? "bg-muted/30 text-muted-foreground"
+                          : d.status === "na"
+                            ? "bg-secondary text-muted-foreground"
+                            : `text-background ${statusColor(d.status)}`
+                      }`}
+                    >
+                      {d.day}
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-success" />
+                    {okCount} ok
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-warning" />
+                    {warnCount} warn
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="size-3 rounded-full bg-danger" />
+                    {failCount} miss
+                  </span>
+                </div>
+              </section>
             )}
 
+            <PillarKpiCard pillar={pillar} data={liveData} />
+            <ShiftsCard shifts={shifts} />
             <TopIssuesCard pillarKey={pillar.key} defaultItems={detail.issues} />
             <ActionItemsCard pillarKey={pillar.key} defaultItems={detail.actions} />
           </div>
@@ -2072,6 +2069,7 @@ function PillarDetailOverlay({
     </div>
   );
 }
+
 
 type ActionItem = { task: string; owner: string; due: string };
 
@@ -2094,7 +2092,17 @@ function useLocalState<T>(storageKey: string, defaultValue: T) {
   return [value, setValue] as const;
 }
 
-function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: string[] }) {
+function TopIssuesCard({
+  pillarKey,
+  defaultItems,
+  compact,
+  onExpand,
+}: {
+  pillarKey: string;
+  defaultItems: string[];
+  compact?: boolean;
+  onExpand?: () => void;
+}) {
   const [items, setItems] = useLocalState<string[]>(`pillar:${pillarKey}:issues`, defaultItems);
   const [draft, setDraft] = useState("");
   const update = (i: number, v: string) => setItems((p) => p.map((it, idx) => (idx === i ? v : it)));
@@ -2105,6 +2113,31 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
     setItems((p) => [...p, v]);
     setDraft("");
   };
+
+  if (compact) {
+    const count = items.length;
+    const preview = items[0] ?? "No issues";
+    return (
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onExpand?.();
+        }}
+        className="mt-3 rounded-xl border border-border/60 bg-card p-3 hover:bg-secondary/30 transition cursor-pointer"
+      >
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Top Issues</span>
+          {count > 1 && (
+            <span className="text-[10px] font-semibold text-muted-foreground">+{count - 1} more</span>
+          )}
+        </div>
+        <div className="mt-1 text-xs text-foreground truncate" title={preview}>
+          {preview}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section className="group/card rounded-2xl border border-border/60 bg-card p-6">
       <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
@@ -2146,6 +2179,7 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
     </section>
   );
 }
+
 
 function ActionItemsCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: ActionItem[] }) {
   const [items, setItems] = useLocalState<ActionItem[]>(`pillar:${pillarKey}:actions`, defaultItems);

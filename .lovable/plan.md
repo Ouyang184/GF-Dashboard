@@ -1,25 +1,45 @@
+# Plan: Declutter Pillar Cards
+
 ## Problem
-The KPI mini-cards on each pillar face (and inside the Safety overlay) use `truncate` on the label with a very small font (9–10px), so labels like "Machines Running", "MC Available", "Recordable Incidents", "On-Time Delivery" get cut off with an ellipsis and users can't tell what the number represents.
+Each pillar card currently packs in: a header, 3 stacked KPI rows, a 31-day calendar, 7 shift dots, a summary, and a Top Issues list. The cards feel crowded and the KPI rows make the front card look like a spreadsheet rather than a status indicator.
 
-## Fix (single file: `src/routes/index.tsx`)
+## Goal
+Make the front of each pillar read as a **daily/monthly status card** at a glance, while moving deeper diagnostics into the expanded overlay.
 
-1. **`PillarKpiRow` (pillar card face)**
-   - Remove `truncate` from the label.
-   - Allow labels to wrap onto 2 lines with `leading-tight` and `min-h` so all 3 cards line up.
-   - Bump label size from `text-[9px]` to `text-[10px]`, keep tracking-wide but drop uppercase to `normal-case` (uppercase + narrow width is what's causing the cutoff feel).
-   - Slightly reduce value size (`text-sm` → `text-[13px]` bold) so label has room; keep the card compact.
-   - Increase padding a touch (`px-2 py-2` → `px-2 py-1.5`) and use `gap-1.5` between cards.
+## What I will change
 
-2. **`PillarKpiCard` (inside Safety overlay, under Monthly Status)**
-   - Same treatment: no `truncate`, wrap to 2 lines, keep label readable (`text-[11px]`, normal case, `leading-tight`, `min-h`).
-   - Keep the larger value (`text-lg`) since there's more room in the overlay.
+### Front card (PillarCard)
+Keep only:
+- Pillar header: icon + label + KPI line
+- 31-day calendar dots (month-over-month status)
+- Summary badge: `X ok · Y warn · Z miss`
+- Compact Top Issues preview: show only the first issue (or a count), clickable to expand
+- Chevron / expand affordance
 
-3. **Shorten a couple of stat labels in `PILLAR_DETAILS`** where the full phrase is long and a shorter version reads the same:
-   - Safety: "Recordable Incidents" → "Recordables", keep others.
-   - Delivery: "On-Time Delivery" → "On-Time %".
-   - Inventory: keep as-is if they already fit after wrapping.
-   - Only trim where needed to avoid awkward 3-line wraps; keep meaning obvious.
+Remove from front card:
+- The 3 stacked KPI rows
+- The 7 shift-dot grid
 
-## Out of scope
-- No changes to data sources, overlay structure, or Top Issues cards.
-- No layout changes to the 5-card grid.
+### Expanded overlay (PillarDetailOverlay)
+Move into the overlay as dedicated sections:
+- **KPIs** — the full stacked KPI rows (including live Productivity data from the backend)
+- **Shifts** — the 7 shift-dot grid with per-shift notes
+- **Top Issues** — the full editable Top Issues list
+
+### Scope
+Apply the same layout consistently to all five pillars: Safety, Quality, Delivery, Inventory, Productivity.
+
+### Non-goals
+- No new backend routes or data changes.
+- No color palette or typography redesign; keep the existing design tokens.
+- No new chart types or data visualizations.
+
+## Files to touch
+- `src/routes/index.tsx` — refactor `PillarCard`, `PillarDetailOverlay`, `PillarKpiRow`, and `PillarKpiCard` to the new layout; keep `usePillarStats` and live data wiring intact.
+
+## Success criteria
+- Front card shows only header, calendar, summary, and a compact Top Issues preview.
+- KPI rows and shift dots appear inside the expanded overlay.
+- All five pillars share the same visual hierarchy.
+- Productivity overlay still uses live API values (`machinesRunning`, `mcAvailablePercent`, `compliancePercent`).
+- Build passes and the dashboard renders without layout overlap.
