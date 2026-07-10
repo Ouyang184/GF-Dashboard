@@ -1369,6 +1369,7 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
+  const { data: liveData } = useDashboardData();
   const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
   useEffect(() => {
