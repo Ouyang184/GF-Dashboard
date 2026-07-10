@@ -1350,11 +1350,11 @@ function usePillarStats(pillar: Pillar, data: DashboardData | null) {
 function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
   const stats = usePillarStats(pillar, data);
   return (
-    <div className="mt-3 flex flex-col gap-1.5">
+    <div className="mt-3 flex flex-col flex-1 gap-2 min-h-0">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="flex items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 shadow-[var(--shadow-card)]"
+          className="flex w-full flex-1 items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 shadow-[var(--shadow-card)] min-h-[44px]"
         >
           <span className="text-[11px] font-medium leading-tight text-muted-foreground">
             {s.label}
@@ -1377,9 +1377,9 @@ function PillarKpiCard({ pillar, data }: { pillar: Pillar; data: DashboardData |
         {stats.map((s) => (
           <div
             key={s.label}
-            className="flex items-center justify-between rounded-xl border border-border/60 bg-secondary/30 px-4 py-3"
+            className="flex w-full items-center justify-between rounded-xl border border-border/60 bg-secondary/30 px-4 py-4"
           >
-            <span className="text-[12px] font-medium leading-tight text-muted-foreground">
+            <span className="text-[13px] font-medium leading-tight text-muted-foreground">
               {s.label}
             </span>
             <span className="text-xl font-bold tabular-nums leading-none text-foreground">
@@ -1445,7 +1445,7 @@ function PillarCard({
           aria-expanded={expanded}
           className="flex w-full items-start justify-between text-left cursor-pointer group"
         >
-          <div>
+          <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="grid place-items-center shrink-0 size-9 rounded-sm bg-primary text-primary-foreground">
                 <Icon className="size-5" />
