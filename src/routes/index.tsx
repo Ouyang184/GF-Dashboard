@@ -1350,11 +1350,11 @@ function usePillarStats(pillar: Pillar, data: DashboardData | null) {
 function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
   const stats = usePillarStats(pillar, data);
   return (
-    <div className="mt-3 flex flex-col gap-2">
+    <div className="mt-3 flex flex-col flex-1 gap-2 min-h-0">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="flex w-full items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2.5 shadow-[var(--shadow-card)]"
+          className="flex w-full flex-1 items-center justify-between rounded-lg border border-border/60 bg-card px-3 py-2 shadow-[var(--shadow-card)] min-h-[44px]"
         >
           <span className="text-[11px] font-medium leading-tight text-muted-foreground">
             {s.label}
