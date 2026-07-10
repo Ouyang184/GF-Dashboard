@@ -1334,7 +1334,7 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
-function PillarKpiRow({ pillar, data }: { pillar: Pillar; data?: DashboardData }) {
+function PillarKpiRow({ pillar, data }: { pillar: Pillar; data: DashboardData | null }) {
   const stats =
     pillar.key === "P" && data
       ? [
