@@ -1334,6 +1334,27 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
+function PillarKpiRow({ pillar, data }: { pillar: Pillar; data?: DashboardData }) {
+  const stats =
+    pillar.key === "P" && data
+      ? [
+          { label: "Machines Running", value: String(data.machinesRunning ?? 0) },
+          { label: "MC Available", value: `${Math.round(data.mcAvailablePercent ?? 0)}%` },
+          { label: "Compliance", value: `${Math.round(data.compliancePercent ?? 0)}%` },
+        ]
+      : PILLAR_DETAILS[pillar.key].stats;
+  return (
+    <div className="mt-3 flex flex-wrap gap-2">
+      {stats.map((s) => (
+        <div key={s.label} className="rounded-md border border-border/60 bg-secondary/30 px-2 py-1">
+          <div className="text-[9px] uppercase tracking-wider text-muted-foreground">{s.label}</div>
+          <div className="text-xs font-bold text-foreground">{s.value}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PillarCard({
   pillar,
   dots,
