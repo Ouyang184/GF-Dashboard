@@ -1624,8 +1624,9 @@ function FloorMap({
   const otherFuseal = fuseal.filter((m) => !HIGHLIGHT_MACHINES.has(m));
 
   return (
+    <div className="w-full overflow-x-auto -mx-2 px-2">
     <div
-      className="relative w-full h-[640px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
+      className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
     >
       {/* Left column — ENG. Extrusion (tall) */}
@@ -1696,6 +1697,7 @@ function FloorMap({
         cols={2}
         className="top-[48%] left-[85%] w-[14%] h-[51%]"
       />
+    </div>
     </div>
   );
 }
