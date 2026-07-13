@@ -2036,6 +2036,31 @@ function useLocalState<T>(storageKey: string, defaultValue: T) {
   return [value, setValue] as const;
 }
 
+function AutoTextarea({ value, onChange, compact, placeholder }: { value: string; onChange: (v: string) => void; compact?: boolean; placeholder?: string }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.style.height = "auto";
+    ref.current.style.height = `${ref.current.scrollHeight}px`;
+  }, [value, compact]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          ref.current?.blur();
+        }
+      }}
+      rows={1}
+      placeholder={placeholder}
+      className={`flex-1 resize-none bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 min-w-0 leading-snug ${compact ? "text-xs" : "text-sm"}`}
+    />
+  );
+}
+
 function TopIssuesCard({ pillarKey, defaultItems, compact = false }: { pillarKey: string; defaultItems: string[]; compact?: boolean }) {
   const [items, setItems] = useLocalState<string[]>(`pillar:${pillarKey}:issues`, defaultItems);
   const [draft, setDraft] = useState("");
@@ -2054,11 +2079,7 @@ function TopIssuesCard({ pillarKey, defaultItems, compact = false }: { pillarKey
         {items.map((it, i) => (
           <li key={i} className="flex items-start gap-3 group/item min-w-0">
             <span className={`rounded-full bg-warning shrink-0 ${compact ? "mt-1.5 size-1.5" : "mt-2 size-2"}`} />
-            <input
-              value={it}
-              onChange={(e) => update(i, e.target.value)}
-              className={`flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 min-w-0 ${compact ? "text-xs" : "text-sm"}`}
-            />
+            <AutoTextarea value={it} onChange={(v) => update(i, v)} compact={compact} />
             <button
               type="button"
               onClick={() => remove(i)}
