@@ -1509,7 +1509,7 @@ function PillarCard({
           )}
           {pillar.key === "Q" && (
             <div className="pt-2 border-t border-dashed border-border/60">
-              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} />
+              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} compact />
             </div>
           )}
         </div>
