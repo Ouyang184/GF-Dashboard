@@ -779,13 +779,15 @@ function LiveKpiRow({
           Fetched {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"} · auto-refresh 30s
         </div>
       </div>
-      <KpiTree
-        data={data}
-        denom={denom}
-        pct={pct}
-        reproComplete={reproComplete}
-        onReproChange={onReproChange}
-      />
+      <div className="w-full overflow-x-auto">
+        <KpiTree
+          data={data}
+          denom={denom}
+          pct={pct}
+          reproComplete={reproComplete}
+          onReproChange={onReproChange}
+        />
+      </div>
     </div>
   );
 }
