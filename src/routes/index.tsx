@@ -547,7 +547,7 @@ function Index() {
       </div>
 
       <header className="border-b border-border/60 backdrop-blur-md bg-background/70 sticky top-0 z-20">
-        <div className="mx-auto max-w-[1600px] px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
               className="h-10 px-2.5 rounded-xl bg-white grid place-items-center font-black tracking-tight shadow-[var(--shadow-glow)] ring-1 ring-[#0033a0]/20"
@@ -585,7 +585,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-[1600px] px-6 py-8 space-y-8">
+      <main className="mx-auto max-w-[1600px] px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
         {/* Top stats row */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <StatCard label="Month" value={monthName || "—"} sub={liveNow ? `Day ${now.getDate()} / ${daysInMonth}` : ""} icon={CalendarDays} />
@@ -594,7 +594,7 @@ function Index() {
         </section>
 
         {/* QDIP grid */}
-        <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {PILLARS.map((p, i) => (
             <PillarCard
               key={p.key}
@@ -779,13 +779,15 @@ function LiveKpiRow({
           Fetched {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"} · auto-refresh 30s
         </div>
       </div>
-      <KpiTree
-        data={data}
-        denom={denom}
-        pct={pct}
-        reproComplete={reproComplete}
-        onReproChange={onReproChange}
-      />
+      <div className="w-full overflow-x-auto">
+        <KpiTree
+          data={data}
+          denom={denom}
+          pct={pct}
+          reproComplete={reproComplete}
+          onReproChange={onReproChange}
+        />
+      </div>
     </div>
   );
 }
@@ -806,7 +808,7 @@ function KpiTree({
   const CONN = "bg-border/70";
   const rawRows = Number.isFinite(data.totalRows) ? data.totalRows : denom;
   return (
-    <div className="mx-auto w-full max-w-5xl pt-2">
+    <div className="mx-auto w-full max-w-5xl pt-2 min-w-[560px]">
       {/* Level 1 — Root centered, Repro Complete aligned to the right */}
       <div className="grid grid-cols-3 gap-4 items-start">
         <div />
@@ -1624,8 +1626,9 @@ function FloorMap({
   const otherFuseal = fuseal.filter((m) => !HIGHLIGHT_MACHINES.has(m));
 
   return (
+    <div className="w-full overflow-x-auto -mx-2 px-2">
     <div
-      className="relative w-full h-[640px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
+      className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
     >
       {/* Left column — ENG. Extrusion (tall) */}
@@ -1696,6 +1699,7 @@ function FloorMap({
         cols={2}
         className="top-[48%] left-[85%] w-[14%] h-[51%]"
       />
+    </div>
     </div>
   );
 }
@@ -1819,8 +1823,9 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
           </button>
         </div>
       </div>
+      <div className="w-full overflow-x-auto -mx-2 px-2">
       <div
-        className="relative w-full h-[640px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
+        className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
         aria-label={`${label} deviation floor map`}
       >
         <Zone name="ENG. Extrusion" machines={zoneFor("ENG. Extrusion")} cols={1} className="top-[1%] left-[1%] w-[15%] h-[52%]" />
@@ -1831,6 +1836,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
         <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={1} className="top-[12%] left-[70%] w-[14%] h-[75%]" />
         <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[1%] left-[85%] w-[14%] h-[45%]" />
         <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[48%] left-[85%] w-[14%] h-[51%]" />
+      </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
@@ -1889,7 +1895,7 @@ function PillarDetailOverlay({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`absolute inset-x-0 top-0 h-64 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
-        <div className="relative mx-auto max-w-[1400px] px-8 py-8">
+        <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               <span className="grid place-items-center size-14 rounded-xl bg-secondary text-accent">
