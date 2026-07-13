@@ -1378,7 +1378,7 @@ function PillarCard({
   const warnCount = displayDots.filter((d) => d.status === "warn").length;
 
   return (
-    <div className="relative overflow-hidden rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
+    <div className="relative rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
       <div className="relative p-5">
         <button
           type="button"
@@ -1509,7 +1509,7 @@ function PillarCard({
           )}
           {pillar.key === "Q" && (
             <div className="pt-2 border-t border-dashed border-border/60">
-              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} />
+              <TopIssuesCard pillarKey="Q" defaultItems={PILLAR_DETAILS.Q.issues} compact />
             </div>
           )}
         </div>
@@ -2036,7 +2036,32 @@ function useLocalState<T>(storageKey: string, defaultValue: T) {
   return [value, setValue] as const;
 }
 
-function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; defaultItems: string[] }) {
+function AutoTextarea({ value, onChange, compact, placeholder }: { value: string; onChange: (v: string) => void; compact?: boolean; placeholder?: string }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.style.height = "auto";
+    ref.current.style.height = `${ref.current.scrollHeight}px`;
+  }, [value, compact]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          ref.current?.blur();
+        }
+      }}
+      rows={1}
+      placeholder={placeholder}
+      className={`flex-1 resize-none bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 min-w-0 leading-snug ${compact ? "text-xs" : "text-sm"}`}
+    />
+  );
+}
+
+function TopIssuesCard({ pillarKey, defaultItems, compact = false }: { pillarKey: string; defaultItems: string[]; compact?: boolean }) {
   const [items, setItems] = useLocalState<string[]>(`pillar:${pillarKey}:issues`, defaultItems);
   const [draft, setDraft] = useState("");
   const update = (i: number, v: string) => setItems((p) => p.map((it, idx) => (idx === i ? v : it)));
@@ -2048,21 +2073,17 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
     setDraft("");
   };
   return (
-    <section className="group/card rounded-2xl border border-border/60 bg-card p-6">
-      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Top Issues</h3>
-      <ul className="space-y-3">
+    <section className={`group/card rounded-2xl border border-border/60 bg-card min-w-0 ${compact ? "p-4" : "p-6"}`}>
+      <h3 className={`font-bold uppercase tracking-wider text-muted-foreground mb-4 ${compact ? "text-xs" : "text-sm"}`}>Top Issues</h3>
+      <ul className={`min-w-0 ${compact ? "space-y-1.5" : "space-y-3"}`}>
         {items.map((it, i) => (
-          <li key={i} className="flex items-start gap-3 text-sm group/item">
-            <span className="mt-2 size-2 rounded-full bg-warning shrink-0" />
-            <input
-              value={it}
-              onChange={(e) => update(i, e.target.value)}
-              className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5"
-            />
+          <li key={i} className="flex items-start gap-3 group/item min-w-0">
+            <span className={`rounded-full bg-warning shrink-0 ${compact ? "mt-1.5 size-1.5" : "mt-2 size-2"}`} />
+            <AutoTextarea value={it} onChange={(v) => update(i, v)} compact={compact} />
             <button
               type="button"
               onClick={() => remove(i)}
-              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity"
+              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity shrink-0"
               aria-label="Remove issue"
             >
               ✕
@@ -2070,8 +2091,8 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
           </li>
         ))}
       </ul>
-      <div className="mt-2 flex items-center gap-3 text-sm opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity">
-        <span className="size-2 rounded-full bg-muted-foreground/40 shrink-0" />
+      <div className={`mt-2 flex items-center gap-3 opacity-0 group-hover/card:opacity-100 focus-within:opacity-100 transition-opacity min-w-0 ${compact ? "text-xs" : "text-sm"}`}>
+        <span className={`rounded-full bg-muted-foreground/40 shrink-0 ${compact ? "size-1.5" : "size-2"}`} />
         <input
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
@@ -2082,7 +2103,7 @@ function TopIssuesCard({ pillarKey, defaultItems }: { pillarKey: string; default
             }
           }}
           placeholder="Add issue…"
-          className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50"
+          className={`flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50 min-w-0 ${compact ? "text-xs" : "text-sm"}`}
         />
       </div>
     </section>
