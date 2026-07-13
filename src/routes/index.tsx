@@ -1378,7 +1378,7 @@ function PillarCard({
   const warnCount = displayDots.filter((d) => d.status === "warn").length;
 
   return (
-    <div className="relative overflow-hidden rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
+    <div className="relative rounded-sm border border-border bg-card shadow-[var(--shadow-card)] border-t-4 border-t-primary">
       <div className="relative p-5">
         <button
           type="button"
