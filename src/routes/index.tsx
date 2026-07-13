@@ -806,7 +806,7 @@ function KpiTree({
   const CONN = "bg-border/70";
   const rawRows = Number.isFinite(data.totalRows) ? data.totalRows : denom;
   return (
-    <div className="mx-auto w-full max-w-5xl pt-2">
+    <div className="mx-auto w-full max-w-5xl pt-2 min-w-[560px]">
       {/* Level 1 — Root centered, Repro Complete aligned to the right */}
       <div className="grid grid-cols-3 gap-4 items-start">
         <div />
