@@ -1821,8 +1821,9 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
           </button>
         </div>
       </div>
+      <div className="w-full overflow-x-auto -mx-2 px-2">
       <div
-        className="relative w-full h-[640px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
+        className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
         aria-label={`${label} deviation floor map`}
       >
         <Zone name="ENG. Extrusion" machines={zoneFor("ENG. Extrusion")} cols={1} className="top-[1%] left-[1%] w-[15%] h-[52%]" />
@@ -1833,6 +1834,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
         <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={1} className="top-[12%] left-[70%] w-[14%] h-[75%]" />
         <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[1%] left-[85%] w-[14%] h-[45%]" />
         <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[48%] left-[85%] w-[14%] h-[51%]" />
+      </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
         <span className="flex items-center gap-1.5">
