@@ -1893,7 +1893,7 @@ function PillarDetailOverlay({
         onClick={(e) => e.stopPropagation()}
       >
         <div className={`absolute inset-x-0 top-0 h-64 bg-gradient-to-b ${pillar.accent} pointer-events-none`} />
-        <div className="relative mx-auto max-w-[1400px] px-8 py-8">
+        <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               <span className="grid place-items-center size-14 rounded-xl bg-secondary text-accent">
