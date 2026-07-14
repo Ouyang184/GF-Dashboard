@@ -806,7 +806,6 @@ function KpiTree({
   onReproChange: (v: string) => void;
 }) {
   const CONN = "bg-border/70";
-  const rawRows = Number.isFinite(data.totalRows) ? data.totalRows : denom;
   return (
     <div className="mx-auto w-full max-w-5xl pt-2 min-w-[560px]">
       {/* Level 1 — Root centered, Repro Complete aligned to the right */}
@@ -815,7 +814,7 @@ function KpiTree({
         <StatCard
           label="New Buy Off"
           value={String(denom)}
-          sub={`${rawRows} rows · unique Machine + Part`}
+          sub={`${denom} unique Machine + Part jobs`}
           icon={Gauge}
         />
         <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
