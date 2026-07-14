@@ -863,7 +863,7 @@ function KpiTree({
         <StatCard
           label="Compliance"
           value={pct(data.compliancePercent)}
-          sub={`${data.complianceCount} of ${denom} · Yes + Comparable`}
+          sub={data.complianceSubtitle}
           icon={Gauge}
           tone="ok"
         />
@@ -958,10 +958,7 @@ function LiveLatestRowsTable({ data }: { data: DashboardData }) {
 }
 
 function MissingMcList({ data }: { data: DashboardData }) {
-  const jobs = (data.machineJobs ?? data.latestRows ?? []).filter((r) => {
-    const mc = String(r.masterCard ?? "").toLowerCase().trim();
-    return mc === "" || mc === "no" || mc === "n" || mc === "missing";
-  });
+  const jobs = data.missingRows ?? [];
   if (!jobs.length) return null;
   return (
     <div className="rounded-sm border border-danger/50 bg-danger/5 shadow-[var(--shadow-card)] overflow-hidden">

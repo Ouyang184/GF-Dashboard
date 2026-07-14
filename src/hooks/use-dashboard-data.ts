@@ -51,6 +51,7 @@ export type DashboardData = {
   missingPercent: number;
   complianceCount: number;
   compliancePercent: number;
+  complianceSubtitle: string;
   reproComplete: number | null;
   // Legacy aliases (still returned by backend)
   availabilityCount: number;
@@ -64,6 +65,7 @@ export type DashboardData = {
   comparable?: number;
   missing?: number;
   latestRows: DashboardRow[];
+  missingRows: DashboardRow[];
   machineJobs?: DashboardRow[];
   // API returns an array; older builds returned an object keyed by machine.
   floorMap?: FloorMapEntry[] | Record<string, FloorMapEntry>;

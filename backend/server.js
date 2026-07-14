@@ -190,6 +190,11 @@ function computeSummary(rows) {
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
   const latestRows = machineJobs;
 
+  const missingRows = machineJobs.filter((r) => {
+    const mc = (r.masterCard || "").toLowerCase();
+    return mc === "" || mc === "no" || mc === "n" || mc === "missing";
+  });
+
   // Normalize a Machine value like "301IM30" / "443IM" to floor-tile "301" / "443".
   const normalizeMachine = (m) =>
     String(m || "").replace(/(IM|EM|AM)\d*$/i, "").trim();
@@ -274,6 +279,7 @@ function computeSummary(rows) {
     // Compliance (Yes OR Comparable)
     complianceCount,
     compliancePercent: pct(complianceCount),
+    complianceSubtitle: `${complianceCount} of ${machinesRunning} · Yes + Comparable`,
 
     // Repro Complete — manual input, not derived from SharePoint yet.
     reproComplete: null,
@@ -291,6 +297,7 @@ function computeSummary(rows) {
     missing,
 
     latestRows,
+    missingRows,
     machineJobs,
     floorMap,
     monthlyMastercards,
