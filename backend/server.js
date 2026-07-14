@@ -179,7 +179,15 @@ function computeSummary(rows) {
 
   const machinesRunning = uniqueJobs.length;
   const mcAvailableCount = matching + comparable; // MC Available = MasterCard "Yes" or "Comparable"
-  const complianceCount = matching + comparable; // Compliant if MC exists
+  // Compliance = OverallAcceptance "Yes" among MC-available jobs.
+  const complianceCount = uniqueJobs.filter((r) => {
+    const mc = (r.masterCard || "").toLowerCase();
+    const oa = (r.overallAcceptance || "").toLowerCase();
+    return (mc === "yes" || mc.startsWith("compar")) && oa === "yes";
+  }).length;
+  const complianceDenominator = mcAvailableCount;
+  const compliancePercent =
+    complianceDenominator === 0 ? 0 : Math.round((complianceCount / complianceDenominator) * 100);
   const pct = (n) =>
     machinesRunning === 0 ? 0 : Math.round((n / machinesRunning) * 100);
 
@@ -279,8 +287,9 @@ function computeSummary(rows) {
 
     // Compliance (Yes OR Comparable)
     complianceCount,
-    compliancePercent: pct(complianceCount),
-    complianceSubtitle: `${complianceCount} of ${machinesRunning} · Yes + Comparable`,
+    complianceDenominator,
+    compliancePercent,
+    complianceSubtitle: `${complianceCount} of ${complianceDenominator} available MC · Overall Accepted`,
 
     // Repro Complete — manual input, not derived from SharePoint yet.
     reproComplete: null,
