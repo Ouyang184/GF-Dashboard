@@ -190,6 +190,11 @@ function computeSummary(rows) {
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
   const latestRows = machineJobs;
 
+  const missingRows = machineJobs.filter((r) => {
+    const mc = (r.masterCard || "").toLowerCase();
+    return mc === "" || mc === "no" || mc === "n" || mc === "missing";
+  });
+
   // Normalize a Machine value like "301IM30" / "443IM" to floor-tile "301" / "443".
   const normalizeMachine = (m) =>
     String(m || "").replace(/(IM|EM|AM)\d*$/i, "").trim();
