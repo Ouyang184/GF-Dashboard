@@ -959,7 +959,6 @@ function LiveLatestRowsTable({ data }: { data: DashboardData }) {
 
 function MissingMcList({ data }: { data: DashboardData }) {
   const jobs = data.missingRows ?? [];
-  if (!jobs.length) return null;
   return (
     <div className="rounded-sm border border-danger/50 bg-danger/5 shadow-[var(--shadow-card)] overflow-hidden">
       <div className="px-4 py-3 border-b border-danger/40 flex items-center justify-between">
@@ -971,7 +970,12 @@ function MissingMcList({ data }: { data: DashboardData }) {
           Machine + Part
         </span>
       </div>
-      <div className="overflow-x-auto">
+      {jobs.length === 0 ? (
+        <div className="px-4 py-6 text-center text-xs text-muted-foreground">
+          No missing MasterCards in this production window.
+        </div>
+      ) : (
+      <div className="overflow-x-auto max-h-[300px] overflow-y-auto scrollbar-hidden">
         <table className="w-full text-xs">
           <thead className="bg-background/50 text-muted-foreground uppercase tracking-wider text-[10px]">
             <tr>
@@ -997,6 +1001,7 @@ function MissingMcList({ data }: { data: DashboardData }) {
           </tbody>
         </table>
       </div>
+      )}
     </div>
   );
 }
