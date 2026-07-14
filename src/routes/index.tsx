@@ -863,7 +863,7 @@ function KpiTree({
         <StatCard
           label="Compliance"
           value={pct(data.compliancePercent)}
-          sub={`${data.complianceCount} of ${denom} · Yes + Comparable`}
+          sub={data.complianceSubtitle}
           icon={Gauge}
           tone="ok"
         />
