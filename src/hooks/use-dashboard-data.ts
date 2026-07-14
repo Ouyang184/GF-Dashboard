@@ -52,6 +52,7 @@ export type DashboardData = {
   complianceCount: number;
   compliancePercent: number;
   complianceSubtitle: string;
+  complianceDenominator: number;
   reproComplete: number | null;
   // Legacy aliases (still returned by backend)
   availabilityCount: number;
