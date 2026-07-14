@@ -1027,7 +1027,7 @@ function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
       </div>
       <div className="overflow-auto scrollbar-hidden max-h-[620px]">
         <table className="w-full text-xs">
-          <thead className="bg-background/50 text-muted-foreground uppercase tracking-wider text-[10px] sticky top-0 z-10">
+          <thead className="bg-card text-muted-foreground uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-[0_1px_0_0_hsl(var(--border))]">
             <tr>
               <th className="px-3 py-2 text-left">ID</th>
               <th className="px-3 py-2 text-left">Date</th>
