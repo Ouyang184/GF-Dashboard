@@ -192,7 +192,8 @@ function computeSummary(rows) {
 
   const missingRows = machineJobs.filter((r) => {
     const mc = (r.masterCard || "").toLowerCase();
-    return mc === "" || mc === "no" || mc === "n" || mc === "missing";
+    // Mirror the count logic: anything that isn't "yes" or "comparable" is missing.
+    return mc !== "yes" && !mc.startsWith("compar");
   });
 
   // Normalize a Machine value like "301IM30" / "443IM" to floor-tile "301" / "443".
