@@ -279,6 +279,7 @@ function computeSummary(rows) {
     // Compliance (Yes OR Comparable)
     complianceCount,
     compliancePercent: pct(complianceCount),
+    complianceSubtitle: `${complianceCount} of ${machinesRunning} · Yes + Comparable`,
 
     // Repro Complete — manual input, not derived from SharePoint yet.
     reproComplete: null,
@@ -296,6 +297,7 @@ function computeSummary(rows) {
     missing,
 
     latestRows,
+    missingRows,
     machineJobs,
     floorMap,
     monthlyMastercards,
