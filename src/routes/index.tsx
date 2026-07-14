@@ -806,7 +806,6 @@ function KpiTree({
   onReproChange: (v: string) => void;
 }) {
   const CONN = "bg-border/70";
-  const rawRows = Number.isFinite(data.totalRows) ? data.totalRows : denom;
   return (
     <div className="mx-auto w-full max-w-5xl pt-2 min-w-[560px]">
       {/* Level 1 — Root centered, Repro Complete aligned to the right */}
@@ -815,7 +814,7 @@ function KpiTree({
         <StatCard
           label="New Buy Off"
           value={String(denom)}
-          sub={`${rawRows} rows · unique Machine + Part`}
+          sub={`${denom} unique Machine + Part jobs`}
           icon={Gauge}
         />
         <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
@@ -1007,7 +1006,8 @@ function MissingMcList({ data }: { data: DashboardData }) {
 }
 
 function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
-  if (!data.latestRows?.length) return null;
+  const latestRows = data?.latestRows || [];
+  if (!latestRows.length) return null;
   const asText = (v: unknown): string => {
     if (v == null) return "";
     if (typeof v === "string" || typeof v === "number") return String(v);
@@ -1022,10 +1022,10 @@ function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <h3 className="text-sm font-semibold">Latest Records</h3>
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
-          {data.latestRows.length} rows
+          {latestRows.length} rows
         </span>
       </div>
-      <div className="overflow-auto scrollbar-hidden max-h-[620px]">
+      <div className="overflow-auto scrollbar-hidden max-h-[420px]">
         <table className="w-full text-xs">
           <thead className="bg-card text-muted-foreground uppercase tracking-wider text-[10px] sticky top-0 z-10 shadow-[0_1px_0_0_hsl(var(--border))]">
             <tr>
@@ -1042,7 +1042,7 @@ function _LiveLatestRowsTableImpl({ data }: { data: DashboardData }) {
             </tr>
           </thead>
           <tbody>
-            {data.latestRows.map((r) => (
+            {latestRows.map((r) => (
               <tr key={r.id} className="border-t border-border/60">
                 <td className="px-3 py-2 font-mono">{r.id}</td>
                 <td className="px-3 py-2">{r.dateCreated}</td>

@@ -196,10 +196,8 @@ function computeSummary(rows) {
   const machineJobs = [...uniqueJobs]
     .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
-  // Latest Records = every raw record in the production window (not deduped).
-  const latestRows = [...inWindow]
-    .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
-    .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
+  // Latest Records = every unique Machine + Part job in the production window.
+  const latestRows = machineJobs;
 
   const missingRows = machineJobs.filter((r) => {
     const mc = (r.masterCard || "").toLowerCase();
