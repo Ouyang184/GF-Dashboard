@@ -805,148 +805,110 @@ function KpiTree({
   reproComplete: string;
   onReproChange: (v: string) => void;
 }) {
-  const CONN = "bg-border/70";
   return (
     <div className="mx-auto w-full max-w-5xl pt-2 min-w-[560px]">
-      {/* Level 1 — Root centered, Repro Complete aligned to the right */}
-      <div className="grid grid-cols-3 gap-4 items-start">
-        <div />
-        <StatCard
-          label="New Buy Off"
-          value={String(denom)}
-          sub={`${denom} unique Machine + Part jobs`}
-          icon={Gauge}
-        />
-        <ReproCompleteCard value={reproComplete} onChange={onReproChange} />
-      </div>
-
-      {/* Trunk + branch bar to level 2 */}
-      <div className="grid grid-cols-3">
-        <div />
-        <div className={`mx-auto h-6 w-px ${CONN}`} />
-        <div />
-      </div>
-      <div className="grid grid-cols-3">
-        <div className="flex justify-end">
-          <div className={`h-px w-1/2 ${CONN}`} />
-        </div>
-        <div className={`h-px w-full ${CONN}`} />
-        <div className="flex justify-start">
-          <div className={`h-px w-1/2 ${CONN}`} />
-        </div>
-      </div>
-      <div className="grid grid-cols-3">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex justify-center">
-            <div className={`h-6 w-px ${CONN}`} />
+      <div className="grid grid-cols-6 gap-4">
+        <div className="col-span-6 md:col-span-3 rounded-sm border border-border border-t-4 border-t-primary bg-card p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-md">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">New Buy Off</p>
+              <h3 className="text-4xl font-bold tracking-tight text-primary tabular-nums">{denom}</h3>
+            </div>
+            <div className="rounded-full bg-primary/10 p-2">
+              <Gauge className="size-5 text-primary" />
+            </div>
           </div>
-        ))}
-      </div>
-
-      {/* Level 2 */}
-      <div className="grid grid-cols-3 gap-4">
-        <StatCard
-          label="MC Available"
-          value={pct(data.mcAvailablePercent ?? 0)}
-          sub={`${data.mcAvailableCount ?? 0} of ${denom} · MasterCard = Yes or Comparable`}
-          icon={BadgeCheck}
-          tone="ok"
-        />
-        <StatCard
-          label="Missing / No MC"
-          value={String(data.missingCount ?? 0)}
-          sub={`${pct(data.missingPercent ?? 0)} · No / blank / missing`}
-          icon={AlertTriangle}
-          tone="fail"
-        />
-        <StatCard
-          label="Compliance"
-          value={pct(data.compliancePercent)}
-          sub={data.complianceSubtitle}
-          icon={Gauge}
-          tone="ok"
-        />
-      </div>
-
-      {/* Trunk under MC Available -> branch bar -> two children */}
-      <div className="grid grid-cols-3">
-        <div className="flex justify-center">
-          <div className={`h-6 w-px ${CONN}`} />
+          <p className="mt-3 text-xs font-medium italic text-muted-foreground">
+            {denom} unique Machine + Part jobs
+          </p>
         </div>
-        <div />
-        <div />
-      </div>
-      <div className="grid grid-cols-3">
-        <div className="px-[16.6%]">
-          <div className={`h-px w-full ${CONN}`} />
-        </div>
-        <div />
-        <div />
-      </div>
-      <div className="grid grid-cols-3">
-        <div className="grid grid-cols-2">
-          <div className="flex justify-center">
-            <div className={`h-6 w-px ${CONN}`} />
+
+        <div className="col-span-6 md:col-span-3 rounded-sm border border-border border-t-4 border-t-primary bg-card p-5 shadow-[var(--shadow-card)] transition-shadow hover:shadow-md">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Repro Complete</p>
+              <input
+                type="text"
+                inputMode="numeric"
+                value={reproComplete}
+                onChange={(e) => onReproChange(e.target.value.replace(/[^\d]/g, ""))}
+                placeholder="0"
+                className="w-full border-b border-transparent bg-transparent text-4xl font-bold tracking-tight text-primary tabular-nums outline-none focus:border-primary/40"
+                aria-label="Repro Complete (manual entry)"
+              />
+            </div>
+            <div className="rounded-full bg-primary/10 p-2">
+              <BadgeCheck className="size-5 text-primary" />
+            </div>
           </div>
-          <div className="flex justify-center">
-            <div className={`h-6 w-px ${CONN}`} />
+          <p className="mt-3 text-xs font-medium italic text-muted-foreground">Manual entry tracking</p>
+        </div>
+
+        <div className="relative col-span-6 overflow-hidden rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:col-span-2">
+          <div className="absolute inset-y-0 left-0 w-1 bg-success" />
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">MC Available</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-foreground tabular-nums">{pct(data.mcAvailablePercent ?? 0)}</span>
+            <span className="font-mono text-[11px] font-semibold text-muted-foreground">{data.mcAvailableCount ?? 0} OF {denom}</span>
+          </div>
+          <p className="mt-2 text-[10px] leading-tight text-muted-foreground">MasterCard = Yes or Comparable</p>
+        </div>
+
+        <div className="relative col-span-6 overflow-hidden rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:col-span-2">
+          <div className="absolute inset-y-0 left-0 w-1 bg-danger" />
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Missing / No MC</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-foreground tabular-nums">{data.missingCount ?? 0}</span>
+            <span className="font-mono text-[11px] font-semibold text-danger">{pct(data.missingPercent ?? 0)}</span>
+          </div>
+          <p className="mt-2 text-[10px] leading-tight text-muted-foreground">No / blank / missing data</p>
+        </div>
+
+        <div className="relative col-span-6 overflow-hidden rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:col-span-2">
+          <div className="absolute inset-y-0 left-0 w-1 bg-primary" />
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Compliance</p>
+          <div className="flex items-baseline gap-2">
+            <span className="text-3xl font-bold text-foreground tabular-nums">{pct(data.compliancePercent)}</span>
+            <span className="font-mono text-[11px] font-semibold text-muted-foreground">{data.complianceCount ?? 0} OF {data.complianceDenominator ?? 0}</span>
+          </div>
+          <p className="mt-2 text-[10px] leading-tight text-muted-foreground">{data.complianceSubtitle}</p>
+        </div>
+
+        <div className="col-span-6 flex rounded-sm border border-border bg-secondary/40 md:col-span-3">
+          <div className="flex-1 border-r border-border p-4">
+            <p className="mb-1 text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Matching</p>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold text-foreground tabular-nums">{data.matchingCount ?? 0}</span>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+                <div className="h-full bg-success" style={{ width: `${data.matchingPercent ?? 0}%` }} />
+              </div>
+            </div>
+            <p className="mt-1 text-[10px] text-muted-foreground">{pct(data.matchingPercent ?? 0)} · Exact match</p>
+          </div>
+          <div className="flex-1 p-4">
+            <p className="mb-1 text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">Comparable</p>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl font-bold text-foreground tabular-nums">{data.comparableCount ?? 0}</span>
+              <div className="h-1.5 w-full overflow-hidden rounded-full bg-border">
+                <div className="h-full bg-warning" style={{ width: `${data.comparablePercent ?? 0}%` }} />
+              </div>
+            </div>
+            <p className="mt-1 text-[10px] text-muted-foreground">{pct(data.comparablePercent ?? 0)} · Comparable</p>
           </div>
         </div>
-        <div />
-        <div />
-      </div>
 
-      {/* Level 3 — children of MC Available only */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="grid grid-cols-2 gap-3">
-          <StatCard
-            label="Matching"
-            value={String(data.matchingCount ?? 0)}
-            sub={`${pct(data.matchingPercent ?? 0)} · Exact match`}
-            icon={Shield}
-            tone="ok"
-          />
-          <StatCard
-            label="Comparable"
-            value={String(data.comparableCount ?? 0)}
-            sub={`${pct(data.comparablePercent ?? 0)} · Comparable`}
-            icon={Shield}
-            tone="warn"
-          />
-        </div>
-        <div />
-        <div />
-      </div>
-    </div>
-  );
-}
-
-function ReproCompleteCard({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
-      <div className="flex items-start justify-between">
-        <div className="w-full">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">
-            Repro Complete
+        <div className="col-span-6 flex items-center justify-between rounded-sm bg-primary p-4 text-primary-foreground md:col-span-3">
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest opacity-70">System Health</p>
+            <p className="text-sm font-medium">All data streams synchronized</p>
           </div>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={value}
-            onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, ""))}
-            placeholder="0"
-            className="mt-2 w-full bg-transparent text-3xl font-bold tracking-tight text-primary outline-none border-b border-transparent focus:border-primary/40"
-            aria-label="Repro Complete (manual entry)"
-          />
-          <div className="mt-1 text-xs text-muted-foreground">Manual entry</div>
+          <div className="flex items-end gap-1">
+            <div className="h-6 w-1 bg-primary-foreground/20" />
+            <div className="h-8 w-1 bg-primary-foreground/40" />
+            <div className="h-5 w-1 bg-primary-foreground/60" />
+            <div className="h-7 w-1 bg-primary-foreground" />
+          </div>
         </div>
-        <BadgeCheck className="size-5 text-accent" />
       </div>
     </div>
   );
