@@ -914,37 +914,6 @@ function KpiTree({
   );
 }
 
-function ReproCompleteCard({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="relative overflow-hidden rounded-sm border border-border bg-card p-5 shadow-[var(--shadow-card)] border-l-4 border-l-primary">
-      <div className="flex items-start justify-between">
-        <div className="w-full">
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">
-            Repro Complete
-          </div>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={value}
-            onChange={(e) => onChange(e.target.value.replace(/[^\d]/g, ""))}
-            placeholder="0"
-            className="mt-2 w-full bg-transparent text-3xl font-bold tracking-tight text-primary outline-none border-b border-transparent focus:border-primary/40"
-            aria-label="Repro Complete (manual entry)"
-          />
-          <div className="mt-1 text-xs text-muted-foreground">Manual entry</div>
-        </div>
-        <BadgeCheck className="size-5 text-accent" />
-      </div>
-    </div>
-  );
-}
-
 function LiveLatestRowsTable({ data }: { data: DashboardData }) {
   return _LiveLatestRowsTableImpl({ data });
 }
