@@ -1300,6 +1300,58 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
+type SafetyShiftEdits = {
+  statuses: Record<string, Status>;
+  notes: Record<string, string>;
+};
+
+function useSafetyShiftEdits(
+  initialStatuses: Status[],
+  initialNotes: Record<string, string>,
+) {
+  const buildInitial = (): SafetyShiftEdits => {
+    const statuses: Record<string, Status> = {};
+    SHIFTS.forEach((s, i) => (statuses[s] = initialStatuses[i] ?? "ok"));
+    return { statuses, notes: { ...initialNotes } };
+  };
+  const [state, setState] = useState<SafetyShiftEdits>(buildInitial);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const raw = window.localStorage.getItem("safety-shifts-v1");
+        if (!raw) return;
+        const parsed = JSON.parse(raw) as Partial<SafetyShiftEdits>;
+        setState((prev) => ({
+          statuses: { ...prev.statuses, ...(parsed.statuses ?? {}) },
+          notes: { ...prev.notes, ...(parsed.notes ?? {}) },
+        }));
+      } catch {}
+    };
+    read();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "safety-shifts-v1") read();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+  const persist = (next: SafetyShiftEdits) => {
+    setState(next);
+    try {
+      window.localStorage.setItem("safety-shifts-v1", JSON.stringify(next));
+    } catch {}
+  };
+  const cycleStatus = (shift: string) => {
+    const order: Status[] = ["ok", "warn", "fail"];
+    const cur = state.statuses[shift] ?? "ok";
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    persist({ ...state, statuses: { ...state.statuses, [shift]: next } });
+  };
+  const setNote = (shift: string, val: string) => {
+    persist({ ...state, notes: { ...state.notes, [shift]: val } });
+  };
+  return { state, cycleStatus, setNote };
+}
+
 function PillarCard({
   pillar,
   dots,
