@@ -1314,7 +1314,7 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
-  const safetyShifts = useSafetyShifts(shifts, detail.shiftNotes);
+  const safetyShifts = useSafetyShiftEdits(shifts, detail.shiftNotes);
   const effectiveShifts =
     pillar.key === "S"
       ? SHIFTS.map((s, i) => safetyShifts.state.statuses[s] ?? shifts[i])
