@@ -1352,6 +1352,38 @@ function useSafetyShiftEdits(
   return { state, cycleStatus, setNote };
 }
 
+function SafetyShiftsEditor({
+  initialStatuses,
+  initialNotes,
+}: {
+  initialStatuses: Status[];
+  initialNotes: Record<string, string>;
+}) {
+  const { state, cycleStatus, setNote } = useSafetyShiftEdits(initialStatuses, initialNotes);
+  return (
+    <div className="space-y-2">
+      {SHIFTS.map((s) => (
+        <div key={s} className="flex items-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={() => cycleStatus(s)}
+            title="Click to change status"
+            className={`size-4 rounded-full shrink-0 ring-1 ring-border hover:scale-110 transition ${statusColor(state.statuses[s] ?? "ok")}`}
+          />
+          <span className="font-semibold w-14 shrink-0">{s}</span>
+          <input
+            type="text"
+            value={state.notes[s] ?? ""}
+            onChange={(e) => setNote(s, e.target.value)}
+            placeholder="Add a note…"
+            className="flex-1 min-w-0 bg-transparent border-b border-border/60 focus:border-primary outline-none text-xs text-foreground py-1"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PillarCard({
   pillar,
   dots,
