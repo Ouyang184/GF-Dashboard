@@ -2000,18 +2000,11 @@ function PillarDetailOverlay({
             {pillar.key === "S" && (
               <>
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="space-y-3">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-sm gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
-                          <span className="font-semibold w-12 shrink-0">{s}</span>
-                          <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Shifts</h3>
+                    <span className="text-[10px] text-muted-foreground">Click dot to cycle · edit note</span>
                   </div>
+                  <SafetyShiftsEditor initialStatuses={shifts} initialNotes={detail.shiftNotes} />
                 </section>
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
