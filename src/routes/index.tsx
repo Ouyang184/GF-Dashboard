@@ -1331,13 +1331,19 @@ function useSafetyShiftEdits(
     const onStorage = (e: StorageEvent) => {
       if (e.key === "safety-shifts-v1") read();
     };
+    const onCustom = () => read();
     window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    window.addEventListener("safety-shifts-updated", onCustom);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("safety-shifts-updated", onCustom);
+    };
   }, []);
   const persist = (next: SafetyShiftEdits) => {
     setState(next);
     try {
       window.localStorage.setItem("safety-shifts-v1", JSON.stringify(next));
+      window.dispatchEvent(new Event("safety-shifts-updated"));
     } catch {}
   };
   const cycleStatus = (shift: string) => {
