@@ -2383,7 +2383,7 @@ function NotesCardImpl({
             <button
               type="button"
               onClick={() => removeItem(idx)}
-              className="opacity-0 group-hover/item:opacity-40 hover:!opacity-100 text-xs text-muted-foreground hover:text-danger transition-opacity"
+              className="text-xs text-muted-foreground/60 hover:text-destructive transition-colors shrink-0"
               aria-label="Remove item"
             >
               ✕
@@ -2391,7 +2391,7 @@ function NotesCardImpl({
           </li>
         ))}
       </ul>
-      <div className="mt-2 flex items-center gap-2 text-sm opacity-0 group-hover/notes:opacity-100 focus-within:opacity-100 transition-opacity">
+      <div className="mt-2 flex items-center gap-2 text-sm">
         <span className="size-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
         <input
           value={draft}
@@ -2402,9 +2402,17 @@ function NotesCardImpl({
               addItem();
             }
           }}
-          placeholder="Add item…"
+            placeholder="Add item and press Enter…"
           className="flex-1 bg-transparent outline-none border-b border-transparent focus:border-border/60 py-0.5 placeholder:text-muted-foreground/50"
         />
+        <button
+          type="button"
+          onClick={addItem}
+          disabled={!draft.trim()}
+          className="text-xs font-semibold uppercase tracking-wider text-primary hover:text-primary/80 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shrink-0"
+        >
+          Add
+        </button>
       </div>
     </div>
   );
