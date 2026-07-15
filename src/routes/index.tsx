@@ -1523,10 +1523,26 @@ function PillarCard({
           ) : (
             <div className="grid grid-cols-2 gap-x-3 gap-y-2">
               {SHIFTS.map((s, i) => (
-                <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                  <span className="font-medium text-muted-foreground">{s}</span>
-                  <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                </div>
+                pillar.key === "S" ? (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      safetyShifts.cycleStatus(s);
+                    }}
+                    title="Click to change shift status"
+                    className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5 hover:bg-secondary transition cursor-pointer"
+                  >
+                    <span className="font-medium text-muted-foreground">{s}</span>
+                    <span className={`size-2.5 rounded-full ${statusColor(effectiveShifts[i])}`} />
+                  </button>
+                ) : (
+                  <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+                    <span className="font-medium text-muted-foreground">{s}</span>
+                    <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
+                  </div>
+                )
               ))}
             </div>
           )}
