@@ -1300,6 +1300,90 @@ function QuoteCard({ text, author }: { text: string; author: string }) {
   );
 }
 
+type SafetyShiftEdits = {
+  statuses: Record<string, Status>;
+  notes: Record<string, string>;
+};
+
+function useSafetyShiftEdits(
+  initialStatuses: Status[],
+  initialNotes: Record<string, string>,
+) {
+  const buildInitial = (): SafetyShiftEdits => {
+    const statuses: Record<string, Status> = {};
+    SHIFTS.forEach((s, i) => (statuses[s] = initialStatuses[i] ?? "ok"));
+    return { statuses, notes: { ...initialNotes } };
+  };
+  const [state, setState] = useState<SafetyShiftEdits>(buildInitial);
+  useEffect(() => {
+    const read = () => {
+      try {
+        const raw = window.localStorage.getItem("safety-shifts-v1");
+        if (!raw) return;
+        const parsed = JSON.parse(raw) as Partial<SafetyShiftEdits>;
+        setState((prev) => ({
+          statuses: { ...prev.statuses, ...(parsed.statuses ?? {}) },
+          notes: { ...prev.notes, ...(parsed.notes ?? {}) },
+        }));
+      } catch {}
+    };
+    read();
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "safety-shifts-v1") read();
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+  const persist = (next: SafetyShiftEdits) => {
+    setState(next);
+    try {
+      window.localStorage.setItem("safety-shifts-v1", JSON.stringify(next));
+    } catch {}
+  };
+  const cycleStatus = (shift: string) => {
+    const order: Status[] = ["ok", "warn", "fail"];
+    const cur = state.statuses[shift] ?? "ok";
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    persist({ ...state, statuses: { ...state.statuses, [shift]: next } });
+  };
+  const setNote = (shift: string, val: string) => {
+    persist({ ...state, notes: { ...state.notes, [shift]: val } });
+  };
+  return { state, cycleStatus, setNote };
+}
+
+function SafetyShiftsEditor({
+  initialStatuses,
+  initialNotes,
+}: {
+  initialStatuses: Status[];
+  initialNotes: Record<string, string>;
+}) {
+  const { state, cycleStatus, setNote } = useSafetyShiftEdits(initialStatuses, initialNotes);
+  return (
+    <div className="space-y-2">
+      {SHIFTS.map((s) => (
+        <div key={s} className="flex items-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={() => cycleStatus(s)}
+            title="Click to change status"
+            className={`size-4 rounded-full shrink-0 ring-1 ring-border hover:scale-110 transition ${statusColor(state.statuses[s] ?? "ok")}`}
+          />
+          <span className="font-semibold w-14 shrink-0">{s}</span>
+          <input
+            type="text"
+            value={state.notes[s] ?? ""}
+            onChange={(e) => setNote(s, e.target.value)}
+            placeholder="Add a note…"
+            className="flex-1 min-w-0 bg-transparent border-b border-border/60 focus:border-primary outline-none text-xs text-foreground py-1"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function PillarCard({
   pillar,
   dots,
@@ -1314,6 +1398,11 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const detail = PILLAR_DETAILS[pillar.key];
+  const safetyShifts = useSafetyShiftEdits(shifts, detail.shiftNotes);
+  const effectiveShifts =
+    pillar.key === "S"
+      ? SHIFTS.map((s, i) => safetyShifts.state.statuses[s] ?? shifts[i])
+      : shifts;
   const [safetyOverride, setSafetyOverride] = useState<Status | null>(null);
   const today = new Date().getDate();
   useEffect(() => {
@@ -1466,10 +1555,26 @@ function PillarCard({
           ) : (
             <div className="grid grid-cols-2 gap-x-3 gap-y-2">
               {SHIFTS.map((s, i) => (
-                <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
-                  <span className="font-medium text-muted-foreground">{s}</span>
-                  <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
-                </div>
+                pillar.key === "S" ? (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      safetyShifts.cycleStatus(s);
+                    }}
+                    title="Click to change shift status"
+                    className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5 hover:bg-secondary transition cursor-pointer"
+                  >
+                    <span className="font-medium text-muted-foreground">{s}</span>
+                    <span className={`size-2.5 rounded-full ${statusColor(effectiveShifts[i])}`} />
+                  </button>
+                ) : (
+                  <div key={s} className="flex items-center justify-between text-xs rounded-md bg-secondary/30 px-2 py-1.5">
+                    <span className="font-medium text-muted-foreground">{s}</span>
+                    <span className={`size-2.5 rounded-full ${statusColor(shifts[i])}`} />
+                  </div>
+                )
               ))}
             </div>
           )}
@@ -1485,7 +1590,7 @@ function PillarCard({
           pillar={pillar}
           detail={detail}
           dots={displayDots}
-          shifts={shifts}
+          shifts={effectiveShifts}
           qualityIssues={qualityIssues}
           onClose={() => setExpanded(false)}
         />
@@ -1927,18 +2032,11 @@ function PillarDetailOverlay({
             {pillar.key === "S" && (
               <>
                 <section className="rounded-2xl border border-border/60 bg-card p-6">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Shifts</h3>
-                  <div className="space-y-3">
-                    {SHIFTS.map((s, i) => (
-                      <div key={s} className="flex items-center justify-between text-sm gap-3">
-                        <div className="flex items-center gap-3 min-w-0">
-                          <span className={`size-3 rounded-full shrink-0 ${statusColor(shifts[i])}`} />
-                          <span className="font-semibold w-12 shrink-0">{s}</span>
-                          <span className="text-xs text-muted-foreground truncate">{detail.shiftNotes[s] ?? "—"}</span>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Shifts</h3>
+                    <span className="text-[10px] text-muted-foreground">Click dot to cycle · edit note</span>
                   </div>
+                  <SafetyShiftsEditor initialStatuses={shifts} initialNotes={detail.shiftNotes} />
                 </section>
                 <section className="lg:col-span-2 rounded-2xl border border-border/60 bg-card p-6">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
