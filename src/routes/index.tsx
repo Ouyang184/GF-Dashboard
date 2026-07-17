@@ -14,6 +14,8 @@ import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
 import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
+import { MoldingPressAnim } from "@/components/productivity/MoldingPressAnim";
+import { IsoPartDrop } from "@/components/productivity/IsoPartDrop";
 import {
   MOLDING_CELL_TOTAL,
   MOLDING_WEEKLY_SCRAP,
