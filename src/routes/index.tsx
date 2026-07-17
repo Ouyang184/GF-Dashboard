@@ -16,6 +16,8 @@ import { useDashboardData, type DashboardData, type FloorMapEntry } from "@/hook
 import { MONTHLY_SCRAP } from "@/data/monthly-scrap";
 import { MoldingPressAnim } from "@/components/productivity/MoldingPressAnim";
 import { IsoPartDrop } from "@/components/productivity/IsoPartDrop";
+import { AmbientTileEject } from "@/components/productivity/AmbientTileEject";
+import { CycleFlowAnim } from "@/components/productivity/CycleFlowAnim";
 import {
   MOLDING_CELL_TOTAL,
   MOLDING_WEEKLY_SCRAP,
@@ -2021,9 +2023,19 @@ function PillarDetailOverlay({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                      <AmbientTileEject />
+                      <p className="mt-2 text-sm font-medium">#1 · Ambient floor-tile ejection</p>
+                      <p className="text-xs text-muted-foreground">Running tiles drop a tiny part on a loop — sits on the floor map.</p>
+                    </div>
+                    <div>
                       <MoldingPressAnim />
-                      <p className="mt-2 text-sm font-medium">#2 · Molding press centerpiece</p>
-                      <p className="text-xs text-muted-foreground">Side-profile press, rhythmic clamp cycle, part rides the conveyor.</p>
+                      <p className="mt-2 text-sm font-medium">#2 · Engel press centerpiece</p>
+                      <p className="text-xs text-muted-foreground">Detailed Engel horizontal press: cabinet, hopper, barrel/screw, tie bars, clamp, conveyor.</p>
+                    </div>
+                    <div>
+                      <CycleFlowAnim />
+                      <p className="mt-2 text-sm font-medium">#3 · Cycle heartbeat</p>
+                      <p className="text-xs text-muted-foreground">Abstract schematic: pellets in → mold pulse → parts out.</p>
                     </div>
                     <div>
                       <IsoPartDrop />
