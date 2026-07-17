@@ -18,6 +18,8 @@ import { MoldingPressAnim } from "@/components/productivity/MoldingPressAnim";
 import { IsoPartDrop } from "@/components/productivity/IsoPartDrop";
 import { AmbientTileEject } from "@/components/productivity/AmbientTileEject";
 import { CycleFlowAnim } from "@/components/productivity/CycleFlowAnim";
+import { lazy, Suspense } from "react";
+const FloorMap3D = lazy(() => import("@/components/productivity/FloorMap3D"));
 import {
   MOLDING_CELL_TOTAL,
   MOLDING_WEEKLY_SCRAP,
