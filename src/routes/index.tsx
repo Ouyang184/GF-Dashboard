@@ -18,6 +18,8 @@ import { MoldingPressAnim } from "@/components/productivity/MoldingPressAnim";
 import { IsoPartDrop } from "@/components/productivity/IsoPartDrop";
 import { AmbientTileEject } from "@/components/productivity/AmbientTileEject";
 import { CycleFlowAnim } from "@/components/productivity/CycleFlowAnim";
+import { lazy, Suspense } from "react";
+const FloorMap3D = lazy(() => import("@/components/productivity/FloorMap3D"));
 import {
   MOLDING_CELL_TOTAL,
   MOLDING_WEEKLY_SCRAP,
@@ -1785,10 +1787,47 @@ function FloorMap({
 
 function IntouchFloor() {
   const { data, lastFetchedAt } = useDashboardData();
+  const dDev = useDeviationMap("D");
+  const iDev = useDeviationMap("I");
+  const deviations = useMemo(() => ({ ...dDev, ...iDev }), [dDev, iDev]);
+  const [view, setView] = useState<"2d" | "3d">("2d");
   return (
     <div>
-      <FloorMap floorMap={data?.floorMap} />
-      <FloorMapLegend />
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <div className="text-xs text-muted-foreground">Plant floor status</div>
+        <div className="inline-flex rounded-md border border-border/60 bg-background/60 p-0.5 text-xs">
+          {(["2d", "3d"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setView(v)}
+              className={`px-2.5 py-1 rounded-sm uppercase tracking-wider font-semibold transition ${
+                view === v
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {v}
+            </button>
+          ))}
+        </div>
+      </div>
+      {view === "2d" ? (
+        <>
+          <FloorMap floorMap={data?.floorMap} />
+          <FloorMapLegend />
+        </>
+      ) : (
+        <Suspense
+          fallback={
+            <div className="h-[520px] sm:h-[640px] rounded-xl border-2 border-border/70 bg-background/40 flex items-center justify-center text-sm text-muted-foreground">
+              Loading 3D floor…
+            </div>
+          }
+        >
+          <FloorMap3D floorMap={data?.floorMap} deviations={deviations} />
+        </Suspense>
+      )}
       <div className="mt-2 text-[11px] text-muted-foreground">
         Last updated:{" "}
         {data?.updatedAt || (lastFetchedAt ? lastFetchedAt.toLocaleString() : "—")}
