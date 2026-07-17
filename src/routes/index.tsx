@@ -1787,7 +1787,9 @@ function FloorMap({
 
 function IntouchFloor() {
   const { data, lastFetchedAt } = useDashboardData();
-  const deviations = useDeviationMap("productivity" as DeviationPillarKey);
+  const dDev = useDeviationMap("D");
+  const iDev = useDeviationMap("I");
+  const deviations = useMemo(() => ({ ...dDev, ...iDev }), [dDev, iDev]);
   const [view, setView] = useState<"2d" | "3d">("2d");
   return (
     <div>
