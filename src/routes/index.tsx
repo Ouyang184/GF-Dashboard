@@ -2012,6 +2012,24 @@ function PillarDetailOverlay({
 
             {pillar.key === "P" && (
               <>
+                <section className="lg:col-span-3 rounded-2xl border border-primary/40 bg-card p-6">
+                  <div className="mb-4 flex items-baseline justify-between">
+                    <h3 className="text-lg font-semibold">Pick an animation</h3>
+                    <span className="text-xs text-muted-foreground">Preview only — tell me which one to keep</span>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <MoldingPressAnim />
+                      <p className="mt-2 text-sm font-medium">#2 · Molding press centerpiece</p>
+                      <p className="text-xs text-muted-foreground">Side-profile press, rhythmic clamp cycle, part rides the conveyor.</p>
+                    </div>
+                    <div>
+                      <IsoPartDrop />
+                      <p className="mt-2 text-sm font-medium">#4 · Isometric part drop</p>
+                      <p className="text-xs text-muted-foreground">Iso machine, pellets in, spring-drop into a filling bin.</p>
+                    </div>
+                  </div>
+                </section>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <LiveDashboardSection />
                 </section>
