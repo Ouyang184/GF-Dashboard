@@ -1654,6 +1654,13 @@ function FloorMap({
         }`}
       >
         <span className="truncate">{key}</span>
+        {running && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-2 -translate-x-1/2 rounded-sm bg-background/90 shadow-[0_0_6px_rgba(255,255,255,0.6)] motion-safe:animate-[fm-drop_3.2s_cubic-bezier(.5,0,.7,1)_infinite]"
+            style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 30) / 10}s` }}
+          />
+        )}
         {running && entry && (
           <span
             className="absolute -top-1 -right-1 rounded-full bg-background text-foreground border border-border text-[9px] leading-none font-semibold px-1.5 py-0.5"
@@ -1708,6 +1715,7 @@ function FloorMap({
 
   return (
     <div className="w-full overflow-x-auto -mx-2 px-2">
+    <style>{`@keyframes fm-drop{0%{transform:translate(-50%,-40%);opacity:0}15%{opacity:1}80%{opacity:1;transform:translate(-50%,120%)}100%{opacity:0;transform:translate(-50%,140%)}}`}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
@@ -2055,34 +2063,6 @@ function PillarDetailOverlay({
 
             {pillar.key === "P" && (
               <>
-                <section className="lg:col-span-3 rounded-2xl border border-primary/40 bg-card p-6">
-                  <div className="mb-4 flex items-baseline justify-between">
-                    <h3 className="text-lg font-semibold">Pick an animation</h3>
-                    <span className="text-xs text-muted-foreground">Preview only — tell me which one to keep</span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <AmbientTileEject />
-                      <p className="mt-2 text-sm font-medium">#1 · Ambient floor-tile ejection</p>
-                      <p className="text-xs text-muted-foreground">Running tiles drop a tiny part on a loop — sits on the floor map.</p>
-                    </div>
-                    <div>
-                      <MoldingPressAnim />
-                      <p className="mt-2 text-sm font-medium">#2 · Engel press centerpiece</p>
-                      <p className="text-xs text-muted-foreground">Detailed Engel horizontal press: cabinet, hopper, barrel/screw, tie bars, clamp, conveyor.</p>
-                    </div>
-                    <div>
-                      <CycleFlowAnim />
-                      <p className="mt-2 text-sm font-medium">#3 · Cycle heartbeat</p>
-                      <p className="text-xs text-muted-foreground">Abstract schematic: pellets in → mold pulse → parts out.</p>
-                    </div>
-                    <div>
-                      <IsoPartDrop />
-                      <p className="mt-2 text-sm font-medium">#4 · Isometric part drop</p>
-                      <p className="text-xs text-muted-foreground">Iso machine, pellets in, spring-drop into a filling bin.</p>
-                    </div>
-                  </div>
-                </section>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <LiveDashboardSection />
                 </section>
