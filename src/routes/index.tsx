@@ -565,6 +565,12 @@ function Index() {
               <h1 className="text-xl font-bold tracking-tight leading-none">AMG Dashboard</h1>
               <p className="text-xs text-muted-foreground mt-1">Daily Process Management · Cell: Engr</p>
             </div>
+            {isFriday() && (
+              <span className="ml-2 flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground animate-fade-in">
+                <span aria-hidden>🍦</span>
+                Ice Cream Friday!
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-6">
