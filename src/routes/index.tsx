@@ -1764,6 +1764,23 @@ function FloorMap({
         100%{transform:translate(180%,10px) rotate(90deg) scale(.6);opacity:0}
       }
       @keyframes fm-led{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+      @keyframes fm-pellet{
+        0%{transform:translateY(-6px);opacity:0}
+        10%{opacity:1}
+        30%{transform:translateY(10px);opacity:1}
+        35%,100%{transform:translateY(10px);opacity:0}
+      }
+      @keyframes fm-arm{
+        0%,70%{transform:translateX(-40%) rotate(-8deg);opacity:.85}
+        80%{transform:translateX(60%) rotate(4deg);opacity:1}
+        95%,100%{transform:translateX(120%) rotate(10deg);opacity:0}
+      }
+      @keyframes fm-cool{
+        0%,45%{opacity:0}
+        55%{opacity:.55}
+        75%{opacity:.25}
+        100%{opacity:0}
+      }
       .fm-breathe{animation:fm-breathe 2.8s ease-in-out infinite}
       .fm-inject{animation:fm-inject 3.6s ease-in-out infinite;mix-blend-mode:screen}
       .fm-sweep{animation:fm-sweep 3.6s linear infinite}
@@ -1772,7 +1789,10 @@ function FloorMap({
       .fm-belt{animation:fm-belt .55s linear infinite}
       .fm-part{animation:fm-part 3.6s cubic-bezier(.5,0,.7,1) infinite}
       .fm-led{animation:fm-led 1.6s ease-in-out infinite}
-      @media (prefers-reduced-motion:reduce){.fm-breathe,.fm-inject,.fm-sweep,.fm-clamp-l,.fm-clamp-r,.fm-belt,.fm-part,.fm-led{animation:none}}
+      .fm-pellet{animation:fm-pellet 3.6s ease-in infinite}
+      .fm-arm{animation:fm-arm 3.6s cubic-bezier(.5,.1,.4,1) infinite;transform-origin:left center}
+      .fm-cool{animation:fm-cool 3.6s ease-in-out infinite;mix-blend-mode:screen}
+      @media (prefers-reduced-motion:reduce){.fm-breathe,.fm-inject,.fm-sweep,.fm-clamp-l,.fm-clamp-r,.fm-belt,.fm-part,.fm-led,.fm-pellet,.fm-arm,.fm-cool{animation:none}}
     `}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
