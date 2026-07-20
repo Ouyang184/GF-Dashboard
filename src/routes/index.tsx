@@ -2198,14 +2198,11 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
         className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
         aria-label={`${label} deviation floor map`}
       >
-        <Zone name="ENG. Extrusion" machines={zoneFor("ENG. Extrusion")} cols={1} className="top-[1%] left-[1%] w-[15%] h-[52%]" />
-        <Zone name="Coil & Collar" machines={zoneFor("Coil & Collar")} cols={2} className="top-[54%] left-[1%] w-[22%] h-[45%]" />
-        <Zone name="Vinyls Extrusion" machines={zoneFor("Vinyls Extrusion")} cols={1} className="top-[1%] left-[40%] w-[12%] h-[22%]" />
-        <Zone name="Fuseal Cell" machines={zoneFor("Fuseal Cell")} cols={2} className="top-[26%] left-[24%] w-[30%] h-[73%]" />
-        <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} cols={1} className="top-[16%] left-[55%] w-[14%] h-[52%]" />
-        <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={1} className="top-[12%] left-[70%] w-[14%] h-[75%]" />
-        <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[1%] left-[85%] w-[14%] h-[45%]" />
-        <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[48%] left-[85%] w-[14%] h-[51%]" />
+        <Zone name="Fuseal Cell" machines={zoneFor("Fuseal Cell")} cols={2} className="top-[2%] left-[2%] w-[38%] h-[96%]" />
+        <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} cols={2} className="top-[2%] left-[42%] w-[20%] h-[47%]" />
+        <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={2} className="top-[51%] left-[42%] w-[20%] h-[47%]" />
+        <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[2%] left-[64%] w-[17%] h-[96%]" />
+        <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[2%] left-[83%] w-[15%] h-[96%]" />
       </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
