@@ -2055,34 +2055,6 @@ function PillarDetailOverlay({
 
             {pillar.key === "P" && (
               <>
-                <section className="lg:col-span-3 rounded-2xl border border-primary/40 bg-card p-6">
-                  <div className="mb-4 flex items-baseline justify-between">
-                    <h3 className="text-lg font-semibold">Pick an animation</h3>
-                    <span className="text-xs text-muted-foreground">Preview only — tell me which one to keep</span>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <AmbientTileEject />
-                      <p className="mt-2 text-sm font-medium">#1 · Ambient floor-tile ejection</p>
-                      <p className="text-xs text-muted-foreground">Running tiles drop a tiny part on a loop — sits on the floor map.</p>
-                    </div>
-                    <div>
-                      <MoldingPressAnim />
-                      <p className="mt-2 text-sm font-medium">#2 · Engel press centerpiece</p>
-                      <p className="text-xs text-muted-foreground">Detailed Engel horizontal press: cabinet, hopper, barrel/screw, tie bars, clamp, conveyor.</p>
-                    </div>
-                    <div>
-                      <CycleFlowAnim />
-                      <p className="mt-2 text-sm font-medium">#3 · Cycle heartbeat</p>
-                      <p className="text-xs text-muted-foreground">Abstract schematic: pellets in → mold pulse → parts out.</p>
-                    </div>
-                    <div>
-                      <IsoPartDrop />
-                      <p className="mt-2 text-sm font-medium">#4 · Isometric part drop</p>
-                      <p className="text-xs text-muted-foreground">Iso machine, pellets in, spring-drop into a filling bin.</p>
-                    </div>
-                  </div>
-                </section>
                 <section className="lg:col-span-3 rounded-2xl border border-border/60 bg-card p-6">
                   <LiveDashboardSection />
                 </section>
