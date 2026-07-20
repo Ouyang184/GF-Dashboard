@@ -1660,13 +1660,33 @@ function FloorMap({
         <span className="relative z-10 truncate drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]">{key}</span>
         {running && (
           <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-            <span className="absolute inset-0 bg-success/30 fm-running-pulse" />
-            <span className="absolute bottom-1 left-[18%] h-2.5 w-1 rounded-sm bg-background/90 shadow-sm fm-clamp-left" />
-            <span className="absolute bottom-1 right-[18%] h-2.5 w-1 rounded-sm bg-background/90 shadow-sm fm-clamp-right" />
-            <span
-              className="absolute bottom-1.5 left-1/2 size-2 -translate-x-1/2 rounded-[2px] bg-warning shadow-[0_0_10px_hsl(var(--warning))] fm-ejected-part"
-              style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 8) / 10}s` }}
-            />
+            {(() => {
+              const delay = `${((key.charCodeAt(0) * 7 + key.charCodeAt(key.length - 1) * 3) % 24) / 10}s`;
+              return (
+                <>
+                  {/* soft breathing wash */}
+                  <span className="absolute inset-0 bg-gradient-to-t from-success/40 via-success/10 to-transparent fm-breathe" style={{ animationDelay: delay }} />
+                  {/* injection heat flash from center */}
+                  <span className="absolute inset-0 fm-inject" style={{ animationDelay: delay }} />
+                  {/* scanning sweep line */}
+                  <span className="absolute inset-y-0 -left-2 w-1.5 bg-gradient-to-b from-transparent via-background/70 to-transparent fm-sweep" style={{ animationDelay: delay }} />
+                  {/* clamp jaws */}
+                  <span className="absolute bottom-1.5 left-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-l" style={{ animationDelay: delay }} />
+                  <span className="absolute bottom-1.5 right-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-r" style={{ animationDelay: delay }} />
+                  {/* conveyor belt with ticking dashes */}
+                  <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-foreground/20 overflow-hidden">
+                    <span className="absolute inset-0 fm-belt bg-[repeating-linear-gradient(90deg,transparent_0_4px,hsl(var(--background))_4px_7px)] opacity-70" />
+                  </span>
+                  {/* ejected part with trail */}
+                  <span
+                    className="absolute bottom-[6px] left-1/2 -translate-x-1/2 h-1.5 w-2.5 rounded-[2px] bg-warning shadow-[0_0_8px_hsl(var(--warning)),0_0_2px_#fff] fm-part"
+                    style={{ animationDelay: delay }}
+                  />
+                  {/* status LED */}
+                  <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-success shadow-[0_0_6px_hsl(var(--success))] fm-led" />
+                </>
+              );
+            })()}
           </span>
         )}
         {running && entry && (
@@ -1725,21 +1745,34 @@ function FloorMap({
     <>
     <div className="w-full overflow-x-auto -mx-2 px-2">
     <style>{`
-      @keyframes fm-running-pulse{0%,100%{opacity:.08}50%{opacity:.5}}
-      @keyframes fm-clamp-left{0%,22%,100%{transform:translateX(0)}38%,62%{transform:translateX(7px)}}
-      @keyframes fm-clamp-right{0%,22%,100%{transform:translateX(0)}38%,62%{transform:translateX(-7px)}}
-      @keyframes fm-ejected-part{
-        0%,58%{transform:translate(-50%,0) scale(.65);opacity:0}
-        64%{transform:translate(-50%,0) scale(1);opacity:1}
-        88%{transform:translate(22px,0) rotate(90deg) scale(1);opacity:1}
-        100%{transform:translate(34px,5px) rotate(135deg) scale(.75);opacity:0}
+      /* Injection cycle: DOSE(0-15) CLAMP(15-30) INJECT(30-45) COOL(45-75) EJECT(75-100) */
+      @keyframes fm-breathe{0%,100%{opacity:.25}50%{opacity:.55}}
+      @keyframes fm-inject{
+        0%,30%{background:radial-gradient(circle at 50% 55%,hsl(var(--warning)/0)_0%,transparent_60%);opacity:0}
+        35%{background:radial-gradient(circle at 50% 55%,hsl(var(--warning)/.95)_0%,hsl(var(--warning)/.3)_35%,transparent_70%);opacity:1}
+        50%{background:radial-gradient(circle at 50% 55%,hsl(var(--warning)/.5)_0%,transparent_60%);opacity:.6}
+        75%,100%{opacity:0}
       }
-      .fm-running-pulse{animation:fm-running-pulse 1.4s ease-in-out infinite}
-      .fm-clamp-left,.fm-clamp-right{animation-duration:2.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
-      .fm-clamp-left{animation-name:fm-clamp-left}
-      .fm-clamp-right{animation-name:fm-clamp-right}
-      .fm-ejected-part{animation:fm-ejected-part 2.2s ease-in-out infinite}
-      @media (prefers-reduced-motion:reduce){.fm-running-pulse,.fm-clamp-left,.fm-clamp-right,.fm-ejected-part{animation:none}}
+      @keyframes fm-sweep{0%{transform:translateX(0)}100%{transform:translateX(calc(100% + 200%))}}
+      @keyframes fm-clamp-l{0%,10%{transform:translateX(-6px)}25%,70%{transform:translateX(0)}82%,100%{transform:translateX(-6px)}}
+      @keyframes fm-clamp-r{0%,10%{transform:translateX(6px)}25%,70%{transform:translateX(0)}82%,100%{transform:translateX(6px)}}
+      @keyframes fm-belt{0%{transform:translateX(0)}100%{transform:translateX(-11px)}}
+      @keyframes fm-part{
+        0%,74%{transform:translate(-50%,0) scale(.4);opacity:0}
+        78%{transform:translate(-50%,-2px) scale(1);opacity:1}
+        90%{transform:translate(120%,4px) rotate(45deg) scale(1);opacity:1}
+        100%{transform:translate(180%,10px) rotate(90deg) scale(.6);opacity:0}
+      }
+      @keyframes fm-led{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+      .fm-breathe{animation:fm-breathe 2.8s ease-in-out infinite}
+      .fm-inject{animation:fm-inject 3.6s ease-in-out infinite;mix-blend-mode:screen}
+      .fm-sweep{animation:fm-sweep 3.6s linear infinite}
+      .fm-clamp-l{animation:fm-clamp-l 3.6s cubic-bezier(.7,0,.3,1) infinite}
+      .fm-clamp-r{animation:fm-clamp-r 3.6s cubic-bezier(.7,0,.3,1) infinite}
+      .fm-belt{animation:fm-belt .55s linear infinite}
+      .fm-part{animation:fm-part 3.6s cubic-bezier(.5,0,.7,1) infinite}
+      .fm-led{animation:fm-led 1.6s ease-in-out infinite}
+      @media (prefers-reduced-motion:reduce){.fm-breathe,.fm-inject,.fm-sweep,.fm-clamp-l,.fm-clamp-r,.fm-belt,.fm-part,.fm-led{animation:none}}
     `}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
