@@ -565,12 +565,6 @@ function Index() {
               <h1 className="text-xl font-bold tracking-tight leading-none">AMG Dashboard</h1>
               <p className="text-xs text-muted-foreground mt-1">Daily Process Management · Cell: Engr</p>
             </div>
-            {isFriday() && (
-              <span className="ml-2 flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-foreground animate-fade-in">
-                <span aria-hidden>🍦</span>
-                Ice Cream Friday!
-              </span>
-            )}
           </div>
 
           <div className="flex items-center gap-6">
@@ -1672,23 +1666,13 @@ function FloorMap({
                 <>
                   {/* soft breathing wash */}
                   <span className="absolute inset-0 bg-gradient-to-t from-success/40 via-success/10 to-transparent fm-breathe" style={{ animationDelay: delay }} />
-                  {/* hopper + falling pellets (top-left) */}
-                  <span className="absolute top-0 left-1 w-2 h-1.5 rounded-b-sm bg-foreground/40" />
-                  <span className="absolute top-1.5 left-[7px] h-1 w-1 rounded-full bg-warning/90 fm-pellet" style={{ animationDelay: delay }} />
-                  <span className="absolute top-1.5 left-[9px] h-[3px] w-[3px] rounded-full bg-warning/70 fm-pellet" style={{ animationDelay: `calc(${delay} + .3s)` }} />
                   {/* injection heat flash from center */}
                   <span className="absolute inset-0 fm-inject" style={{ animationDelay: delay }} />
-                  {/* cooling cyan wash after inject */}
-                  <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(120,200,255,.35),transparent_65%)] fm-cool" style={{ animationDelay: delay }} />
                   {/* scanning sweep line */}
                   <span className="absolute inset-y-0 -left-2 w-1.5 bg-gradient-to-b from-transparent via-background/70 to-transparent fm-sweep" style={{ animationDelay: delay }} />
                   {/* clamp jaws */}
                   <span className="absolute bottom-1.5 left-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-l" style={{ animationDelay: delay }} />
                   <span className="absolute bottom-1.5 right-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-r" style={{ animationDelay: delay }} />
-                  {/* robot arm sweeping across to grab the part */}
-                  <span className="absolute top-1 left-0 h-[2px] w-6 rounded-full bg-foreground/70 fm-arm" style={{ animationDelay: delay }}>
-                    <span className="absolute right-0 -top-[2px] h-[6px] w-[6px] rounded-sm bg-foreground/80 shadow-[0_0_4px_rgba(0,0,0,.6)]" />
-                  </span>
                   {/* conveyor belt with ticking dashes */}
                   <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-foreground/20 overflow-hidden">
                     <span className="absolute inset-0 fm-belt bg-[repeating-linear-gradient(90deg,transparent_0_4px,hsl(var(--background))_4px_7px)] opacity-70" />
@@ -1780,23 +1764,6 @@ function FloorMap({
         100%{transform:translate(180%,10px) rotate(90deg) scale(.6);opacity:0}
       }
       @keyframes fm-led{0%,100%{opacity:.4;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
-      @keyframes fm-pellet{
-        0%{transform:translateY(-6px);opacity:0}
-        10%{opacity:1}
-        30%{transform:translateY(10px);opacity:1}
-        35%,100%{transform:translateY(10px);opacity:0}
-      }
-      @keyframes fm-arm{
-        0%,70%{transform:translateX(-40%) rotate(-8deg);opacity:.85}
-        80%{transform:translateX(60%) rotate(4deg);opacity:1}
-        95%,100%{transform:translateX(120%) rotate(10deg);opacity:0}
-      }
-      @keyframes fm-cool{
-        0%,45%{opacity:0}
-        55%{opacity:.55}
-        75%{opacity:.25}
-        100%{opacity:0}
-      }
       .fm-breathe{animation:fm-breathe 2.8s ease-in-out infinite}
       .fm-inject{animation:fm-inject 3.6s ease-in-out infinite;mix-blend-mode:screen}
       .fm-sweep{animation:fm-sweep 3.6s linear infinite}
@@ -1805,58 +1772,79 @@ function FloorMap({
       .fm-belt{animation:fm-belt .55s linear infinite}
       .fm-part{animation:fm-part 3.6s cubic-bezier(.5,0,.7,1) infinite}
       .fm-led{animation:fm-led 1.6s ease-in-out infinite}
-      .fm-pellet{animation:fm-pellet 3.6s ease-in infinite}
-      .fm-arm{animation:fm-arm 3.6s cubic-bezier(.5,.1,.4,1) infinite;transform-origin:left center}
-      .fm-cool{animation:fm-cool 3.6s ease-in-out infinite;mix-blend-mode:screen}
-      @media (prefers-reduced-motion:reduce){.fm-breathe,.fm-inject,.fm-sweep,.fm-clamp-l,.fm-clamp-r,.fm-belt,.fm-part,.fm-led,.fm-pellet,.fm-arm,.fm-cool{animation:none}}
+      @media (prefers-reduced-motion:reduce){.fm-breathe,.fm-inject,.fm-sweep,.fm-clamp-l,.fm-clamp-r,.fm-belt,.fm-part,.fm-led{animation:none}}
     `}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
     >
-      {/* Fuseal Cell — hero (left, tall) */}
+      {/* Left column — ENG. Extrusion (tall) */}
+      <Zone
+        name="ENG. Extrusion"
+        machines={zoneFor("ENG. Extrusion")}
+        cols={1}
+        className="top-[1%] left-[1%] w-[15%] h-[52%]"
+      />
+
+      {/* Coil & Collar — left middle */}
+      <Zone
+        name="Coil & Collar"
+        machines={zoneFor("Coil & Collar")}
+        cols={2}
+        className="top-[54%] left-[1%] w-[22%] h-[45%]"
+      />
+
+      {/* Vinyls Extrusion — top middle, small */}
+      <Zone
+        name="Vinyls Extrusion"
+        machines={zoneFor("Vinyls Extrusion")}
+        cols={1}
+        className="top-[1%] left-[40%] w-[12%] h-[22%]"
+      />
+
+      {/* Fuseal Cell — center, large (focus) */}
       <Zone
         name="Fuseal Cell"
         focus
-        className="top-[2%] left-[2%] w-[38%] h-[96%]"
+        className="top-[26%] left-[24%] w-[30%] h-[73%]"
       >
-        <div className="flex-1 grid grid-cols-2 gap-1.5 min-h-0">
+        <div className="flex-1 grid grid-cols-2 gap-1 min-h-0">
           {otherFuseal.map((m) => <Tile key={m} id={m} />)}
           <Tile id="301IM30" />
           <Tile id="109IM00" />
         </div>
       </Zone>
 
-      {/* SD Cell 1 — center top */}
+      {/* SD Cell 1 — center-right */}
       <Zone
         name="SD Cell 1"
         machines={zoneFor("SD Cell 1")}
-        cols={2}
-        className="top-[2%] left-[42%] w-[20%] h-[47%]"
+        cols={1}
+        className="top-[16%] left-[55%] w-[14%] h-[52%]"
       />
 
-      {/* SD Cell 2 — center bottom */}
+      {/* SD Cell 2 — right wide column */}
       <Zone
         name="SD Cell 2"
         machines={zoneFor("SD Cell 2")}
-        cols={2}
-        className="top-[51%] left-[42%] w-[20%] h-[47%]"
+        cols={1}
+        className="top-[12%] left-[70%] w-[14%] h-[75%]"
       />
 
-      {/* MD Cell — right column */}
+      {/* MD Cell — top right corner */}
       <Zone
         name="MD Cell"
         machines={zoneFor("MD Cell")}
         cols={2}
-        className="top-[2%] left-[64%] w-[17%] h-[96%]"
+        className="top-[1%] left-[85%] w-[14%] h-[45%]"
       />
 
-      {/* LD Cell — far right column */}
+      {/* LD Cell — bottom right corner */}
       <Zone
         name="LD Cell"
         machines={zoneFor("LD Cell")}
         cols={2}
-        className="top-[2%] left-[83%] w-[15%] h-[96%]"
+        className="top-[48%] left-[85%] w-[14%] h-[51%]"
       />
     </div>
     </div>
@@ -2204,11 +2192,14 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
         className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
         aria-label={`${label} deviation floor map`}
       >
-        <Zone name="Fuseal Cell" machines={zoneFor("Fuseal Cell")} cols={2} className="top-[2%] left-[2%] w-[38%] h-[96%]" />
-        <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} cols={2} className="top-[2%] left-[42%] w-[20%] h-[47%]" />
-        <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={2} className="top-[51%] left-[42%] w-[20%] h-[47%]" />
-        <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[2%] left-[64%] w-[17%] h-[96%]" />
-        <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[2%] left-[83%] w-[15%] h-[96%]" />
+        <Zone name="ENG. Extrusion" machines={zoneFor("ENG. Extrusion")} cols={1} className="top-[1%] left-[1%] w-[15%] h-[52%]" />
+        <Zone name="Coil & Collar" machines={zoneFor("Coil & Collar")} cols={2} className="top-[54%] left-[1%] w-[22%] h-[45%]" />
+        <Zone name="Vinyls Extrusion" machines={zoneFor("Vinyls Extrusion")} cols={1} className="top-[1%] left-[40%] w-[12%] h-[22%]" />
+        <Zone name="Fuseal Cell" machines={zoneFor("Fuseal Cell")} cols={2} className="top-[26%] left-[24%] w-[30%] h-[73%]" />
+        <Zone name="SD Cell 1" machines={zoneFor("SD Cell 1")} cols={1} className="top-[16%] left-[55%] w-[14%] h-[52%]" />
+        <Zone name="SD Cell 2" machines={zoneFor("SD Cell 2")} cols={1} className="top-[12%] left-[70%] w-[14%] h-[75%]" />
+        <Zone name="MD Cell" machines={zoneFor("MD Cell")} cols={2} className="top-[1%] left-[85%] w-[14%] h-[45%]" />
+        <Zone name="LD Cell" machines={zoneFor("LD Cell")} cols={2} className="top-[48%] left-[85%] w-[14%] h-[51%]" />
       </div>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
