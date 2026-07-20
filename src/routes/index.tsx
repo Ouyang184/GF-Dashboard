@@ -1657,11 +1657,11 @@ function FloorMap({
             : "bg-muted/60 border-border text-muted-foreground hover:bg-muted"
         } ${selected === key ? "ring-2 ring-accent ring-offset-1 ring-offset-background" : ""}`}
       >
-        <span className="truncate">{key}</span>
+        <span className="relative z-10 truncate drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]">{key}</span>
         {running && (
           <span
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-2 -translate-x-1/2 rounded-sm bg-background/90 shadow-[0_0_6px_rgba(255,255,255,0.6)] motion-safe:animate-[fm-drop_3.2s_cubic-bezier(.5,0,.7,1)_infinite]"
+            className="pointer-events-none absolute left-1/2 top-0 h-2 w-2.5 -translate-x-1/2 rounded-[2px] bg-amber-300 shadow-[0_0_8px_rgba(253,224,71,0.9)] ring-1 ring-amber-500/60 motion-safe:animate-[fm-drop_2.6s_cubic-bezier(.5,0,.7,1)_infinite]"
             style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 30) / 10}s` }}
           />
         )}
@@ -1720,7 +1720,7 @@ function FloorMap({
   return (
     <>
     <div className="w-full overflow-x-auto -mx-2 px-2">
-    <style>{`@keyframes fm-drop{0%{transform:translate(-50%,-40%);opacity:0}15%{opacity:1}80%{opacity:1;transform:translate(-50%,120%)}100%{opacity:0;transform:translate(-50%,140%)}}`}</style>
+    <style>{`@keyframes fm-drop{0%{transform:translate(-50%,-60%) scaleY(.6);opacity:0}10%{opacity:1;transform:translate(-50%,-20%) scaleY(1)}70%{opacity:1;transform:translate(-50%,180%) scaleY(1)}100%{opacity:0;transform:translate(-50%,240%) scaleY(.8)}}`}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
