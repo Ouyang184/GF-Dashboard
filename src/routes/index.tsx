@@ -1654,6 +1654,13 @@ function FloorMap({
         }`}
       >
         <span className="truncate">{key}</span>
+        {running && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-1.5 w-2 -translate-x-1/2 rounded-sm bg-background/90 shadow-[0_0_6px_rgba(255,255,255,0.6)] motion-safe:animate-[fm-drop_3.2s_cubic-bezier(.5,0,.7,1)_infinite]"
+            style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 30) / 10}s` }}
+          />
+        )}
         {running && entry && (
           <span
             className="absolute -top-1 -right-1 rounded-full bg-background text-foreground border border-border text-[9px] leading-none font-semibold px-1.5 py-0.5"
