@@ -1630,6 +1630,9 @@ function FloorMap({
     if (key) byMachine.set(key, e);
   }
 
+  const [selected, setSelected] = useState<string | null>(null);
+  const selectedEntry = selected ? byMachine.get(selected) : undefined;
+
   const Tile = ({ id }: { id: string }) => {
     const key = displayId(id);
     const entry = byMachine.get(key);
@@ -1647,11 +1650,12 @@ function FloorMap({
       <button
         type="button"
         title={tooltip}
-        className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 transition text-sm sm:text-base ${
+        onClick={() => setSelected(key)}
+        className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 transition text-sm sm:text-base cursor-pointer ${
           running
-            ? "bg-success/80 border-success text-background hover:brightness-110 cursor-pointer"
-            : "bg-muted/60 border-border text-muted-foreground cursor-default"
-        }`}
+            ? "bg-success/80 border-success text-background hover:brightness-110"
+            : "bg-muted/60 border-border text-muted-foreground hover:bg-muted"
+        } ${selected === key ? "ring-2 ring-accent ring-offset-1 ring-offset-background" : ""}`}
       >
         <span className="truncate">{key}</span>
         {running && (
@@ -1714,6 +1718,7 @@ function FloorMap({
   const otherFuseal = fuseal.filter((m) => !HIGHLIGHT_MACHINES.has(m));
 
   return (
+    <>
     <div className="w-full overflow-x-auto -mx-2 px-2">
     <style>{`@keyframes fm-drop{0%{transform:translate(-50%,-40%);opacity:0}15%{opacity:1}80%{opacity:1;transform:translate(-50%,120%)}100%{opacity:0;transform:translate(-50%,140%)}}`}</style>
     <div
