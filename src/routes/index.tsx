@@ -1808,73 +1808,49 @@ function FloorMap({
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
     >
-      {/* Left column — ENG. Extrusion (tall) */}
-      <Zone
-        name="ENG. Extrusion"
-        machines={zoneFor("ENG. Extrusion")}
-        cols={1}
-        className="top-[1%] left-[1%] w-[15%] h-[52%]"
-      />
-
-      {/* Coil & Collar — left middle */}
-      <Zone
-        name="Coil & Collar"
-        machines={zoneFor("Coil & Collar")}
-        cols={2}
-        className="top-[54%] left-[1%] w-[22%] h-[45%]"
-      />
-
-      {/* Vinyls Extrusion — top middle, small */}
-      <Zone
-        name="Vinyls Extrusion"
-        machines={zoneFor("Vinyls Extrusion")}
-        cols={1}
-        className="top-[1%] left-[40%] w-[12%] h-[22%]"
-      />
-
-      {/* Fuseal Cell — center, large (focus) */}
+      {/* Fuseal Cell — hero (left, tall) */}
       <Zone
         name="Fuseal Cell"
         focus
-        className="top-[26%] left-[24%] w-[30%] h-[73%]"
+        className="top-[2%] left-[2%] w-[38%] h-[96%]"
       >
-        <div className="flex-1 grid grid-cols-2 gap-1 min-h-0">
+        <div className="flex-1 grid grid-cols-2 gap-1.5 min-h-0">
           {otherFuseal.map((m) => <Tile key={m} id={m} />)}
           <Tile id="301IM30" />
           <Tile id="109IM00" />
         </div>
       </Zone>
 
-      {/* SD Cell 1 — center-right */}
+      {/* SD Cell 1 — center top */}
       <Zone
         name="SD Cell 1"
         machines={zoneFor("SD Cell 1")}
-        cols={1}
-        className="top-[16%] left-[55%] w-[14%] h-[52%]"
+        cols={2}
+        className="top-[2%] left-[42%] w-[20%] h-[47%]"
       />
 
-      {/* SD Cell 2 — right wide column */}
+      {/* SD Cell 2 — center bottom */}
       <Zone
         name="SD Cell 2"
         machines={zoneFor("SD Cell 2")}
-        cols={1}
-        className="top-[12%] left-[70%] w-[14%] h-[75%]"
+        cols={2}
+        className="top-[51%] left-[42%] w-[20%] h-[47%]"
       />
 
-      {/* MD Cell — top right corner */}
+      {/* MD Cell — right column */}
       <Zone
         name="MD Cell"
         machines={zoneFor("MD Cell")}
         cols={2}
-        className="top-[1%] left-[85%] w-[14%] h-[45%]"
+        className="top-[2%] left-[64%] w-[17%] h-[96%]"
       />
 
-      {/* LD Cell — bottom right corner */}
+      {/* LD Cell — far right column */}
       <Zone
         name="LD Cell"
         machines={zoneFor("LD Cell")}
         cols={2}
-        className="top-[48%] left-[85%] w-[14%] h-[51%]"
+        className="top-[2%] left-[83%] w-[15%] h-[96%]"
       />
     </div>
     </div>
