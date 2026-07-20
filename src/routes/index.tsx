@@ -1659,11 +1659,15 @@ function FloorMap({
       >
         <span className="relative z-10 truncate drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)]">{key}</span>
         {running && (
-          <span
-            aria-hidden
-            className="pointer-events-none absolute left-1/2 top-0 h-2 w-2.5 -translate-x-1/2 rounded-[2px] bg-amber-300 shadow-[0_0_8px_rgba(253,224,71,0.9)] ring-1 ring-amber-500/60 motion-safe:animate-[fm-drop_2.6s_cubic-bezier(.5,0,.7,1)_infinite]"
-            style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 30) / 10}s` }}
-          />
+          <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            <span className="absolute inset-0 bg-success/30 fm-running-pulse" />
+            <span className="absolute bottom-1 left-[18%] h-2.5 w-1 rounded-sm bg-background/90 shadow-sm fm-clamp-left" />
+            <span className="absolute bottom-1 right-[18%] h-2.5 w-1 rounded-sm bg-background/90 shadow-sm fm-clamp-right" />
+            <span
+              className="absolute bottom-1.5 left-1/2 size-2 -translate-x-1/2 rounded-[2px] bg-warning shadow-[0_0_10px_hsl(var(--warning))] fm-ejected-part"
+              style={{ animationDelay: `${((key.charCodeAt(0) + key.charCodeAt(key.length - 1)) % 8) / 10}s` }}
+            />
+          </span>
         )}
         {running && entry && (
           <span
@@ -1720,7 +1724,23 @@ function FloorMap({
   return (
     <>
     <div className="w-full overflow-x-auto -mx-2 px-2">
-    <style>{`@keyframes fm-drop{0%{transform:translate(-50%,-60%) scaleY(.6);opacity:0}10%{opacity:1;transform:translate(-50%,-20%) scaleY(1)}70%{opacity:1;transform:translate(-50%,180%) scaleY(1)}100%{opacity:0;transform:translate(-50%,240%) scaleY(.8)}}`}</style>
+    <style>{`
+      @keyframes fm-running-pulse{0%,100%{opacity:.08}50%{opacity:.5}}
+      @keyframes fm-clamp-left{0%,22%,100%{transform:translateX(0)}38%,62%{transform:translateX(7px)}}
+      @keyframes fm-clamp-right{0%,22%,100%{transform:translateX(0)}38%,62%{transform:translateX(-7px)}}
+      @keyframes fm-ejected-part{
+        0%,58%{transform:translate(-50%,0) scale(.65);opacity:0}
+        64%{transform:translate(-50%,0) scale(1);opacity:1}
+        88%{transform:translate(22px,0) rotate(90deg) scale(1);opacity:1}
+        100%{transform:translate(34px,5px) rotate(135deg) scale(.75);opacity:0}
+      }
+      .fm-running-pulse{animation:fm-running-pulse 1.4s ease-in-out infinite}
+      .fm-clamp-left,.fm-clamp-right{animation-duration:2.2s;animation-timing-function:ease-in-out;animation-iteration-count:infinite}
+      .fm-clamp-left{animation-name:fm-clamp-left}
+      .fm-clamp-right{animation-name:fm-clamp-right}
+      .fm-ejected-part{animation:fm-ejected-part 2.2s ease-in-out infinite}
+      @media (prefers-reduced-motion:reduce){.fm-running-pulse,.fm-clamp-left,.fm-clamp-right,.fm-ejected-part{animation:none}}
+    `}</style>
     <div
       className="relative h-[520px] sm:h-[640px] min-w-[720px] rounded-xl border-2 border-border/70 bg-background/40 overflow-hidden"
       aria-label="Plant floor map"
