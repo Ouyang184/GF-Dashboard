@@ -1666,13 +1666,23 @@ function FloorMap({
                 <>
                   {/* soft breathing wash */}
                   <span className="absolute inset-0 bg-gradient-to-t from-success/40 via-success/10 to-transparent fm-breathe" style={{ animationDelay: delay }} />
+                  {/* hopper + falling pellets (top-left) */}
+                  <span className="absolute top-0 left-1 w-2 h-1.5 rounded-b-sm bg-foreground/40" />
+                  <span className="absolute top-1.5 left-[7px] h-1 w-1 rounded-full bg-warning/90 fm-pellet" style={{ animationDelay: delay }} />
+                  <span className="absolute top-1.5 left-[9px] h-[3px] w-[3px] rounded-full bg-warning/70 fm-pellet" style={{ animationDelay: `calc(${delay} + .3s)` }} />
                   {/* injection heat flash from center */}
                   <span className="absolute inset-0 fm-inject" style={{ animationDelay: delay }} />
+                  {/* cooling cyan wash after inject */}
+                  <span className="absolute inset-0 bg-[radial-gradient(circle_at_50%_60%,rgba(120,200,255,.35),transparent_65%)] fm-cool" style={{ animationDelay: delay }} />
                   {/* scanning sweep line */}
                   <span className="absolute inset-y-0 -left-2 w-1.5 bg-gradient-to-b from-transparent via-background/70 to-transparent fm-sweep" style={{ animationDelay: delay }} />
                   {/* clamp jaws */}
                   <span className="absolute bottom-1.5 left-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-l" style={{ animationDelay: delay }} />
                   <span className="absolute bottom-1.5 right-[14%] h-3 w-[3px] rounded-sm bg-background/90 shadow-[0_0_4px_rgba(0,0,0,0.4)] fm-clamp-r" style={{ animationDelay: delay }} />
+                  {/* robot arm sweeping across to grab the part */}
+                  <span className="absolute top-1 left-0 h-[2px] w-6 rounded-full bg-foreground/70 fm-arm" style={{ animationDelay: delay }}>
+                    <span className="absolute right-0 -top-[2px] h-[6px] w-[6px] rounded-sm bg-foreground/80 shadow-[0_0_4px_rgba(0,0,0,.6)]" />
+                  </span>
                   {/* conveyor belt with ticking dashes */}
                   <span className="absolute bottom-0 left-0 right-0 h-[3px] bg-foreground/20 overflow-hidden">
                     <span className="absolute inset-0 fm-belt bg-[repeating-linear-gradient(90deg,transparent_0_4px,hsl(var(--background))_4px_7px)] opacity-70" />
