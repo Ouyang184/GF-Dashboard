@@ -1795,6 +1795,186 @@ function FloorMap({
       />
     </div>
     </div>
+    <MachineDrawer machineId={selected} entry={selectedEntry} onClose={() => setSelected(null)} />
+    </>
+  );
+}
+
+function MachineDrawer({
+  machineId,
+  entry,
+  onClose,
+}: {
+  machineId: string | null;
+  entry?: FloorMapEntry;
+  onClose: () => void;
+}) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!machineId) return;
+    const id = setInterval(() => setNow(Date.now()), 500);
+    return () => clearInterval(id);
+  }, [machineId]);
+  useEffect(() => {
+    if (!machineId) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [machineId, onClose]);
+
+  if (!machineId) return null;
+  const running = !!entry;
+
+  // Deterministic per-machine cycle simulation.
+  const seed = machineId.split("").reduce((s, c) => s + c.charCodeAt(0), 0);
+  const cycleSec = 40 + (seed % 20); // 40–60s per cycle
+  const PHASES: { name: string; frac: number; color: string }[] = [
+    { name: "DOSE",   frac: 0.15, color: "bg-sky-500" },
+    { name: "CLAMP",  frac: 0.10, color: "bg-indigo-500" },
+    { name: "INJECT", frac: 0.15, color: "bg-primary" },
+    { name: "COOL",   frac: 0.45, color: "bg-emerald-500" },
+    { name: "EJECT",  frac: 0.15, color: "bg-amber-500" },
+  ];
+  const t = running ? ((now / 1000) % cycleSec) / cycleSec : 0;
+  let acc = 0;
+  let phase = PHASES[0];
+  let phaseProgress = 0;
+  for (const p of PHASES) {
+    if (t < acc + p.frac) {
+      phase = p;
+      phaseProgress = (t - acc) / p.frac;
+      break;
+    }
+    acc += p.frac;
+  }
+
+  // Simulated part count: starts from shift start (7am) using cycle time.
+  const shiftStart = (() => {
+    const d = new Date();
+    d.setHours(7, 0, 0, 0);
+    if (d.getTime() > now) d.setDate(d.getDate() - 1);
+    return d.getTime();
+  })();
+  const partCount = running
+    ? Math.max(0, Math.floor(((now - shiftStart) / 1000) / cycleSec)) + (seed % 7)
+    : 0;
+
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
+      <button
+        type="button"
+        aria-label="Close"
+        onClick={onClose}
+        className="absolute inset-0 bg-background/60 backdrop-blur-sm animate-fade-in"
+      />
+      <aside className="relative h-full w-full max-w-md overflow-y-auto border-l border-border/60 bg-card shadow-2xl animate-slide-in-right">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border/60 bg-card/95 backdrop-blur px-5 py-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Machine</div>
+            <div className="text-2xl font-bold font-mono">{machineId}</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold ${
+                running
+                  ? "border-success/50 bg-success/15 text-success"
+                  : "border-border bg-muted/40 text-muted-foreground"
+              }`}
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${running ? "bg-success animate-pulse" : "bg-muted-foreground/50"}`}
+              />
+              {running ? "RUNNING" : "IDLE"}
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+              aria-label="Close drawer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="space-y-5 p-5">
+          {running ? (
+            <>
+              <section>
+                <div className="mb-2 flex items-baseline justify-between">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Cycle Phase</div>
+                  <div className="text-[10px] font-mono text-muted-foreground">{cycleSec}s / cycle</div>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <span className={`inline-block h-3 w-3 rounded-full ${phase.color} animate-pulse`} />
+                  <span className="text-xl font-bold tracking-wider">{phase.name}</span>
+                </div>
+                <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`h-full ${phase.color} transition-[width] duration-500 ease-linear`}
+                    style={{ width: `${Math.min(100, phaseProgress * 100)}%` }}
+                  />
+                </div>
+                <div className="mt-2 flex justify-between gap-1 text-[9px] font-mono uppercase text-muted-foreground">
+                  {PHASES.map((p) => (
+                    <span key={p.name} className={p.name === phase.name ? "text-foreground font-semibold" : ""}>
+                      {p.name}
+                    </span>
+                  ))}
+                </div>
+              </section>
+
+              <section className="grid grid-cols-2 gap-3">
+                <div className="rounded-lg border border-border/60 bg-background/40 p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Parts (shift)</div>
+                  <div className="mt-1 text-2xl font-bold tabular-nums text-primary">{partCount.toLocaleString()}</div>
+                </div>
+                <div className="rounded-lg border border-border/60 bg-background/40 p-3">
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Active Jobs</div>
+                  <div className="mt-1 text-2xl font-bold tabular-nums">{entry?.jobCount ?? 0}</div>
+                </div>
+              </section>
+
+              <section>
+                <div className="mb-2 text-[10px] uppercase tracking-wider text-muted-foreground">Jobs</div>
+                <ul className="space-y-2">
+                  {entry?.jobs.map((j, i) => (
+                    <li key={i} className="rounded-md border border-border/60 bg-background/40 p-3 text-sm">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono font-semibold">{j.partNumber}</span>
+                        <span
+                          className={`text-[10px] uppercase tracking-wider font-semibold ${
+                            j.status === "matching"
+                              ? "text-success"
+                              : j.status === "comparable"
+                                ? "text-warning"
+                                : "text-danger"
+                          }`}
+                        >
+                          MC: {j.masterCard || "—"}
+                        </span>
+                      </div>
+                      {j.partDescription && (
+                        <div className="mt-1 text-xs text-muted-foreground">{j.partDescription}</div>
+                      )}
+                      <div className="mt-1 flex justify-between text-[11px] text-muted-foreground">
+                        <span>WO {j.workOrder || "—"}</span>
+                        <span>Tech: {j.productionTech || "—"}</span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            </>
+          ) : (
+            <div className="rounded-lg border border-dashed border-border/60 bg-background/40 p-6 text-center text-sm text-muted-foreground">
+              No live jobs for machine <span className="font-mono font-semibold text-foreground">{machineId}</span> in
+              the current production window.
+            </div>
+          )}
+        </div>
+      </aside>
+    </div>
   );
 }
 
