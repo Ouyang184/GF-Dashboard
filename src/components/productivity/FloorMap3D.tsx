@@ -1,6 +1,6 @@
 import { Suspense, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, Html, RoundedBox } from "@react-three/drei";
+import { OrbitControls, Html, RoundedBox, Environment, ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import {
   PLANT_ROOMS,
@@ -69,7 +69,13 @@ export default function FloorMap3D({ floorMap, deviations }: Props) {
 
           <Suspense fallback={null}>
             <Slab />
-            <Grid />
+            <FloorLanes />
+            <PerimeterFence />
+            <CeilingLights />
+            <Forklifts />
+            <PalletStacks />
+            <ContactShadows position={[0, 0.03, 0]} opacity={0.45} scale={220} blur={2.6} far={20} />
+            <Environment preset="warehouse" />
             {PLANT_ROOMS.map((r) => (
               <Room key={r.id} room={r} />
             ))}
@@ -176,24 +182,192 @@ function LegendDot({ color, label }: { color: string; label: string }) {
 
 function Slab() {
   return (
-    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.05, 0]}>
-      <planeGeometry args={[PLANT_WIDTH + 20, PLANT_DEPTH + 20]} />
-      <meshStandardMaterial color="#181c22" roughness={0.95} />
-    </mesh>
+    <group>
+      {/* Outer apron */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.06, 0]}>
+        <planeGeometry args={[PLANT_WIDTH + 60, PLANT_DEPTH + 60]} />
+        <meshStandardMaterial color="#0b0d11" roughness={1} />
+      </mesh>
+      {/* Plant concrete slab */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.04, 0]}>
+        <planeGeometry args={[PLANT_WIDTH + 12, PLANT_DEPTH + 12]} />
+        <meshStandardMaterial color="#1c2028" roughness={0.92} metalness={0.05} />
+      </mesh>
+    </group>
   );
 }
 
-function Grid() {
+function FloorLanes() {
+  // Painted safety walkways: yellow border stripes around plant perimeter
+  const t = 0.35;
+  const w = PLANT_WIDTH + 4;
+  const d = PLANT_DEPTH + 4;
+  const y = 0.01;
+  const stripe = "#d4a017";
   return (
-    <gridHelper
-      args={[
-        Math.max(PLANT_WIDTH, PLANT_DEPTH) + 20,
-        Math.max(PLANT_WIDTH, PLANT_DEPTH) + 20,
-        "#2a2f3a",
-        "#1f242c",
-      ]}
-      position={[0, 0, 0]}
-    />
+    <group>
+      <mesh position={[0, y, -d / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[w, t]} />
+        <meshStandardMaterial color={stripe} emissive={stripe} emissiveIntensity={0.15} />
+      </mesh>
+      <mesh position={[0, y, d / 2]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[w, t]} />
+        <meshStandardMaterial color={stripe} emissive={stripe} emissiveIntensity={0.15} />
+      </mesh>
+      <mesh position={[-w / 2, y, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[t, d]} />
+        <meshStandardMaterial color={stripe} emissive={stripe} emissiveIntensity={0.15} />
+      </mesh>
+      <mesh position={[w / 2, y, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <planeGeometry args={[t, d]} />
+        <meshStandardMaterial color={stripe} emissive={stripe} emissiveIntensity={0.15} />
+      </mesh>
+      {/* Central aisle dashes */}
+      {Array.from({ length: 20 }).map((_, i) => (
+        <mesh
+          key={i}
+          position={[-PLANT_WIDTH / 2 + 4 + i * 6, y, 0]}
+          rotation={[-Math.PI / 2, 0, 0]}
+        >
+          <planeGeometry args={[2.4, 0.2]} />
+          <meshStandardMaterial color="#e8e8ea" opacity={0.55} transparent />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function PerimeterFence() {
+  const w = PLANT_WIDTH + 10;
+  const d = PLANT_DEPTH + 10;
+  const h = 0.9;
+  const mat = <meshStandardMaterial color="#2a3140" roughness={0.7} metalness={0.4} />;
+  return (
+    <group>
+      <mesh position={[0, h / 2, -d / 2]}>
+        <boxGeometry args={[w, h, 0.15]} />
+        {mat}
+      </mesh>
+      <mesh position={[0, h / 2, d / 2]}>
+        <boxGeometry args={[w, h, 0.15]} />
+        {mat}
+      </mesh>
+      <mesh position={[-w / 2, h / 2, 0]}>
+        <boxGeometry args={[0.15, h, d]} />
+        {mat}
+      </mesh>
+      <mesh position={[w / 2, h / 2, 0]}>
+        <boxGeometry args={[0.15, h, d]} />
+        {mat}
+      </mesh>
+    </group>
+  );
+}
+
+function CeilingLights() {
+  const lights: Array<[number, number]> = [];
+  for (let x = -PLANT_WIDTH / 2 + 10; x <= PLANT_WIDTH / 2 - 10; x += 20) {
+    for (let z = -PLANT_DEPTH / 2 + 8; z <= PLANT_DEPTH / 2 - 8; z += 16) {
+      lights.push([x, z]);
+    }
+  }
+  return (
+    <group>
+      {lights.map(([x, z], i) => (
+        <group key={i} position={[x, 14, z]}>
+          <mesh>
+            <boxGeometry args={[3.2, 0.15, 0.5]} />
+            <meshStandardMaterial
+              color="#fff7d6"
+              emissive="#fff2b0"
+              emissiveIntensity={1.4}
+            />
+          </mesh>
+          <pointLight color="#fff2c8" intensity={0.35} distance={22} decay={2} />
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function Forklifts() {
+  const forklifts: Array<[number, number, number]> = [
+    [-40, 0, 22],
+    [10, 0, -20],
+    [35, 0, 24],
+  ];
+  return (
+    <group>
+      {forklifts.map(([x, y, z], i) => (
+        <group key={i} position={[x, y, z]} rotation={[0, (i * Math.PI) / 3, 0]}>
+          {/* body */}
+          <mesh castShadow position={[0, 0.55, 0]}>
+            <boxGeometry args={[1.4, 0.9, 2.2]} />
+            <meshStandardMaterial color="#e0a500" roughness={0.5} metalness={0.3} />
+          </mesh>
+          {/* mast */}
+          <mesh castShadow position={[0, 1.6, 1.15]}>
+            <boxGeometry args={[0.9, 2.0, 0.15]} />
+            <meshStandardMaterial color="#1a1d24" metalness={0.7} roughness={0.35} />
+          </mesh>
+          {/* forks */}
+          <mesh position={[-0.3, 0.15, 1.65]}>
+            <boxGeometry args={[0.15, 0.08, 1.0]} />
+            <meshStandardMaterial color="#2a2f3a" metalness={0.8} />
+          </mesh>
+          <mesh position={[0.3, 0.15, 1.65]}>
+            <boxGeometry args={[0.15, 0.08, 1.0]} />
+            <meshStandardMaterial color="#2a2f3a" metalness={0.8} />
+          </mesh>
+          {/* wheels */}
+          {[
+            [-0.65, 0.25, -0.7],
+            [0.65, 0.25, -0.7],
+            [-0.65, 0.25, 0.7],
+            [0.65, 0.25, 0.7],
+          ].map(([wx, wy, wz], j) => (
+            <mesh key={j} position={[wx, wy, wz]} rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.25, 0.25, 0.2, 12]} />
+              <meshStandardMaterial color="#0d0f14" roughness={0.9} />
+            </mesh>
+          ))}
+        </group>
+      ))}
+    </group>
+  );
+}
+
+function PalletStacks() {
+  const stacks: Array<[number, number]> = [
+    [-50, -22], [-50, -14], [-50, -6], [-50, 2], [-50, 10], [-50, 18],
+    [50, -22], [50, -14], [50, -6], [50, 2], [50, 10], [50, 18],
+  ];
+  return (
+    <group>
+      {stacks.map(([x, z], i) => (
+        <group key={i} position={[x, 0, z]}>
+          {/* pallet */}
+          <mesh castShadow position={[0, 0.15, 0]}>
+            <boxGeometry args={[2.2, 0.25, 2.2]} />
+            <meshStandardMaterial color="#8a5a2b" roughness={0.9} />
+          </mesh>
+          {/* boxes */}
+          <mesh castShadow position={[0, 0.9, 0]}>
+            <boxGeometry args={[1.9, 1.1, 1.9]} />
+            <meshStandardMaterial
+              color={i % 2 === 0 ? "#b98a4a" : "#a67a3f"}
+              roughness={0.85}
+            />
+          </mesh>
+          {i % 3 === 0 && (
+            <mesh castShadow position={[0, 2.05, 0]}>
+              <boxGeometry args={[1.6, 0.9, 1.6]} />
+              <meshStandardMaterial color="#c99a5c" roughness={0.85} />
+            </mesh>
+          )}
+        </group>
+      ))}
+    </group>
   );
 }
 
