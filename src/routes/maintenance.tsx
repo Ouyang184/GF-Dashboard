@@ -66,17 +66,13 @@ function Panel({
 }) {
   return (
     <section
-      className={`maint-panel rounded-md p-4 maint-motion ${className}`}
+      className={`rounded-2xl p-6 border border-[#1a2340] bg-[#111828]/40 backdrop-blur-sm maint-motion ${className}`}
       style={{
         animation: `maint-boot 700ms ${delay}ms cubic-bezier(.2,.8,.2,1) both`,
       }}
     >
-      <header className="flex items-center justify-between mb-4 pb-2.5 border-b border-[#1a2340]">
-        <h2
-          className="text-[11px] font-semibold tracking-[0.2em] text-white/90 uppercase flex items-center gap-2.5"
-          style={MONO_STACK}
-        >
-          <span className="inline-block w-[3px] h-3 bg-[#4b7dff] rounded-sm" />
+      <header className="flex items-center justify-between mb-5">
+        <h2 className="text-[13px] font-medium text-white/85 tracking-tight" style={FONT_STACK}>
           {title}
         </h2>
         {right}
