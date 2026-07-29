@@ -66,17 +66,13 @@ function Panel({
 }) {
   return (
     <section
-      className={`maint-panel rounded-md p-4 maint-motion ${className}`}
+      className={`rounded-2xl p-6 border border-[#1a2340] bg-[#111828]/40 backdrop-blur-sm maint-motion ${className}`}
       style={{
         animation: `maint-boot 700ms ${delay}ms cubic-bezier(.2,.8,.2,1) both`,
       }}
     >
-      <header className="flex items-center justify-between mb-4 pb-2.5 border-b border-[#1e2636]">
-        <h2
-          className="text-[11px] font-semibold tracking-[0.2em] text-white/90 uppercase flex items-center gap-2.5"
-          style={MONO_STACK}
-        >
-          <span className="inline-block w-[3px] h-3 bg-[#6ea8ff] rounded-sm" />
+      <header className="flex items-center justify-between mb-5">
+        <h2 className="text-[13px] font-medium text-white/85 tracking-tight" style={FONT_STACK}>
           {title}
         </h2>
         {right}
@@ -112,62 +108,43 @@ function TopBar() {
       : "SHIFT B"
     : "";
   return (
-    <header className="relative border-b border-[#1e2636] bg-[#0a0d14]/95 backdrop-blur sticky top-0 z-30">
-      <div className="mx-auto max-w-[1700px] px-6 py-4 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 grid place-items-center rounded-md bg-[#6ea8ff]/10 border border-[#6ea8ff]/30">
-            <span className="text-[#6ea8ff] font-bold text-sm" style={MONO_STACK}>MX</span>
-          </div>
-          <div>
-            <h1
-              className="text-base font-semibold tracking-[0.14em] text-white leading-none"
-              style={FONT_STACK}
-            >
-              Maintenance Command Center
-            </h1>
-            <div className="text-[10px] mt-1.5 tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-              AMG Plant · Operations Node 01
-            </div>
-          </div>
+    <header className="relative border-b border-[#1a2340] bg-[#0a0e18]/90 backdrop-blur sticky top-0 z-30">
+      <div className="mx-auto max-w-[1500px] px-8 py-5 flex items-center justify-between gap-6">
+        <div>
+          <h1 className="text-xl font-semibold text-white tracking-tight" style={FONT_STACK}>
+            Maintenance
+          </h1>
+          <p className="text-[12px] text-[#6a7690] mt-1">Fleet status and predictive insights · AMG Plant</p>
         </div>
 
-        <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.18em] uppercase" style={MONO_STACK}>
-          <span className="flex items-center gap-2 text-white/70">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]" style={{ animation: "maint-blink 1.6s infinite" }} />
-            System Online
+        <div className="hidden md:flex items-center gap-3 text-[11px] text-white/60">
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]" />
+            Online
           </span>
-          <span className="text-[#2a3346]">|</span>
-          <span className="text-white/70">Telemetry <span className="text-[#4ecb8a]">Nominal</span></span>
-          <span className="text-[#2a3346]">|</span>
-          <span className="text-white/70">Latency <span className="text-white tabular-nums">42<span className="text-[#6a7690]">ms</span></span></span>
+          <span className="text-[#242c48]">·</span>
+          <span>Telemetry nominal</span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div
-            className="px-2.5 py-1 rounded border border-[#1e2636] bg-[#0f1520] text-[#6ea8ff] text-[10px] tracking-[0.25em] font-semibold"
-            style={MONO_STACK}
-          >
-            {shift}
-          </div>
+        <div className="flex items-center gap-4">
           <div className="text-right">
             <div
-              className="font-semibold text-xl tabular-nums text-white leading-none"
+              className="font-medium text-[15px] tabular-nums text-white leading-none"
               style={MONO_STACK}
               suppressHydrationWarning
             >
               {timeStr}
             </div>
             <div
-              className="text-[10px] text-[#6a7690] tracking-widest uppercase mt-1"
+              className="text-[10px] text-[#6a7690] tracking-wide mt-1"
               suppressHydrationWarning
             >
-              {dateStr}
+              {dateStr} · {shift}
             </div>
           </div>
           <Link
             to="/"
-            className="px-3 py-2 rounded border border-[#1e2636] hover:border-[#6ea8ff]/50 hover:bg-[#6ea8ff]/5 text-[11px] tracking-[0.2em] text-white/70 hover:text-white transition"
-            style={MONO_STACK}
+            className="px-3 py-2 rounded-lg border border-[#1a2340] hover:border-[#4b7dff]/60 hover:bg-[#4b7dff]/5 text-[11px] text-white/70 hover:text-white transition"
           >
             ← QDIP
           </Link>
@@ -213,11 +190,11 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
         <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
           <defs>
             <linearGradient id="gaugeStroke" x1="0" x2="1">
-              <stop offset="0%" stopColor="#6ea8ff" />
+              <stop offset="0%" stopColor="#4b7dff" />
               <stop offset="100%" stopColor="#4ecb8a" />
             </linearGradient>
           </defs>
-          <circle cx="100" cy="100" r={R} stroke="#1e2636" strokeWidth="8" fill="none" />
+          <circle cx="100" cy="100" r={R} stroke="#1a2340" strokeWidth="8" fill="none" />
           <circle
             cx="100"
             cy="100"
@@ -243,7 +220,7 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                stroke="#1e2636"
+                stroke="#1a2340"
                 strokeWidth={i % 5 === 0 ? 1.5 : 1}
               />
             );
@@ -256,7 +233,7 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
               style={MONO_STACK}
             >
               {display}
-              <span className="text-[#6ea8ff] text-2xl">%</span>
+              <span className="text-[#4b7dff] text-2xl">%</span>
             </div>
             <div className="text-[10px] tracking-[0.3em] text-[#6a7690] mt-2 uppercase">
               FLEET HEALTH
@@ -313,7 +290,7 @@ function MachineTile({ m }: { m: MachineTelemetry }) {
   const c = StatusColor(m.status);
   return (
     <div
-      className="relative rounded border border-[#1e2636] bg-[#0b111c]/90 p-2 hover:border-[#6ea8ff]/50 transition"
+      className="relative rounded border border-[#1a2340] bg-[#0f1524]/90 p-2 hover:border-[#4b7dff]/50 transition"
       style={m.status === "down" ? { animation: "maint-pulse-glow 2s ease-in-out infinite" } : undefined}
     >
       <div className="flex items-center justify-between mb-1">
@@ -354,11 +331,11 @@ function TelemetryWall({ fleet }: { fleet: MachineTelemetry[] }) {
 
 function AlertRow({ a }: { a: Alert }) {
   const c =
-    a.severity === "crit" ? "#e5556b" : a.severity === "warn" ? "#e8b464" : "#6ea8ff";
+    a.severity === "crit" ? "#e5556b" : a.severity === "warn" ? "#e8b464" : "#4b7dff";
   const rel = timeAgo(a.ts);
   return (
     <div
-      className="flex items-center gap-2 py-1.5 px-2 border-l-2 bg-[#0b111c]/60"
+      className="flex items-center gap-2 py-1.5 px-2 border-l-2 bg-[#0f1524]/60"
       style={{ borderColor: c, animation: "maint-slide-in 400ms ease both" }}
     >
       <span
@@ -399,7 +376,7 @@ function Counter({
   value,
   suffix = "",
   label,
-  color = "#6ea8ff",
+  color = "#4b7dff",
 }: {
   value: number;
   suffix?: string;
@@ -423,18 +400,14 @@ function Counter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
   return (
-    <div className="relative rounded border border-[#1e2636] bg-[#0b111c] p-4 overflow-hidden">
+    <div className="rounded-xl border border-[#1a2340] bg-[#0f1524]/60 p-5">
+      <div className="text-[10px] tracking-wider text-[#6a7690] uppercase font-medium">{label}</div>
       <div
-        className="absolute inset-x-0 top-0 h-px opacity-70"
-        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
-      />
-      <div className="text-[9px] tracking-[0.3em] text-[#6a7690] uppercase">{label}</div>
-      <div
-        className="mt-1 text-3xl font-bold tabular-nums leading-none"
-        style={{ ...MONO_STACK, color }}
+        className="mt-2 text-3xl font-light tabular-nums leading-none text-white"
+        style={MONO_STACK}
       >
         {d.toFixed(1)}
-        <span className="text-base opacity-60 ml-1">{suffix}</span>
+        <span className="text-sm ml-1.5" style={{ color }}>{suffix}</span>
       </div>
     </div>
   );
@@ -447,8 +420,8 @@ function KpiCounters({ fleet }: { fleet: MachineTelemetry[] }) {
   const mttr = 42 - (avgUptime - 85) * 0.6;
   const oee = avgUptime * 0.92;
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <Counter value={mtbf} suffix="h" label="MTBF" color="#6ea8ff" />
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <Counter value={mtbf} suffix="h" label="MTBF" color="#4b7dff" />
       <Counter value={mttr} suffix="min" label="MTTR" color="#e8b464" />
       <Counter value={oee} suffix="%" label="OEE" color="#4ecb8a" />
       <Counter value={avgUptime} suffix="%" label="AVG UPTIME" color="#a78bfa" />
@@ -465,13 +438,13 @@ function DowntimePareto({ tick }: { tick: number }) {
     <div className="flex flex-col gap-1.5">
       {data.map((d, i) => {
         const pct = (d.minutes / max) * 100;
-        const color = i === 0 ? "#e5556b" : i < 3 ? "#e8b464" : "#6ea8ff";
+        const color = i === 0 ? "#e5556b" : i < 3 ? "#e8b464" : "#4b7dff";
         return (
           <div key={d.reason} className="flex items-center gap-2 text-[11px]">
             <div className="w-28 shrink-0 truncate text-white/80" style={MONO_STACK}>
               {d.reason}
             </div>
-            <div className="flex-1 h-4 rounded-sm bg-[#0b111c] border border-[#1e2636] overflow-hidden relative">
+            <div className="flex-1 h-4 rounded-sm bg-[#0f1524] border border-[#1a2340] overflow-hidden relative">
               <div
                 className="h-full transition-all duration-700 ease-out"
                 style={{
@@ -504,9 +477,9 @@ function DowntimePareto({ tick }: { tick: number }) {
 /* ------------------------------ kanban ---------------------------------- */
 
 function WoCard({ w }: { w: WorkOrder }) {
-  const pc = w.priority === "P1" ? "#e5556b" : w.priority === "P2" ? "#e8b464" : "#6ea8ff";
+  const pc = w.priority === "P1" ? "#e5556b" : w.priority === "P2" ? "#e8b464" : "#4b7dff";
   return (
-    <div className="rounded border border-[#1e2636] bg-[#0b111c] p-2 hover:border-[#6ea8ff]/40 transition">
+    <div className="rounded border border-[#1a2340] bg-[#0f1524] p-2 hover:border-[#4b7dff]/40 transition">
       <div className="flex items-center justify-between mb-1">
         <span className="text-[10px] font-bold text-white" style={MONO_STACK}>
           {w.id}
@@ -603,7 +576,7 @@ function RiskRow({ m }: { m: MachineTelemetry }) {
         if (m.status === "warn") risk = Math.min(1, risk + 0.25);
         if (m.status === "down") risk = Math.min(1, risk + 0.5);
         const c =
-          risk > 0.7 ? "#e5556b" : risk > 0.45 ? "#e8b464" : risk > 0.2 ? "#6ea8ff" : "#1e2636";
+          risk > 0.7 ? "#e5556b" : risk > 0.45 ? "#e8b464" : risk > 0.2 ? "#4b7dff" : "#1a2340";
         return (
           <div
             key={f}
@@ -642,7 +615,7 @@ function SparesPanel() {
               {s.sku}
             </div>
             <div className="flex-1 truncate text-white/80">{s.part}</div>
-            <div className="w-20 h-1.5 bg-[#0b111c] rounded-full overflow-hidden border border-[#1e2636]">
+            <div className="w-20 h-1.5 bg-[#0f1524] rounded-full overflow-hidden border border-[#1a2340]">
               <div className="h-full" style={{ width: `${pct}%`, background: c }} />
             </div>
             <div className="w-12 text-right tabular-nums font-bold" style={{ ...MONO_STACK, color: c }}>
@@ -678,10 +651,10 @@ function PmTimeline() {
             return (
               <div
                 key={i}
-                className="min-h-[90px] rounded border border-[#1e2636] bg-[#0b111c]/50 p-1 flex flex-col gap-1"
+                className="min-h-[90px] rounded border border-[#1a2340] bg-[#0f1524]/50 p-1 flex flex-col gap-1"
               >
                 {items.slice(0, 3).map((t, k) => {
-                  const c = t.hours > 4 ? "#e5556b" : t.hours > 2 ? "#e8b464" : "#6ea8ff";
+                  const c = t.hours > 4 ? "#e5556b" : t.hours > 2 ? "#e8b464" : "#4b7dff";
                   return (
                     <div
                       key={k}
@@ -748,110 +721,81 @@ function MaintenancePage() {
   const wos = useMemo(() => buildWorkOrders(tick), [tick]);
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-white relative" style={FONT_STACK}>
+    <div className="min-h-screen bg-[#0a0e18] text-white relative" style={FONT_STACK}>
       <AmbientBackdrop />
       <TopBar />
-      <main className="relative z-10 mx-auto max-w-[1700px] px-6 py-6 space-y-4">
-        {/* Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <Panel title="FLEET HEALTH" className="lg:col-span-3" delay={0}>
+      <main className="relative z-10 mx-auto max-w-[1500px] px-8 py-8 space-y-6">
+        {/* KPI header strip */}
+        <KpiCounters fleet={fleet} />
+
+        {/* Row 1: fleet + telemetry */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Fleet Health" className="lg:col-span-4" delay={0}>
             <FleetHealthGauge fleet={fleet} />
           </Panel>
           <Panel
-            title="LIVE TELEMETRY"
-            className="lg:col-span-6"
+            title="Live Telemetry"
+            className="lg:col-span-8"
             delay={80}
             right={
-              <span
-                className="text-[9px] tracking-widest text-[#4ecb8a] flex items-center gap-1.5"
-                style={MONO_STACK}
-              >
+              <span className="text-[10px] text-[#4ecb8a] flex items-center gap-1.5">
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]"
-                  style={{ animation: "maint-blink 1.2s infinite" }}
+                  style={{ animation: "maint-blink 1.4s infinite" }}
                 />
-                LIVE · {fleet.length} NODES
+                {fleet.length} nodes streaming
               </span>
             }
           >
             <TelemetryWall fleet={fleet} />
           </Panel>
-          <Panel
-            title="CRITICAL ALERTS"
-            className="lg:col-span-3"
-            delay={160}
+        </div>
+
+        {/* Row 2: pareto + heatmap + spares */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Downtime Pareto" className="lg:col-span-4" delay={160}
+            right={<span className="text-[10px] text-[#6a7690]">last 24h</span>}>
+            <DowntimePareto tick={tick} />
+          </Panel>
+          <Panel title="Predictive Risk Heatmap" className="lg:col-span-5" delay={220}
             right={
-              <span
-                className="text-[9px] tracking-widest text-[#e5556b]"
-                style={MONO_STACK}
-              >
-                {alerts.filter((a) => a.severity === "crit").length} CRIT
+              <span className="text-[10px] bg-[#e8b464]/10 text-[#e8b464] px-2 py-0.5 rounded border border-[#e8b464]/25">
+                monitored
               </span>
-            }
-          >
-            <AlertStream alerts={alerts} />
+            }>
+            <RiskHeatmap fleet={fleet} />
+          </Panel>
+          <Panel title="Active Spares" className="lg:col-span-3" delay={280}>
+            <SparesPanel />
           </Panel>
         </div>
 
-        {/* Row 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-9 space-y-4">
-            <Panel title="OPERATIONAL METRICS" delay={220}>
-              <KpiCounters fleet={fleet} />
-            </Panel>
-            <Panel
-              title="DOWNTIME PARETO · LAST 24H"
-              delay={280}
-              right={
-                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-                  MINUTES
-                </span>
-              }
-            >
-              <DowntimePareto tick={tick} />
-            </Panel>
-            <Panel title="PREDICTIVE RISK MATRIX" delay={340}>
-              <RiskHeatmap fleet={fleet} />
-            </Panel>
-          </div>
-          <div className="lg:col-span-3 space-y-4">
-            <Panel
-              title="WORK ORDER QUEUE"
-              delay={220}
-              right={
-                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-                  {wos.length} TOTAL
-                </span>
-              }
-            >
-              <WorkOrderKanban wos={wos} />
-            </Panel>
-            <Panel title="SPARES INVENTORY" delay={340}>
-              <SparesPanel />
-            </Panel>
-          </div>
+        {/* Row 3: alerts + work orders */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Critical Alerts" className="lg:col-span-5" delay={320}
+            right={
+              <span className="text-[10px] text-[#e5556b]">
+                {alerts.filter((a) => a.severity === "crit").length} critical
+              </span>
+            }>
+            <AlertStream alerts={alerts} />
+          </Panel>
+          <Panel title="Work Orders" className="lg:col-span-7" delay={380}
+            right={<span className="text-[10px] text-[#6a7690]">{wos.length} total</span>}>
+            <WorkOrderKanban wos={wos} />
+          </Panel>
         </div>
 
-        {/* Row 3 */}
-        <Panel
-          title="PREVENTIVE MAINTENANCE · 14-DAY HORIZON"
-          delay={400}
-          right={
-            <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-              TODAY → +14D
-            </span>
-          }
-        >
+        {/* Row 4: PM timeline full width */}
+        <Panel title="Preventive Maintenance"
+          delay={440}
+          right={<span className="text-[10px] text-[#6a7690]">today → +14d</span>}>
           <PmTimeline />
         </Panel>
 
-        <footer className="mt-4 pt-4 pb-8 flex items-center justify-between border-t border-[#1e2636]">
-          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-            AMG Maintenance OS · v2.6.1
-          </div>
-          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-            Internal Use Only
-          </div>
+        <footer className="pt-6 pb-4 flex items-center justify-between border-t border-[#1a2340]">
+          <div className="text-[10px] text-[#6a7690]">AMG Maintenance · v2.6.1</div>
+          <div className="text-[10px] text-[#6a7690]">Internal use only</div>
         </footer>
       </main>
     </div>
