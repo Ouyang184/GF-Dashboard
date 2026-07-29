@@ -51,19 +51,6 @@ function StatusColor(s: MachineStatus): string {
         : "#6a7690";
 }
 
-function CornerBrackets() {
-  const cls =
-    "absolute w-3 h-3 border-[#6ea8ff]/70 pointer-events-none";
-  return (
-    <>
-      <div className={`${cls} top-0 left-0 border-t border-l`} />
-      <div className={`${cls} top-0 right-0 border-t border-r`} />
-      <div className={`${cls} bottom-0 left-0 border-b border-l`} />
-      <div className={`${cls} bottom-0 right-0 border-b border-r`} />
-    </>
-  );
-}
-
 function Panel({
   title,
   right,
@@ -84,13 +71,13 @@ function Panel({
         animation: `maint-boot 700ms ${delay}ms cubic-bezier(.2,.8,.2,1) both`,
       }}
     >
-      <CornerBrackets />
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-center justify-between mb-4 pb-2.5 border-b border-[#1e2636]">
         <h2
-          className="text-[11px] font-semibold tracking-[0.22em] text-[#6ea8ff] uppercase"
+          className="text-[11px] font-semibold tracking-[0.2em] text-white/90 uppercase flex items-center gap-2.5"
           style={MONO_STACK}
         >
-          » {title}
+          <span className="inline-block w-[3px] h-3 bg-[#6ea8ff] rounded-sm" />
+          {title}
         </h2>
         {right}
       </header>
