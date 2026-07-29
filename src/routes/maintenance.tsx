@@ -108,62 +108,43 @@ function TopBar() {
       : "SHIFT B"
     : "";
   return (
-    <header className="relative border-b border-[#1a2340] bg-[#0a0e18]/95 backdrop-blur sticky top-0 z-30">
-      <div className="mx-auto max-w-[1700px] px-6 py-4 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 grid place-items-center rounded-md bg-[#4b7dff]/10 border border-[#4b7dff]/30">
-            <span className="text-[#4b7dff] font-bold text-sm" style={MONO_STACK}>MX</span>
-          </div>
-          <div>
-            <h1
-              className="text-base font-semibold tracking-[0.14em] text-white leading-none"
-              style={FONT_STACK}
-            >
-              Maintenance Command Center
-            </h1>
-            <div className="text-[10px] mt-1.5 tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-              AMG Plant · Operations Node 01
-            </div>
-          </div>
+    <header className="relative border-b border-[#1a2340] bg-[#0a0e18]/90 backdrop-blur sticky top-0 z-30">
+      <div className="mx-auto max-w-[1500px] px-8 py-5 flex items-center justify-between gap-6">
+        <div>
+          <h1 className="text-xl font-semibold text-white tracking-tight" style={FONT_STACK}>
+            Maintenance
+          </h1>
+          <p className="text-[12px] text-[#6a7690] mt-1">Fleet status and predictive insights · AMG Plant</p>
         </div>
 
-        <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.18em] uppercase" style={MONO_STACK}>
-          <span className="flex items-center gap-2 text-white/70">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]" style={{ animation: "maint-blink 1.6s infinite" }} />
-            System Online
+        <div className="hidden md:flex items-center gap-3 text-[11px] text-white/60">
+          <span className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]" />
+            Online
           </span>
-          <span className="text-[#242c48]">|</span>
-          <span className="text-white/70">Telemetry <span className="text-[#4ecb8a]">Nominal</span></span>
-          <span className="text-[#242c48]">|</span>
-          <span className="text-white/70">Latency <span className="text-white tabular-nums">42<span className="text-[#6a7690]">ms</span></span></span>
+          <span className="text-[#242c48]">·</span>
+          <span>Telemetry nominal</span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div
-            className="px-2.5 py-1 rounded border border-[#1a2340] bg-[#131a2e] text-[#4b7dff] text-[10px] tracking-[0.25em] font-semibold"
-            style={MONO_STACK}
-          >
-            {shift}
-          </div>
+        <div className="flex items-center gap-4">
           <div className="text-right">
             <div
-              className="font-semibold text-xl tabular-nums text-white leading-none"
+              className="font-medium text-[15px] tabular-nums text-white leading-none"
               style={MONO_STACK}
               suppressHydrationWarning
             >
               {timeStr}
             </div>
             <div
-              className="text-[10px] text-[#6a7690] tracking-widest uppercase mt-1"
+              className="text-[10px] text-[#6a7690] tracking-wide mt-1"
               suppressHydrationWarning
             >
-              {dateStr}
+              {dateStr} · {shift}
             </div>
           </div>
           <Link
             to="/"
-            className="px-3 py-2 rounded border border-[#1a2340] hover:border-[#4b7dff]/50 hover:bg-[#4b7dff]/5 text-[11px] tracking-[0.2em] text-white/70 hover:text-white transition"
-            style={MONO_STACK}
+            className="px-3 py-2 rounded-lg border border-[#1a2340] hover:border-[#4b7dff]/60 hover:bg-[#4b7dff]/5 text-[11px] text-white/70 hover:text-white transition"
           >
             ← QDIP
           </Link>
