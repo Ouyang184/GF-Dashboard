@@ -400,18 +400,14 @@ function Counter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
   return (
-    <div className="relative rounded border border-[#1a2340] bg-[#0f1524] p-4 overflow-hidden">
+    <div className="rounded-xl border border-[#1a2340] bg-[#0f1524]/60 p-5">
+      <div className="text-[10px] tracking-wider text-[#6a7690] uppercase font-medium">{label}</div>
       <div
-        className="absolute inset-x-0 top-0 h-px opacity-70"
-        style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
-      />
-      <div className="text-[9px] tracking-[0.3em] text-[#6a7690] uppercase">{label}</div>
-      <div
-        className="mt-1 text-3xl font-bold tabular-nums leading-none"
-        style={{ ...MONO_STACK, color }}
+        className="mt-2 text-3xl font-light tabular-nums leading-none text-white"
+        style={MONO_STACK}
       >
         {d.toFixed(1)}
-        <span className="text-base opacity-60 ml-1">{suffix}</span>
+        <span className="text-sm ml-1.5" style={{ color }}>{suffix}</span>
       </div>
     </div>
   );
