@@ -98,32 +98,6 @@ function useClock() {
   return now;
 }
 
-function TypewriterLine({ text }: { text: string }) {
-  const [n, setN] = useState(0);
-  useEffect(() => {
-    setN(0);
-    const id = setInterval(() => {
-      setN((v) => {
-        if (v >= text.length) {
-          clearInterval(id);
-          return v;
-        }
-        return v + 1;
-      });
-    }, 24);
-    return () => clearInterval(id);
-  }, [text]);
-  return (
-    <span style={MONO_STACK} className="text-[#4ecb8a]">
-      {text.slice(0, n)}
-      <span
-        className="inline-block w-[7px] h-[12px] bg-[#4ecb8a] align-middle ml-0.5"
-        style={{ animation: "maint-caret 900ms steps(1) infinite" }}
-      />
-    </span>
-  );
-}
-
 function TopBar() {
   const now = useClock();
   const timeStr = now
@@ -134,51 +108,50 @@ function TopBar() {
     : "";
   const shift = now
     ? now.getHours() >= 7 && now.getHours() < 19
-      ? "SHIFT · A"
-      : "SHIFT · B"
+      ? "SHIFT A"
+      : "SHIFT B"
     : "";
   return (
-    <header className="relative border-b border-[#1e2636] bg-[#0a0d14]/90 backdrop-blur sticky top-0 z-30">
-      <div className="mx-auto max-w-[1700px] px-6 py-3 flex items-center justify-between gap-6">
-        <div className="flex items-center gap-4">
-          <div className="relative w-10 h-10 grid place-items-center rounded-md border border-[#6ea8ff]/50 bg-[#6ea8ff]/10">
-            <div
-              className="absolute inset-1 rounded-sm border border-[#6ea8ff]/40"
-              style={{ animation: "maint-radar 6s linear infinite" }}
-            />
-            <span className="text-[#6ea8ff] font-black" style={MONO_STACK}>
-              MX
-            </span>
+    <header className="relative border-b border-[#1e2636] bg-[#0a0d14]/95 backdrop-blur sticky top-0 z-30">
+      <div className="mx-auto max-w-[1700px] px-6 py-4 flex items-center justify-between gap-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 grid place-items-center rounded-md bg-[#6ea8ff]/10 border border-[#6ea8ff]/30">
+            <span className="text-[#6ea8ff] font-bold text-sm" style={MONO_STACK}>MX</span>
           </div>
           <div>
             <h1
-              className="text-lg font-bold tracking-[0.35em] text-white leading-none"
+              className="text-base font-semibold tracking-[0.14em] text-white leading-none"
               style={FONT_STACK}
             >
-              MAINTENANCE · COMMAND CENTER
+              Maintenance Command Center
             </h1>
-            <div className="text-[10px] mt-1 tracking-[0.3em] text-[#6a7690] uppercase">
-              AMG PLANT / OPS.MX.NODE.01
+            <div className="text-[10px] mt-1.5 tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
+              AMG Plant · Operations Node 01
             </div>
           </div>
         </div>
 
-        <div className="hidden md:block flex-1 min-w-0 mx-4 text-xs truncate">
-          <TypewriterLine
-            text={`SYSTEM ONLINE · TELEMETRY LINK ESTABLISHED · ${timeStr} UTC-6 · ALL SUBSYSTEMS NOMINAL`}
-          />
+        <div className="hidden md:flex items-center gap-5 text-[10px] tracking-[0.18em] uppercase" style={MONO_STACK}>
+          <span className="flex items-center gap-2 text-white/70">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]" style={{ animation: "maint-blink 1.6s infinite" }} />
+            System Online
+          </span>
+          <span className="text-[#2a3346]">|</span>
+          <span className="text-white/70">Telemetry <span className="text-[#4ecb8a]">Nominal</span></span>
+          <span className="text-[#2a3346]">|</span>
+          <span className="text-white/70">Latency <span className="text-white tabular-nums">42<span className="text-[#6a7690]">ms</span></span></span>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div
-            className="px-3 py-1.5 rounded border border-[#e8b464]/50 bg-[#e8b464]/10 text-[#e8b464] text-[10px] tracking-[0.25em] font-semibold"
+            className="px-2.5 py-1 rounded border border-[#1e2636] bg-[#0f1520] text-[#6ea8ff] text-[10px] tracking-[0.25em] font-semibold"
             style={MONO_STACK}
           >
             {shift}
           </div>
           <div className="text-right">
             <div
-              className="font-bold text-2xl tabular-nums text-white leading-none"
+              className="font-semibold text-xl tabular-nums text-white leading-none"
               style={MONO_STACK}
               suppressHydrationWarning
             >
@@ -193,7 +166,7 @@ function TopBar() {
           </div>
           <Link
             to="/"
-            className="px-3 py-2 rounded border border-[#1e2636] hover:border-[#6ea8ff]/60 hover:bg-[#6ea8ff]/5 text-[11px] tracking-[0.25em] text-white/80 hover:text-white transition"
+            className="px-3 py-2 rounded border border-[#1e2636] hover:border-[#6ea8ff]/50 hover:bg-[#6ea8ff]/5 text-[11px] tracking-[0.2em] text-white/70 hover:text-white transition"
             style={MONO_STACK}
           >
             ← QDIP
