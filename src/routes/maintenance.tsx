@@ -43,17 +43,17 @@ const MONO_STACK = { fontFamily: "'JetBrains Mono', ui-monospace, monospace" };
 
 function StatusColor(s: MachineStatus): string {
   return s === "run"
-    ? "#3dffb0"
+    ? "#4ecb8a"
     : s === "warn"
-      ? "#ffb020"
+      ? "#e8b464"
       : s === "down"
-        ? "#ff2d75"
-        : "#4a5a7a";
+        ? "#e5556b"
+        : "#6a7690";
 }
 
 function CornerBrackets() {
   const cls =
-    "absolute w-3 h-3 border-[#00e5ff]/70 pointer-events-none";
+    "absolute w-3 h-3 border-[#6ea8ff]/70 pointer-events-none";
   return (
     <>
       <div className={`${cls} top-0 left-0 border-t border-l`} />
@@ -87,7 +87,7 @@ function Panel({
       <CornerBrackets />
       <header className="flex items-center justify-between mb-3">
         <h2
-          className="text-[11px] font-semibold tracking-[0.22em] text-[#00e5ff] uppercase"
+          className="text-[11px] font-semibold tracking-[0.22em] text-[#6ea8ff] uppercase"
           style={MONO_STACK}
         >
           » {title}
@@ -127,10 +127,10 @@ function TypewriterLine({ text }: { text: string }) {
     return () => clearInterval(id);
   }, [text]);
   return (
-    <span style={MONO_STACK} className="text-[#3dffb0]">
+    <span style={MONO_STACK} className="text-[#4ecb8a]">
       {text.slice(0, n)}
       <span
-        className="inline-block w-[7px] h-[12px] bg-[#3dffb0] align-middle ml-0.5"
+        className="inline-block w-[7px] h-[12px] bg-[#4ecb8a] align-middle ml-0.5"
         style={{ animation: "maint-caret 900ms steps(1) infinite" }}
       />
     </span>
@@ -151,15 +151,15 @@ function TopBar() {
       : "SHIFT · B"
     : "";
   return (
-    <header className="relative border-b border-[#1b2a4a] bg-[#05070d]/90 backdrop-blur sticky top-0 z-30">
+    <header className="relative border-b border-[#1e2636] bg-[#0a0d14]/90 backdrop-blur sticky top-0 z-30">
       <div className="mx-auto max-w-[1700px] px-6 py-3 flex items-center justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="relative w-10 h-10 grid place-items-center rounded-md border border-[#00e5ff]/50 bg-[#00e5ff]/10">
+          <div className="relative w-10 h-10 grid place-items-center rounded-md border border-[#6ea8ff]/50 bg-[#6ea8ff]/10">
             <div
-              className="absolute inset-1 rounded-sm border border-[#00e5ff]/40"
+              className="absolute inset-1 rounded-sm border border-[#6ea8ff]/40"
               style={{ animation: "maint-radar 6s linear infinite" }}
             />
-            <span className="text-[#00e5ff] font-black" style={MONO_STACK}>
+            <span className="text-[#6ea8ff] font-black" style={MONO_STACK}>
               MX
             </span>
           </div>
@@ -170,7 +170,7 @@ function TopBar() {
             >
               MAINTENANCE · COMMAND CENTER
             </h1>
-            <div className="text-[10px] mt-1 tracking-[0.3em] text-[#4a5a7a] uppercase">
+            <div className="text-[10px] mt-1 tracking-[0.3em] text-[#6a7690] uppercase">
               AMG PLANT / OPS.MX.NODE.01
             </div>
           </div>
@@ -184,7 +184,7 @@ function TopBar() {
 
         <div className="flex items-center gap-4">
           <div
-            className="px-3 py-1.5 rounded border border-[#ffb020]/50 bg-[#ffb020]/10 text-[#ffb020] text-[10px] tracking-[0.25em] font-semibold"
+            className="px-3 py-1.5 rounded border border-[#e8b464]/50 bg-[#e8b464]/10 text-[#e8b464] text-[10px] tracking-[0.25em] font-semibold"
             style={MONO_STACK}
           >
             {shift}
@@ -198,7 +198,7 @@ function TopBar() {
               {timeStr}
             </div>
             <div
-              className="text-[10px] text-[#4a5a7a] tracking-widest uppercase mt-1"
+              className="text-[10px] text-[#6a7690] tracking-widest uppercase mt-1"
               suppressHydrationWarning
             >
               {dateStr}
@@ -206,7 +206,7 @@ function TopBar() {
           </div>
           <Link
             to="/"
-            className="px-3 py-2 rounded border border-[#1b2a4a] hover:border-[#00e5ff]/60 hover:bg-[#00e5ff]/5 text-[11px] tracking-[0.25em] text-white/80 hover:text-white transition"
+            className="px-3 py-2 rounded border border-[#1e2636] hover:border-[#6ea8ff]/60 hover:bg-[#6ea8ff]/5 text-[11px] tracking-[0.25em] text-white/80 hover:text-white transition"
             style={MONO_STACK}
           >
             ← QDIP
@@ -253,11 +253,11 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
         <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
           <defs>
             <linearGradient id="gaugeStroke" x1="0" x2="1">
-              <stop offset="0%" stopColor="#00e5ff" />
-              <stop offset="100%" stopColor="#3dffb0" />
+              <stop offset="0%" stopColor="#6ea8ff" />
+              <stop offset="100%" stopColor="#4ecb8a" />
             </linearGradient>
           </defs>
-          <circle cx="100" cy="100" r={R} stroke="#1b2a4a" strokeWidth="8" fill="none" />
+          <circle cx="100" cy="100" r={R} stroke="#1e2636" strokeWidth="8" fill="none" />
           <circle
             cx="100"
             cy="100"
@@ -283,7 +283,7 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                stroke="#1b2a4a"
+                stroke="#1e2636"
                 strokeWidth={i % 5 === 0 ? 1.5 : 1}
               />
             );
@@ -296,9 +296,9 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
               style={MONO_STACK}
             >
               {display}
-              <span className="text-[#00e5ff] text-2xl">%</span>
+              <span className="text-[#6ea8ff] text-2xl">%</span>
             </div>
-            <div className="text-[10px] tracking-[0.3em] text-[#4a5a7a] mt-2 uppercase">
+            <div className="text-[10px] tracking-[0.3em] text-[#6a7690] mt-2 uppercase">
               FLEET HEALTH
             </div>
           </div>
@@ -306,22 +306,22 @@ function FleetHealthGauge({ fleet }: { fleet: MachineTelemetry[] }) {
       </div>
       <div className="mt-4 grid grid-cols-3 gap-3 w-full text-center">
         <div>
-          <div className="text-[#3dffb0] text-xl font-bold tabular-nums" style={MONO_STACK}>
+          <div className="text-[#4ecb8a] text-xl font-bold tabular-nums" style={MONO_STACK}>
             {running}
           </div>
-          <div className="text-[9px] tracking-widest text-[#4a5a7a] mt-0.5">RUN</div>
+          <div className="text-[9px] tracking-widest text-[#6a7690] mt-0.5">RUN</div>
         </div>
         <div>
-          <div className="text-[#ffb020] text-xl font-bold tabular-nums" style={MONO_STACK}>
+          <div className="text-[#e8b464] text-xl font-bold tabular-nums" style={MONO_STACK}>
             {warn}
           </div>
-          <div className="text-[9px] tracking-widest text-[#4a5a7a] mt-0.5">WARN</div>
+          <div className="text-[9px] tracking-widest text-[#6a7690] mt-0.5">WARN</div>
         </div>
         <div>
-          <div className="text-[#ff2d75] text-xl font-bold tabular-nums" style={MONO_STACK}>
+          <div className="text-[#e5556b] text-xl font-bold tabular-nums" style={MONO_STACK}>
             {down}
           </div>
-          <div className="text-[9px] tracking-widest text-[#4a5a7a] mt-0.5">DOWN</div>
+          <div className="text-[9px] tracking-widest text-[#6a7690] mt-0.5">DOWN</div>
         </div>
       </div>
     </div>
@@ -353,7 +353,7 @@ function MachineTile({ m }: { m: MachineTelemetry }) {
   const c = StatusColor(m.status);
   return (
     <div
-      className="relative rounded border border-[#1b2a4a] bg-[#0a1120]/90 p-2 hover:border-[#00e5ff]/50 transition"
+      className="relative rounded border border-[#1e2636] bg-[#0b111c]/90 p-2 hover:border-[#6ea8ff]/50 transition"
       style={m.status === "down" ? { animation: "maint-pulse-glow 2s ease-in-out infinite" } : undefined}
     >
       <div className="flex items-center justify-between mb-1">
@@ -371,7 +371,7 @@ function MachineTile({ m }: { m: MachineTelemetry }) {
       </div>
       <Waveform data={m.waveform} color={c} />
       <div className="flex justify-between text-[9px] mt-1" style={MONO_STACK}>
-        <span className="text-[#4a5a7a]">
+        <span className="text-[#6a7690]">
           {m.tempC}°C · {m.pressBar}b
         </span>
         <span style={{ color: c }}>{m.uptimePct.toFixed(1)}%</span>
@@ -394,18 +394,18 @@ function TelemetryWall({ fleet }: { fleet: MachineTelemetry[] }) {
 
 function AlertRow({ a }: { a: Alert }) {
   const c =
-    a.severity === "crit" ? "#ff2d75" : a.severity === "warn" ? "#ffb020" : "#00e5ff";
+    a.severity === "crit" ? "#e5556b" : a.severity === "warn" ? "#e8b464" : "#6ea8ff";
   const rel = timeAgo(a.ts);
   return (
     <div
-      className="flex items-center gap-2 py-1.5 px-2 border-l-2 bg-[#0a1120]/60"
+      className="flex items-center gap-2 py-1.5 px-2 border-l-2 bg-[#0b111c]/60"
       style={{ borderColor: c, animation: "maint-slide-in 400ms ease both" }}
     >
       <span
         className="w-1.5 h-1.5 rounded-full shrink-0"
         style={{ background: c, boxShadow: `0 0 6px ${c}` }}
       />
-      <span className="text-[10px] text-[#4a5a7a] tabular-nums w-10 shrink-0" style={MONO_STACK}>
+      <span className="text-[10px] text-[#6a7690] tabular-nums w-10 shrink-0" style={MONO_STACK}>
         {rel}
       </span>
       <span className="text-[10px] font-bold text-white w-16 shrink-0 truncate" style={MONO_STACK}>
@@ -439,7 +439,7 @@ function Counter({
   value,
   suffix = "",
   label,
-  color = "#00e5ff",
+  color = "#6ea8ff",
 }: {
   value: number;
   suffix?: string;
@@ -463,12 +463,12 @@ function Counter({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
   return (
-    <div className="relative rounded border border-[#1b2a4a] bg-[#0a1120] p-4 overflow-hidden">
+    <div className="relative rounded border border-[#1e2636] bg-[#0b111c] p-4 overflow-hidden">
       <div
         className="absolute inset-x-0 top-0 h-px opacity-70"
         style={{ background: `linear-gradient(90deg, transparent, ${color}, transparent)` }}
       />
-      <div className="text-[9px] tracking-[0.3em] text-[#4a5a7a] uppercase">{label}</div>
+      <div className="text-[9px] tracking-[0.3em] text-[#6a7690] uppercase">{label}</div>
       <div
         className="mt-1 text-3xl font-bold tabular-nums leading-none"
         style={{ ...MONO_STACK, color }}
@@ -488,9 +488,9 @@ function KpiCounters({ fleet }: { fleet: MachineTelemetry[] }) {
   const oee = avgUptime * 0.92;
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <Counter value={mtbf} suffix="h" label="MTBF" color="#00e5ff" />
-      <Counter value={mttr} suffix="min" label="MTTR" color="#ffb020" />
-      <Counter value={oee} suffix="%" label="OEE" color="#3dffb0" />
+      <Counter value={mtbf} suffix="h" label="MTBF" color="#6ea8ff" />
+      <Counter value={mttr} suffix="min" label="MTTR" color="#e8b464" />
+      <Counter value={oee} suffix="%" label="OEE" color="#4ecb8a" />
       <Counter value={avgUptime} suffix="%" label="AVG UPTIME" color="#a78bfa" />
     </div>
   );
@@ -505,13 +505,13 @@ function DowntimePareto({ tick }: { tick: number }) {
     <div className="flex flex-col gap-1.5">
       {data.map((d, i) => {
         const pct = (d.minutes / max) * 100;
-        const color = i === 0 ? "#ff2d75" : i < 3 ? "#ffb020" : "#00e5ff";
+        const color = i === 0 ? "#e5556b" : i < 3 ? "#e8b464" : "#6ea8ff";
         return (
           <div key={d.reason} className="flex items-center gap-2 text-[11px]">
             <div className="w-28 shrink-0 truncate text-white/80" style={MONO_STACK}>
               {d.reason}
             </div>
-            <div className="flex-1 h-4 rounded-sm bg-[#0a1120] border border-[#1b2a4a] overflow-hidden relative">
+            <div className="flex-1 h-4 rounded-sm bg-[#0b111c] border border-[#1e2636] overflow-hidden relative">
               <div
                 className="h-full transition-all duration-700 ease-out"
                 style={{
@@ -544,9 +544,9 @@ function DowntimePareto({ tick }: { tick: number }) {
 /* ------------------------------ kanban ---------------------------------- */
 
 function WoCard({ w }: { w: WorkOrder }) {
-  const pc = w.priority === "P1" ? "#ff2d75" : w.priority === "P2" ? "#ffb020" : "#00e5ff";
+  const pc = w.priority === "P1" ? "#e5556b" : w.priority === "P2" ? "#e8b464" : "#6ea8ff";
   return (
-    <div className="rounded border border-[#1b2a4a] bg-[#0a1120] p-2 hover:border-[#00e5ff]/40 transition">
+    <div className="rounded border border-[#1e2636] bg-[#0b111c] p-2 hover:border-[#6ea8ff]/40 transition">
       <div className="flex items-center justify-between mb-1">
         <span className="text-[10px] font-bold text-white" style={MONO_STACK}>
           {w.id}
@@ -559,7 +559,7 @@ function WoCard({ w }: { w: WorkOrder }) {
         </span>
       </div>
       <div className="text-[11px] text-white/85 line-clamp-2">{w.title}</div>
-      <div className="mt-1 flex justify-between text-[9px] text-[#4a5a7a]" style={MONO_STACK}>
+      <div className="mt-1 flex justify-between text-[9px] text-[#6a7690]" style={MONO_STACK}>
         <span>{w.machine}</span>
         <span>{w.tech} · {w.eta}</span>
       </div>
@@ -569,9 +569,9 @@ function WoCard({ w }: { w: WorkOrder }) {
 
 function WorkOrderKanban({ wos }: { wos: WorkOrder[] }) {
   const cols: { key: WorkOrder["status"]; label: string; color: string }[] = [
-    { key: "open", label: "OPEN", color: "#ff2d75" },
-    { key: "progress", label: "IN PROGRESS", color: "#ffb020" },
-    { key: "done", label: "COMPLETE", color: "#3dffb0" },
+    { key: "open", label: "OPEN", color: "#e5556b" },
+    { key: "progress", label: "IN PROGRESS", color: "#e8b464" },
+    { key: "done", label: "COMPLETE", color: "#4ecb8a" },
   ];
   return (
     <div className="grid grid-cols-3 gap-2">
@@ -586,7 +586,7 @@ function WorkOrderKanban({ wos }: { wos: WorkOrder[] }) {
               >
                 {c.label}
               </span>
-              <span className="text-[9px] text-[#4a5a7a] tabular-nums" style={MONO_STACK}>
+              <span className="text-[9px] text-[#6a7690] tabular-nums" style={MONO_STACK}>
                 {items.length.toString().padStart(2, "0")}
               </span>
             </div>
@@ -618,7 +618,7 @@ function RiskHeatmap({ fleet }: { fleet: MachineTelemetry[] }) {
         {FAILURE_MODES.map((f) => (
           <div
             key={f}
-            className="text-[9px] tracking-widest text-[#4a5a7a] text-center pb-1"
+            className="text-[9px] tracking-widest text-[#6a7690] text-center pb-1"
             style={MONO_STACK}
           >
             {f}
@@ -643,7 +643,7 @@ function RiskRow({ m }: { m: MachineTelemetry }) {
         if (m.status === "warn") risk = Math.min(1, risk + 0.25);
         if (m.status === "down") risk = Math.min(1, risk + 0.5);
         const c =
-          risk > 0.7 ? "#ff2d75" : risk > 0.45 ? "#ffb020" : risk > 0.2 ? "#00e5ff" : "#1b2a4a";
+          risk > 0.7 ? "#e5556b" : risk > 0.45 ? "#e8b464" : risk > 0.2 ? "#6ea8ff" : "#1e2636";
         return (
           <div
             key={f}
@@ -670,7 +670,7 @@ function SparesPanel() {
       {spares.map((s) => {
         const low = s.onHand < s.min;
         const zero = s.onHand === 0;
-        const c = zero ? "#ff2d75" : low ? "#ffb020" : "#3dffb0";
+        const c = zero ? "#e5556b" : low ? "#e8b464" : "#4ecb8a";
         const pct = Math.min(100, (s.onHand / Math.max(1, s.min * 2)) * 100);
         return (
           <div
@@ -678,11 +678,11 @@ function SparesPanel() {
             className="flex items-center gap-2 text-[11px]"
             style={zero ? { animation: "maint-pulse-glow 2s infinite" } : undefined}
           >
-            <div className="w-14 text-[9px] text-[#4a5a7a] shrink-0" style={MONO_STACK}>
+            <div className="w-14 text-[9px] text-[#6a7690] shrink-0" style={MONO_STACK}>
               {s.sku}
             </div>
             <div className="flex-1 truncate text-white/80">{s.part}</div>
-            <div className="w-20 h-1.5 bg-[#0a1120] rounded-full overflow-hidden border border-[#1b2a4a]">
+            <div className="w-20 h-1.5 bg-[#0b111c] rounded-full overflow-hidden border border-[#1e2636]">
               <div className="h-full" style={{ width: `${pct}%`, background: c }} />
             </div>
             <div className="w-12 text-right tabular-nums font-bold" style={{ ...MONO_STACK, color: c }}>
@@ -707,7 +707,7 @@ function PmTimeline() {
           {Array.from({ length: days }).map((_, i) => (
             <div
               key={i}
-              className="text-[9px] text-center text-[#4a5a7a] pb-1"
+              className="text-[9px] text-center text-[#6a7690] pb-1"
               style={MONO_STACK}
             >
               D+{i}
@@ -718,10 +718,10 @@ function PmTimeline() {
             return (
               <div
                 key={i}
-                className="min-h-[90px] rounded border border-[#1b2a4a] bg-[#0a1120]/50 p-1 flex flex-col gap-1"
+                className="min-h-[90px] rounded border border-[#1e2636] bg-[#0b111c]/50 p-1 flex flex-col gap-1"
               >
                 {items.slice(0, 3).map((t, k) => {
-                  const c = t.hours > 4 ? "#ff2d75" : t.hours > 2 ? "#ffb020" : "#00e5ff";
+                  const c = t.hours > 4 ? "#e5556b" : t.hours > 2 ? "#e8b464" : "#6ea8ff";
                   return (
                     <div
                       key={k}
@@ -742,7 +742,7 @@ function PmTimeline() {
                   );
                 })}
                 {items.length > 3 && (
-                  <div className="text-[8px] text-[#4a5a7a] text-center" style={MONO_STACK}>
+                  <div className="text-[8px] text-[#6a7690] text-center" style={MONO_STACK}>
                     +{items.length - 3}
                   </div>
                 )}
@@ -764,7 +764,7 @@ function AmbientBackdrop() {
         className="absolute inset-0 opacity-[0.08] maint-motion"
         style={{
           backgroundImage:
-            "linear-gradient(#00e5ff 1px, transparent 1px), linear-gradient(90deg, #00e5ff 1px, transparent 1px)",
+            "linear-gradient(#6ea8ff 1px, transparent 1px), linear-gradient(90deg, #6ea8ff 1px, transparent 1px)",
           backgroundSize: "40px 40px",
           animation: "maint-grid-drift 20s linear infinite",
         }}
@@ -773,7 +773,7 @@ function AmbientBackdrop() {
         className="absolute inset-x-0 h-[2px] opacity-40 maint-motion"
         style={{
           background:
-            "linear-gradient(90deg, transparent, #00e5ff, transparent)",
+            "linear-gradient(90deg, transparent, #6ea8ff, transparent)",
           animation: "maint-scanline 7s linear infinite",
         }}
       />
@@ -797,7 +797,7 @@ function MaintenancePage() {
   const wos = useMemo(() => buildWorkOrders(tick), [tick]);
 
   return (
-    <div className="min-h-screen bg-[#05070d] text-white relative" style={FONT_STACK}>
+    <div className="min-h-screen bg-[#0a0d14] text-white relative" style={FONT_STACK}>
       <AmbientBackdrop />
       <TopBar />
       <main className="relative z-10 mx-auto max-w-[1700px] px-6 py-6 space-y-4">
@@ -812,11 +812,11 @@ function MaintenancePage() {
             delay={80}
             right={
               <span
-                className="text-[9px] tracking-widest text-[#3dffb0] flex items-center gap-1.5"
+                className="text-[9px] tracking-widest text-[#4ecb8a] flex items-center gap-1.5"
                 style={MONO_STACK}
               >
                 <span
-                  className="w-1.5 h-1.5 rounded-full bg-[#3dffb0]"
+                  className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]"
                   style={{ animation: "maint-blink 1.2s infinite" }}
                 />
                 LIVE · {fleet.length} NODES
@@ -831,7 +831,7 @@ function MaintenancePage() {
             delay={160}
             right={
               <span
-                className="text-[9px] tracking-widest text-[#ff2d75]"
+                className="text-[9px] tracking-widest text-[#e5556b]"
                 style={MONO_STACK}
               >
                 {alerts.filter((a) => a.severity === "crit").length} CRIT
@@ -852,7 +852,7 @@ function MaintenancePage() {
               title="DOWNTIME PARETO · LAST 24H"
               delay={280}
               right={
-                <span className="text-[9px] tracking-widest text-[#4a5a7a]" style={MONO_STACK}>
+                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
                   MINUTES
                 </span>
               }
@@ -868,7 +868,7 @@ function MaintenancePage() {
               title="WORK ORDER QUEUE"
               delay={220}
               right={
-                <span className="text-[9px] tracking-widest text-[#4a5a7a]" style={MONO_STACK}>
+                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
                   {wos.length} TOTAL
                 </span>
               }
@@ -886,7 +886,7 @@ function MaintenancePage() {
           title="PREVENTIVE MAINTENANCE · 14-DAY HORIZON"
           delay={400}
           right={
-            <span className="text-[9px] tracking-widest text-[#4a5a7a]" style={MONO_STACK}>
+            <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
               TODAY → +14D
             </span>
           }
@@ -896,7 +896,7 @@ function MaintenancePage() {
 
         <footer className="pt-4 pb-8 text-center">
           <div
-            className="text-[10px] tracking-[0.35em] text-[#4a5a7a] uppercase"
+            className="text-[10px] tracking-[0.35em] text-[#6a7690] uppercase"
             style={MONO_STACK}
           >
             ▲ AMG MAINTENANCE OS · v2.6.1 · classified: internal
