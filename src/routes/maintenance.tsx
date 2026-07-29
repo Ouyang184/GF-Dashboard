@@ -724,107 +724,78 @@ function MaintenancePage() {
     <div className="min-h-screen bg-[#0a0e18] text-white relative" style={FONT_STACK}>
       <AmbientBackdrop />
       <TopBar />
-      <main className="relative z-10 mx-auto max-w-[1700px] px-6 py-6 space-y-4">
-        {/* Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <Panel title="FLEET HEALTH" className="lg:col-span-3" delay={0}>
+      <main className="relative z-10 mx-auto max-w-[1500px] px-8 py-8 space-y-6">
+        {/* KPI header strip */}
+        <KpiCounters fleet={fleet} />
+
+        {/* Row 1: fleet + telemetry */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Fleet Health" className="lg:col-span-4" delay={0}>
             <FleetHealthGauge fleet={fleet} />
           </Panel>
           <Panel
-            title="LIVE TELEMETRY"
-            className="lg:col-span-6"
+            title="Live Telemetry"
+            className="lg:col-span-8"
             delay={80}
             right={
-              <span
-                className="text-[9px] tracking-widest text-[#4ecb8a] flex items-center gap-1.5"
-                style={MONO_STACK}
-              >
+              <span className="text-[10px] text-[#4ecb8a] flex items-center gap-1.5">
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-[#4ecb8a]"
-                  style={{ animation: "maint-blink 1.2s infinite" }}
+                  style={{ animation: "maint-blink 1.4s infinite" }}
                 />
-                LIVE · {fleet.length} NODES
+                {fleet.length} nodes streaming
               </span>
             }
           >
             <TelemetryWall fleet={fleet} />
           </Panel>
-          <Panel
-            title="CRITICAL ALERTS"
-            className="lg:col-span-3"
-            delay={160}
+        </div>
+
+        {/* Row 2: pareto + heatmap + spares */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Downtime Pareto" className="lg:col-span-4" delay={160}
+            right={<span className="text-[10px] text-[#6a7690]">last 24h</span>}>
+            <DowntimePareto tick={tick} />
+          </Panel>
+          <Panel title="Predictive Risk Heatmap" className="lg:col-span-5" delay={220}
             right={
-              <span
-                className="text-[9px] tracking-widest text-[#e5556b]"
-                style={MONO_STACK}
-              >
-                {alerts.filter((a) => a.severity === "crit").length} CRIT
+              <span className="text-[10px] bg-[#e8b464]/10 text-[#e8b464] px-2 py-0.5 rounded border border-[#e8b464]/25">
+                monitored
               </span>
-            }
-          >
-            <AlertStream alerts={alerts} />
+            }>
+            <RiskHeatmap fleet={fleet} />
+          </Panel>
+          <Panel title="Active Spares" className="lg:col-span-3" delay={280}>
+            <SparesPanel />
           </Panel>
         </div>
 
-        {/* Row 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-9 space-y-4">
-            <Panel title="OPERATIONAL METRICS" delay={220}>
-              <KpiCounters fleet={fleet} />
-            </Panel>
-            <Panel
-              title="DOWNTIME PARETO · LAST 24H"
-              delay={280}
-              right={
-                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-                  MINUTES
-                </span>
-              }
-            >
-              <DowntimePareto tick={tick} />
-            </Panel>
-            <Panel title="PREDICTIVE RISK MATRIX" delay={340}>
-              <RiskHeatmap fleet={fleet} />
-            </Panel>
-          </div>
-          <div className="lg:col-span-3 space-y-4">
-            <Panel
-              title="WORK ORDER QUEUE"
-              delay={220}
-              right={
-                <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-                  {wos.length} TOTAL
-                </span>
-              }
-            >
-              <WorkOrderKanban wos={wos} />
-            </Panel>
-            <Panel title="SPARES INVENTORY" delay={340}>
-              <SparesPanel />
-            </Panel>
-          </div>
+        {/* Row 3: alerts + work orders */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <Panel title="Critical Alerts" className="lg:col-span-5" delay={320}
+            right={
+              <span className="text-[10px] text-[#e5556b]">
+                {alerts.filter((a) => a.severity === "crit").length} critical
+              </span>
+            }>
+            <AlertStream alerts={alerts} />
+          </Panel>
+          <Panel title="Work Orders" className="lg:col-span-7" delay={380}
+            right={<span className="text-[10px] text-[#6a7690]">{wos.length} total</span>}>
+            <WorkOrderKanban wos={wos} />
+          </Panel>
         </div>
 
-        {/* Row 3 */}
-        <Panel
-          title="PREVENTIVE MAINTENANCE · 14-DAY HORIZON"
-          delay={400}
-          right={
-            <span className="text-[9px] tracking-widest text-[#6a7690]" style={MONO_STACK}>
-              TODAY → +14D
-            </span>
-          }
-        >
+        {/* Row 4: PM timeline full width */}
+        <Panel title="Preventive Maintenance"
+          delay={440}
+          right={<span className="text-[10px] text-[#6a7690]">today → +14d</span>}>
           <PmTimeline />
         </Panel>
 
-        <footer className="mt-4 pt-4 pb-8 flex items-center justify-between border-t border-[#1a2340]">
-          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-            AMG Maintenance OS · v2.6.1
-          </div>
-          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
-            Internal Use Only
-          </div>
+        <footer className="pt-6 pb-4 flex items-center justify-between border-t border-[#1a2340]">
+          <div className="text-[10px] text-[#6a7690]">AMG Maintenance · v2.6.1</div>
+          <div className="text-[10px] text-[#6a7690]">Internal use only</div>
         </footer>
       </main>
     </div>
