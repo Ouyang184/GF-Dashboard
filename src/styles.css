@@ -189,14 +189,14 @@ body::-webkit-scrollbar {
 
 @theme inline {
   --color-maint-bg: #05070d;
-  --color-maint-panel: #0d1526;
-  --color-maint-panel-2: #111a30;
-  --color-maint-line: #1b2a4a;
-  --color-maint-cyan: #00e5ff;
-  --color-maint-amber: #ffb020;
-  --color-maint-magenta: #ff2d75;
-  --color-maint-mint: #3dffb0;
-  --color-maint-dim: #4a5a7a;
+  --color-maint-panel: #0f1520;
+  --color-maint-panel-2: #131a27;
+  --color-maint-line: #1e2636;
+  --color-maint-accent: #6ea8ff;
+  --color-maint-amber: #e8b464;
+  --color-maint-red: #e5556b;
+  --color-maint-mint: #4ecb8a;
+  --color-maint-dim: #6a7690;
 }
 
 @keyframes maint-scanline {
@@ -208,8 +208,8 @@ body::-webkit-scrollbar {
   100% { background-position: 40px 40px; }
 }
 @keyframes maint-pulse-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,45,117,0.55); }
-  50%      { box-shadow: 0 0 22px 4px rgba(255,45,117,0.35); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229,85,107,0.30); }
+  50%      { box-shadow: 0 0 14px 2px rgba(229,85,107,0.22); }
 }
 @keyframes maint-slide-in {
   0%   { transform: translateX(24px); opacity: 0; }
@@ -237,8 +237,9 @@ body::-webkit-scrollbar {
 }
 
 @utility maint-panel {
-  background: linear-gradient(180deg, #0d1526 0%, #111a30 100%);
-  border: 1px solid #1b2a4a;
+  background: #0f1520;
+  border: 1px solid #1e2636;
+  border-radius: 6px;
   position: relative;
   overflow: hidden;
 }
