@@ -182,3 +182,67 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;
 }
+
+/* =========================================================
+ * Maintenance Command Center
+ * ========================================================= */
+
+@theme inline {
+  --color-maint-bg: #05070d;
+  --color-maint-panel: #0d1526;
+  --color-maint-panel-2: #111a30;
+  --color-maint-line: #1b2a4a;
+  --color-maint-cyan: #00e5ff;
+  --color-maint-amber: #ffb020;
+  --color-maint-magenta: #ff2d75;
+  --color-maint-mint: #3dffb0;
+  --color-maint-dim: #4a5a7a;
+}
+
+@keyframes maint-scanline {
+  0% { transform: translateY(-10%); }
+  100% { transform: translateY(110vh); }
+}
+@keyframes maint-grid-drift {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+@keyframes maint-pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,45,117,0.55); }
+  50%      { box-shadow: 0 0 22px 4px rgba(255,45,117,0.35); }
+}
+@keyframes maint-slide-in {
+  0%   { transform: translateX(24px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes maint-boot {
+  0%   { transform: translateY(8px) scale(0.985); opacity: 0; filter: blur(6px); }
+  100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
+}
+@keyframes maint-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+@keyframes maint-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+@keyframes maint-radar {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes maint-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@utility maint-panel {
+  background: linear-gradient(180deg, #0d1526 0%, #111a30 100%);
+  border: 1px solid #1b2a4a;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .maint-motion { animation: none !important; }
+}
