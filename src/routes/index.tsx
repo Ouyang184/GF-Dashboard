@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
