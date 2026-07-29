@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useIntouchSnapshot, type IntouchSnapshot } from "@/hooks/use-intouch-snapshot";
 import { CopilotSyncPanel } from "@/components/intouch/CopilotSyncPanel";
@@ -587,6 +587,12 @@ function Index() {
               <div className="font-mono text-2xl font-bold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
               <div className="text-xs text-muted-foreground" suppressHydrationWarning>{dateStr}</div>
             </div>
+            <Link
+              to="/maintenance"
+              className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[#00e5ff]/40 bg-[#00e5ff]/5 text-[#00e5ff] text-xs font-semibold tracking-[0.2em] hover:bg-[#00e5ff]/15 transition"
+            >
+              MAINTENANCE →
+            </Link>
           </div>
         </div>
       </header>
