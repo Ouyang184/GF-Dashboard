@@ -424,7 +424,7 @@ function KpiCounters({ fleet }: { fleet: MachineTelemetry[] }) {
   const mttr = 42 - (avgUptime - 85) * 0.6;
   const oee = avgUptime * 0.92;
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <Counter value={mtbf} suffix="h" label="MTBF" color="#4b7dff" />
       <Counter value={mttr} suffix="min" label="MTTR" color="#e8b464" />
       <Counter value={oee} suffix="%" label="OEE" color="#4ecb8a" />
