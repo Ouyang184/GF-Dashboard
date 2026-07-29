@@ -52,7 +52,7 @@ export function buildFleet(tick: number): MachineTelemetry[] {
     return {
       id,
       status,
-      uptimePct: Math.round(70 + rand(seed)() * 29 * 10) / 10,
+      uptimePct: Math.round((70 + rand(seed)() * 29) * 10) / 10,
       cycleSec: Math.round((18 + rand(seed + 1)() * 22) * 10) / 10,
       tempC: Math.round(180 + rand(seed + 2)() * 60),
       pressBar: Math.round(80 + rand(seed + 3)() * 60),
