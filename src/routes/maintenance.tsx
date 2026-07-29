@@ -721,27 +721,18 @@ function AmbientBackdrop() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
       <div
-        className="absolute inset-0 opacity-[0.08] maint-motion"
+        className="absolute inset-0 opacity-[0.035]"
         style={{
           backgroundImage:
-            "linear-gradient(#6ea8ff 1px, transparent 1px), linear-gradient(90deg, #6ea8ff 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-          animation: "maint-grid-drift 20s linear infinite",
-        }}
-      />
-      <div
-        className="absolute inset-x-0 h-[2px] opacity-40 maint-motion"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, #6ea8ff, transparent)",
-          animation: "maint-scanline 7s linear infinite",
+            "linear-gradient(#ffffff 1px, transparent 1px), linear-gradient(90deg, #ffffff 1px, transparent 1px)",
+          backgroundSize: "56px 56px",
         }}
       />
       <div
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse at 50% 0%, rgba(0,229,255,0.08), transparent 60%)",
+            "radial-gradient(ellipse at 50% 0%, rgba(110,168,255,0.05), transparent 55%)",
         }}
       />
     </div>
@@ -854,12 +845,12 @@ function MaintenancePage() {
           <PmTimeline />
         </Panel>
 
-        <footer className="pt-4 pb-8 text-center">
-          <div
-            className="text-[10px] tracking-[0.35em] text-[#6a7690] uppercase"
-            style={MONO_STACK}
-          >
-            ▲ AMG MAINTENANCE OS · v2.6.1 · classified: internal
+        <footer className="mt-4 pt-4 pb-8 flex items-center justify-between border-t border-[#1e2636]">
+          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
+            AMG Maintenance OS · v2.6.1
+          </div>
+          <div className="text-[10px] tracking-[0.2em] text-[#6a7690] uppercase" style={MONO_STACK}>
+            Internal Use Only
           </div>
         </footer>
       </main>
