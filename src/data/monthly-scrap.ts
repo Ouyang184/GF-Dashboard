@@ -16,6 +16,7 @@ const RAW: { year: number; month: number; yieldQty: number; scrap: number }[] = 
   { year: 2026, month: 3, yieldQty: 745999, scrap: 28778 },
   { year: 2026, month: 4, yieldQty: 765557, scrap: 22137 },
   { year: 2026, month: 5, yieldQty: 1072113, scrap: 29834 },
+  { year: 2026, month: 6, yieldQty: 127138, scrap: 2643 },
 ];
 
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

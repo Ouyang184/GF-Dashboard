@@ -1,0 +1,92 @@
+{
+  "version": "1.0",
+  "appId": "17411cbf-358e-4c57-ac83-2788103f1134",
+  "appDisplayName": "AMG Dashboard",
+  "region": "prod",
+  "appType": "CodeApp",
+  "environmentId": "cde8a3b6-e164-efed-bb08-2dd0345cf74a",
+  "description": " ",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {
+    "2a937447-9a9d-47dc-8261-4b67a94b1129": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_sharepointonline",
+      "displayName": "SharePoint",
+      "dataSources": [
+        "molding buyoff structure",
+        "mastercards",
+        "dashboard task status",
+        "dashboard weather",
+        "dashboard control",
+        "molding buyoff rejection logs",
+        "coils & collars buyoff structure",
+        "extrusion buyoff structure",
+        "dashboard date status",
+        "db - deviation app",
+        "prd_approvals",
+        "machines",
+        "dashboardtaskstatus"
+      ],
+      "dataSets": {
+        "https://georgfischer.sharepoint.com/sites/GFPS-PAFProductionReport": {
+          "dataSources": {
+            "molding buyoff structure": {
+              "tableName": "d345460c-5e32-4140-b1f7-5871ccd11b46"
+            },
+            "coils & collars buyoff structure": {
+              "tableName": "a3cd380d-7cdd-4259-a1cd-dcc3b8d9e4b4"
+            },
+            "extrusion buyoff structure": {
+              "tableName": "b50510e1-77a8-42e6-a1ab-946de15e7fc8"
+            },
+            "db - deviation app": {
+              "tableName": "ac1553fb-018a-490a-a727-0831b63bb5e8"
+            }
+          }
+        },
+        "https://georgfischer.sharepoint.com/sites/GFPS-AMGManufacturingEngineering": {
+          "dataSources": {
+            "mastercards": {
+              "tableName": "87746398-9dbf-4834-a604-b03a4190d2d2"
+            },
+            "dashboard task status": {
+              "tableName": "72be6dbe-b078-4ba6-ae39-677870e93340"
+            },
+            "dashboard weather": {
+              "tableName": "19422b0f-f227-4410-9a8c-079edc59410b"
+            },
+            "dashboard control": {
+              "tableName": "b53a170b-ac6b-402b-b8e4-1428262c6e5a"
+            },
+            "molding buyoff rejection logs": {
+              "tableName": "b4faea05-5b8f-4d4a-a0fc-e6222abad16f"
+            },
+            "dashboard date status": {
+              "tableName": "9dac1890-e533-45fe-8ccc-f523814ce7f7"
+            },
+            "prd_approvals": {
+              "tableName": "6efdac8d-914a-4bb0-b859-65d4b1bc5bc7"
+            },
+            "machines": {
+              "tableName": "fc0546b4-df46-4be5-871a-0336792556fa"
+            },
+            "dashboardtaskstatus": {
+              "tableName": "72be6dbe-b078-4ba6-ae39-677870e93340"
+            }
+          }
+        }
+      }
+    },
+    "3335f0c8-7449-417b-b520-2cf7116a4d07": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+      "displayName": "Excel Online (Business)",
+      "dataSources": [
+        "excelonlinebusiness"
+      ],
+      "dataSets": {}
+    }
+  },
+  "databaseReferences": {}
+}

@@ -1,0 +1,2808 @@
+{
+  "name": "b50510e1-77a8-42e6-a1ab-946de15e7fc8",
+  "title": "Extrusion Buyoff Structure",
+  "x-ms-permission": "read-write",
+  "x-ms-capabilities": {
+    "sortRestrictions": {
+      "sortable": true,
+      "unsortableProperties": [
+        "PartDescription",
+        "Comments",
+        "MechanicalDefects",
+        "DimensionalDefects",
+        "VisualDefects",
+        "Deviation_x003f__x0028_Visual_x0",
+        "DeviationDescription_x0028_Visua",
+        "Deviation_x003f__x0028_Dimension",
+        "DeviationDescription_x0028_Dimen",
+        "Deviation_x003f__x0028_Mechanica",
+        "DeviationDescription_x0028_Mecha",
+        "QCComments",
+        "Time_x0020_Open",
+        "Overall_x0020_Acceptance",
+        "DefectCodes",
+        "Date_x0020_Completed_x0020__x002",
+        "Date_x0020_Completed_x0020__x0020",
+        "Date_x0020_Completed_x0020__x0021",
+        "Consolidated_x0020_Deviation_x00",
+        "{Identifier}",
+        "{IsFolder}",
+        "{Thumbnail}",
+        "{Link}",
+        "{Name}",
+        "{FilenameWithExtension}",
+        "{Path}",
+        "{FullPath}",
+        "{ModerationStatus}",
+        "{ModerationComment}",
+        "{ContentType}",
+        "{HasAttachments}",
+        "{Attachments}",
+        "{VersionNumber}",
+        "{TriggerWindowStartToken}",
+        "{TriggerWindowEndToken}"
+      ]
+    },
+    "filterRestrictions": {
+      "filterable": true,
+      "nonFilterableProperties": [
+        "PartDescription",
+        "Comments",
+        "DeviationDescription_x0028_Visua",
+        "DeviationDescription_x0028_Dimen",
+        "DeviationDescription_x0028_Mecha",
+        "QCComments",
+        "Time_x0020_Open",
+        "Overall_x0020_Acceptance",
+        "DefectCodes",
+        "Date_x0020_Completed_x0020__x002",
+        "Date_x0020_Completed_x0020__x0020",
+        "Date_x0020_Completed_x0020__x0021",
+        "Consolidated_x0020_Deviation_x00",
+        "{Identifier}",
+        "{IsFolder}",
+        "{Thumbnail}",
+        "{Link}",
+        "{Name}",
+        "{FilenameWithExtension}",
+        "{Path}",
+        "{FullPath}",
+        "{ModerationStatus}",
+        "{ModerationComment}",
+        "{ContentType}",
+        "{HasAttachments}",
+        "{Attachments}",
+        "{VersionNumber}",
+        "{TriggerWindowStartToken}",
+        "{TriggerWindowEndToken}"
+      ]
+    },
+    "isOnlyServerPagable": true,
+    "filterFunctionSupport": [
+      "and",
+      "or",
+      "eq",
+      "startswith",
+      "gt",
+      "ge",
+      "lt",
+      "le",
+      "ne"
+    ],
+    "serverPagingOptions": [
+      "top",
+      "skiptoken"
+    ],
+    "odataVersion": 3
+  },
+  "schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "ID": {
+          "title": "ID",
+          "description": "List item id. Use this value for specifying the item to act on in other list related actions.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-keyType": "primary",
+          "x-ms-keyOrder": 1,
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          }
+        },
+        "Title": {
+          "title": "Title",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "WorkOrder_x0023_": {
+          "title": "Work Order #",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "DateCreated": {
+          "title": "Date Created",
+          "type": "string",
+          "format": "date",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "TimeIn": {
+          "title": "Time In",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "ExtrusionOperator": {
+          "title": "Production Tech",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Material#Id": {
+          "title": "Material Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Material": {
+          "title": "Material",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "fc36590b-cabc-4911-adbb-6b20ee5bcb2f"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "MaterialType#Id": {
+          "title": "Material Type Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "MaterialType": {
+          "title": "Material Type",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "94b32696-add3-4fb8-85db-76774908b0f3"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "OtherMaterial": {
+          "title": "Other Material",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Line_x0023_#Id": {
+          "title": "Line # Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Line_x0023_": {
+          "title": "Line #",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "5f32305c-e143-460f-a852-79fa25100e82"
+                },
+                "value-path": "Id",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Line_x0023_/MachineNO"
+                },
+                "filterFunctions": [
+                  "eq"
+                ]
+              }
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Line_x0020__x0023__x003a_Area#Id": {
+          "title": "Area Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Line_x0020__x0023__x003a_Area": {
+          "title": "Area",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-keyType": "primary",
+              "x-ms-keyOrder": 1,
+              "x-ms-permission": "read-only"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Line_x0023_/Area"
+                },
+                "filterFunctions": [
+                  "eq"
+                ]
+              }
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "NTQ#Id": {
+          "title": "NTQ Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "NTQ": {
+          "title": "NTQ",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "6cf1d05e-8cef-431f-bd60-fafd2d094924"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "BatchCode_x0028_Tech_x0029_": {
+          "title": "Julian Date",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Part_x0023_": {
+          "title": "Part #",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "PartDescription": {
+          "title": "Part Description",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Comments": {
+          "title": "Technician Comments",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "MechanicalDefects#Id": {
+          "title": "Mechanical Defects Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "MechanicalDefects@odata.type": {
+          "title": "MechanicalDefects",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "MechanicalDefects": {
+          "title": "Mechanical Defects",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "861ebb72-6491-416d-a9bb-4a464a83d360"
+                  },
+                  "value-path": "Id",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-permission": "read-only",
+                "x-ms-capabilities": {
+                  "x-ms-sp": {
+                    "OdataQueryName": "MechanicalDefects/Title"
+                  },
+                  "filterFunctions": [
+                    "eq"
+                  ]
+                }
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "DimensionalDefects#Id": {
+          "title": "Dimensional Defects Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "DimensionalDefects@odata.type": {
+          "title": "DimensionalDefects",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "DimensionalDefects": {
+          "title": "Dimensional Defects",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "192ed72a-754e-4327-9dc7-f2782ec99a38"
+                  },
+                  "value-path": "Id",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-permission": "read-only",
+                "x-ms-capabilities": {
+                  "x-ms-sp": {
+                    "OdataQueryName": "DimensionalDefects/Title"
+                  },
+                  "filterFunctions": [
+                    "eq"
+                  ]
+                }
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "VisualDefects#Id": {
+          "title": "Visual Defects Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "VisualDefects@odata.type": {
+          "title": "VisualDefects",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "VisualDefects": {
+          "title": "Visual Defects",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "0d69ecba-d7d6-45fe-ae3b-b679f4ec6e98"
+                  },
+                  "value-path": "Id",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-permission": "read-only",
+                "x-ms-capabilities": {
+                  "x-ms-sp": {
+                    "OdataQueryName": "VisualDefects/Title"
+                  },
+                  "filterFunctions": [
+                    "eq"
+                  ]
+                }
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "FootageScrapped": {
+          "title": "Footage Scrapped",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Deviation_x003f__x0028_Visual_x0#Id": {
+          "title": "Deviation? (Visual) Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "Deviation_x003f__x0028_Visual_x0@odata.type": {
+          "title": "Deviation_x003f__x0028_Visual_x0",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "Deviation_x003f__x0028_Visual_x0": {
+          "title": "Deviation? (Visual)",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "x-ms-sp": {
+                "IsChoice": true
+              },
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "50a2debd-684a-4959-8b02-f859a800f407"
+                  },
+                  "value-path": "Value",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-visibility": "internal",
+                "x-ms-permission": "read-only"
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "DeviationPending_x003f__x0028_Vi#Id": {
+          "title": "Deviation Status (Visual) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "DeviationPending_x003f__x0028_Vi": {
+          "title": "Deviation Status (Visual)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "bfa59d0c-514a-4b4e-b404-d694c1eb157e"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "DeviationNumber_x0028_Visual_x00": {
+          "title": "Deviation Number (Visual)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "DeviationDescription_x0028_Visua": {
+          "title": "Deviation Comments (Visual)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Deviation_x003f__x0028_Dimension#Id": {
+          "title": "Deviation? (Dimensional) Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "Deviation_x003f__x0028_Dimension@odata.type": {
+          "title": "Deviation_x003f__x0028_Dimension",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "Deviation_x003f__x0028_Dimension": {
+          "title": "Deviation? (Dimensional)",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "x-ms-sp": {
+                "IsChoice": true
+              },
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "0404b015-f569-4b4b-8ee5-563de0f7bd77"
+                  },
+                  "value-path": "Value",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-visibility": "internal",
+                "x-ms-permission": "read-only"
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "DeviationPending_x003f__x0028_Di#Id": {
+          "title": "Deviation Status (Dimensional) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "DeviationPending_x003f__x0028_Di": {
+          "title": "Deviation Status (Dimensional)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "72ea370c-a36c-4c4a-b3cf-032cfcb4c1cf"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "DeviationNumber_x0028_Dimensiona": {
+          "title": "Deviation Number (Dimensional)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "DeviationDescription_x0028_Dimen": {
+          "title": "Deviation Comments (Dimensional)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Deviation_x003f__x0028_Mechanica#Id": {
+          "title": "Deviation? (Mechanical) Id",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "Deviation_x003f__x0028_Mechanica@odata.type": {
+          "title": "Deviation_x003f__x0028_Mechanica",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "Deviation_x003f__x0028_Mechanica": {
+          "title": "Deviation? (Mechanical)",
+          "x-ms-permission": "read-write",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "x-ms-sort": "none",
+            "x-ms-capabilities": {
+              "x-ms-sp": {
+                "IsChoice": true
+              },
+              "filterFunctions": [
+                "eq"
+              ]
+            },
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Value": {
+                "title": "Value",
+                "type": "string",
+                "x-ms-dynamic-values": {
+                  "operationId": "GetEntityValues",
+                  "parameters": {
+                    "dataset": {
+                      "parameter": "dataset"
+                    },
+                    "table": {
+                      "parameter": "table"
+                    },
+                    "id": "c6869897-a9b4-4f1b-a1fc-b8b8d4f89f7e"
+                  },
+                  "value-path": "Value",
+                  "value-title": "Value",
+                  "value-collection": "value"
+                }
+              },
+              "Id": {
+                "title": "Id",
+                "type": "integer",
+                "format": "int64",
+                "x-ms-visibility": "internal",
+                "x-ms-permission": "read-only"
+              }
+            },
+            "x-ms-displayFormat": {
+              "titleProperty": "Value"
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListExpandedReference)"
+        },
+        "DeviationPending_x003f__x0028_Me#Id": {
+          "title": "Deviation Status (Mechanical) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "DeviationPending_x003f__x0028_Me": {
+          "title": "Deviation Status (Mechanical)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "1e0c6580-d6bc-44bf-bd46-e9b020ae46b8"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "DeviationNumber_x0028_Mechanical": {
+          "title": "Deviation Number (Mechanical)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "DeviationDescription_x0028_Mecha": {
+          "title": "Deviation Comments (Mechanical)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "BuyoffAccepted_x0028_Mechanical_#Id": {
+          "title": "Buyoff Accepted (Mechanical) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "BuyoffAccepted_x0028_Mechanical_": {
+          "title": "Buyoff Accepted (Mechanical)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "cbbdf778-b5da-435e-85c7-fbf5776155e0"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "QCTech": {
+          "title": "QC Tech (Mechanical)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "TimeOut": {
+          "title": "Time Out (Mechanical)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "BuyoffAccepted_x0028_Dimensional#Id": {
+          "title": "Buyoff Accepted (Dimensional) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "BuyoffAccepted_x0028_Dimensional": {
+          "title": "Buyoff Accepted (Dimensional)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "2a308bee-5d51-4739-abcb-074cd75b6594"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "QCTech_x0028_Dimensional_x0029_": {
+          "title": "QC Tech (Dimensional)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "TimeOut_x0028_Dimensional_x0029_": {
+          "title": "Time Out (Dimensional)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "BuyoffAccepted_x0028_Visual_x002#Id": {
+          "title": "Buyoff Accepted (Visual) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "BuyoffAccepted_x0028_Visual_x002": {
+          "title": "Buyoff Accepted (Visual)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "57cc9312-a034-4e9c-b08e-f0ff4c0cc6ce"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "QCTech_x0028_Visual_x0029_": {
+          "title": "QC Tech (Visual)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "TimeOut_x0028_Visual_x0029_": {
+          "title": "Time Out (Visual)",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Shift#Id": {
+          "title": "Shift Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Shift": {
+          "title": "Shift",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "20da6e8e-f49b-4e73-8ff2-669dbf08310c"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Plant#Id": {
+          "title": "Plant Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Plant": {
+          "title": "Plant",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "22667539-f77f-4da3-a534-9aea496c206f"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "QCComments": {
+          "title": "QC Comments",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Time_x0020_Open": {
+          "title": "Time Open",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "Overall_x0020_Acceptance": {
+          "title": "Overall Acceptance",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "DefectCodes": {
+          "title": "Defect Codes",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "OData__ColorTag": {
+          "title": "Color Tag",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "ComplianceAssetId": {
+          "title": "Compliance Asset Id",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Date_x0020_Completed_x0020__x002": {
+          "title": "Date Completed (Mechanical)",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "Date_x0020_Completed_x0020__x0020": {
+          "title": "Date Completed (Dimensional)",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "Date_x0020_Completed_x0020__x0021": {
+          "title": "Date Completed (Visual)",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "Consolidated_x0020_Deviation_x00": {
+          "title": "Consolidated Deviation Number",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "BatchCode_x0028_QC_x0029_#Id": {
+          "title": "Print Stream (QC) Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "BatchCode_x0028_QC_x0029_": {
+          "title": "Print Stream (QC)",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "9f039fcc-fe23-40b7-a187-ab54667b9567"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "BatchCode#Id": {
+          "title": "Batch Code Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "BatchCode": {
+          "title": "Batch Code",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "1e12435f-6e50-4ce9-ac54-4159661cb7fd"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Modified": {
+          "title": "Modified",
+          "description": "When this item was last changed.",
+          "type": "string",
+          "format": "date-time",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "Created": {
+          "title": "Created",
+          "description": "When this item was created.",
+          "type": "string",
+          "format": "date-time",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "Author#Claims": {
+          "title": "Created By Claims",
+          "type": "string",
+          "description": "Internal identifier for the user who created this item.",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Author": {
+          "title": "Created By",
+          "description": "The user who created this item.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Claims": {
+              "title": "Claims",
+              "type": "string",
+              "description": "Internal identifier for the user who created this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "1df5e554-ec7e-46a6-901d-d85a3881cb18"
+                },
+                "value-path": "Claims",
+                "value-title": "DisplayName",
+                "value-collection": "value"
+              }
+            },
+            "DisplayName": {
+              "title": "DisplayName",
+              "type": "string",
+              "description": "The name of the user who created this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Title"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Email": {
+              "title": "Email",
+              "type": "string",
+              "description": "Email address of the user who created this item.",
+              "format": "email",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "EMail"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Picture": {
+              "title": "Picture",
+              "type": "string",
+              "description": "Link to a picture of the user who created this item.",
+              "format": "uri",
+              "x-ms-media-kind": "image",
+              "x-ms-media-default-folder-path": "/sites/GFPS-PAFProductionReport",
+              "x-ms-media-base-url": "https://georgfischer.sharepoint.com/sites/GFPS-PAFProductionReport",
+              "x-ms-permission": "read-only"
+            },
+            "Department": {
+              "title": "Department",
+              "type": "string",
+              "description": "Department name of the user who created this item.",
+              "x-ms-permission": "read-only"
+            },
+            "JobTitle": {
+              "title": "JobTitle",
+              "type": "string",
+              "description": "Job title of the user who created this item.",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "DisplayName",
+            "subtitleProperty": "Email",
+            "thumbnailProperty": "Picture"
+          }
+        },
+        "Editor#Claims": {
+          "title": "Modified By Claims",
+          "type": "string",
+          "description": "Internal identifier for the user who last changed this item.",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Editor": {
+          "title": "Modified By",
+          "description": "The user who last changed this item.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Claims": {
+              "title": "Claims",
+              "type": "string",
+              "description": "Internal identifier for the user who last changed this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "d31655d1-1d5b-4511-95a1-7a09e9b75bf2"
+                },
+                "value-path": "Claims",
+                "value-title": "DisplayName",
+                "value-collection": "value"
+              }
+            },
+            "DisplayName": {
+              "title": "DisplayName",
+              "type": "string",
+              "description": "The name of the user who last changed this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Title"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Email": {
+              "title": "Email",
+              "type": "string",
+              "description": "Email address of the user who last changed this item.",
+              "format": "email",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "EMail"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Picture": {
+              "title": "Picture",
+              "type": "string",
+              "description": "Link to a picture of the user who last changed this item.",
+              "format": "uri",
+              "x-ms-media-kind": "image",
+              "x-ms-media-default-folder-path": "/sites/GFPS-PAFProductionReport",
+              "x-ms-media-base-url": "https://georgfischer.sharepoint.com/sites/GFPS-PAFProductionReport",
+              "x-ms-permission": "read-only"
+            },
+            "Department": {
+              "title": "Department",
+              "type": "string",
+              "description": "Department name of the user who last changed this item.",
+              "x-ms-permission": "read-only"
+            },
+            "JobTitle": {
+              "title": "JobTitle",
+              "type": "string",
+              "description": "Job title of the user who last changed this item.",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "DisplayName",
+            "subtitleProperty": "Email",
+            "thumbnailProperty": "Picture"
+          }
+        },
+        "{Identifier}": {
+          "title": "Identifier",
+          "description": "Value that can be used in file related actions for selecting a file.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{IsFolder}": {
+          "title": "IsFolder",
+          "description": "True when the item is a folder, false otherwise.",
+          "type": "boolean",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Thumbnail}": {
+          "title": "Thumbnail",
+          "description": "URL to the thumbnails of the item in 3 different sizes, if available.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none",
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Small": {
+              "title": "Small",
+              "type": "string",
+              "description": "URL to the small, highly compressed size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            },
+            "Medium": {
+              "title": "Medium",
+              "type": "string",
+              "description": "URL to the standard size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            },
+            "Large": {
+              "title": "Large",
+              "type": "string",
+              "description": "URL to the largest size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            }
+          }
+        },
+        "{Link}": {
+          "title": "Link to item",
+          "description": "Link that can be used to get to the file or list item. Only people with permissions to the item will be able to open the link.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Name}": {
+          "title": "Name",
+          "description": "File name of the item in document libraries, display name of the item in lists.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{FilenameWithExtension}": {
+          "title": "File name with extension",
+          "description": "For libraries, returns file name including extension. For lists, returns the title property.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Path}": {
+          "title": "Folder path",
+          "description": "Path to the folder the item is in, relative to the site address.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{FullPath}": {
+          "title": "Full Path",
+          "description": "Full path of an item or a folder or a file",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ModerationStatus}": {
+          "title": "Content approval status",
+          "description": "The content approval status. It can be one of the following: Draft, Pending, Approved, or Rejected",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ModerationComment}": {
+          "title": "Comments associated with the content approval of this list item",
+          "description": "The comments associated with moderation of the list item.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ContentType}#Id": {
+          "title": "Content type Id",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "{ContentType}": {
+          "title": "Content type",
+          "description": "Name of the Content type of the item.",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none",
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Id": {
+              "title": "Id",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "4651e8f2-38c9-4ad0-8def-41f743f76f30"
+                },
+                "value-path": "Id",
+                "value-title": "Name",
+                "value-collection": "value"
+              }
+            },
+            "Name": {
+              "title": "Name",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Name"
+          }
+        },
+        "{HasAttachments}": {
+          "title": "Has attachments",
+          "description": "Indicates the presence of attachments in the item.",
+          "type": "boolean",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Attachments}@odata.type": {
+          "title": "{Attachments}",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "{Attachments}": {
+          "title": "Attachments",
+          "description": "Never returns any data. Use Attachment endpoints to access item attachments.",
+          "x-ms-permission": "read-write",
+          "targetEntity": "attachments",
+          "format": "x-ms-containedMediaEntity",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "format": "x-ms-mediaEntity",
+            "x-ms-sort": "none",
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Id": {
+                "title": "Id",
+                "type": "string",
+                "x-ms-keyType": "primary",
+                "x-ms-keyOrder": 1,
+                "x-ms-permission": "read-only"
+              },
+              "AbsoluteUri": {
+                "title": "AbsoluteUri",
+                "type": "string",
+                "format": "uri",
+                "x-ms-permission": "read-only"
+              },
+              "DisplayName": {
+                "title": "DisplayName",
+                "type": "string",
+                "x-ms-permission": "read-only"
+              }
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListItemAttachment)"
+        },
+        "{VersionNumber}": {
+          "title": "Version number",
+          "description": "The version number of the file or the list item.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{TriggerWindowStartToken}": {
+          "title": "Trigger Window Start Token",
+          "description": "A token expressing the time of the last flow check. Use this if you want to check if one or more columns were modified since the last flow check.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{TriggerWindowEndToken}": {
+          "title": "Trigger Window End Token",
+          "description": "A token expressing the time of the current flow check. Use this if you want to check if one or more columns were modified since the last flow check.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        }
+      },
+      "x-ms-relationships": {
+        "Material": {
+          "targetEntity": "Material",
+          "referentialConstraints": {
+            "Material#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "MaterialType": {
+          "targetEntity": "MaterialType",
+          "referentialConstraints": {
+            "MaterialType#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Line_x0023_": {
+          "targetEntity": "Line_x0023_",
+          "referentialConstraints": {
+            "Line_x0023_#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Line_x0020__x0023__x003a_Area": {
+          "targetEntity": "Line_x0020__x0023__x003a_Area",
+          "referentialConstraints": {
+            "Line_x0020__x0023__x003a_Area#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "NTQ": {
+          "targetEntity": "NTQ",
+          "referentialConstraints": {
+            "NTQ#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "MechanicalDefects": {
+          "targetEntity": "MechanicalDefects",
+          "referentialConstraints": {
+            "MechanicalDefects#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "DimensionalDefects": {
+          "targetEntity": "DimensionalDefects",
+          "referentialConstraints": {
+            "DimensionalDefects#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "VisualDefects": {
+          "targetEntity": "VisualDefects",
+          "referentialConstraints": {
+            "VisualDefects#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Deviation_x003f__x0028_Visual_x0": {
+          "targetEntity": "Deviation_x003f__x0028_Visual_x0",
+          "referentialConstraints": {
+            "Deviation_x003f__x0028_Visual_x0#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "DeviationPending_x003f__x0028_Vi": {
+          "targetEntity": "DeviationPending_x003f__x0028_Vi",
+          "referentialConstraints": {
+            "DeviationPending_x003f__x0028_Vi#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Deviation_x003f__x0028_Dimension": {
+          "targetEntity": "Deviation_x003f__x0028_Dimension",
+          "referentialConstraints": {
+            "Deviation_x003f__x0028_Dimension#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "DeviationPending_x003f__x0028_Di": {
+          "targetEntity": "DeviationPending_x003f__x0028_Di",
+          "referentialConstraints": {
+            "DeviationPending_x003f__x0028_Di#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Deviation_x003f__x0028_Mechanica": {
+          "targetEntity": "Deviation_x003f__x0028_Mechanica",
+          "referentialConstraints": {
+            "Deviation_x003f__x0028_Mechanica#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "DeviationPending_x003f__x0028_Me": {
+          "targetEntity": "DeviationPending_x003f__x0028_Me",
+          "referentialConstraints": {
+            "DeviationPending_x003f__x0028_Me#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "BuyoffAccepted_x0028_Mechanical_": {
+          "targetEntity": "BuyoffAccepted_x0028_Mechanical_",
+          "referentialConstraints": {
+            "BuyoffAccepted_x0028_Mechanical_#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "BuyoffAccepted_x0028_Dimensional": {
+          "targetEntity": "BuyoffAccepted_x0028_Dimensional",
+          "referentialConstraints": {
+            "BuyoffAccepted_x0028_Dimensional#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "BuyoffAccepted_x0028_Visual_x002": {
+          "targetEntity": "BuyoffAccepted_x0028_Visual_x002",
+          "referentialConstraints": {
+            "BuyoffAccepted_x0028_Visual_x002#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Shift": {
+          "targetEntity": "Shift",
+          "referentialConstraints": {
+            "Shift#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Plant": {
+          "targetEntity": "Plant",
+          "referentialConstraints": {
+            "Plant#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "BatchCode_x0028_QC_x0029_": {
+          "targetEntity": "BatchCode_x0028_QC_x0029_",
+          "referentialConstraints": {
+            "BatchCode_x0028_QC_x0029_#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "BatchCode": {
+          "targetEntity": "BatchCode",
+          "referentialConstraints": {
+            "BatchCode#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Author": {
+          "targetEntity": "Author",
+          "referentialConstraints": {
+            "Author#Claims": {
+              "referencedProperty": "Claims"
+            }
+          }
+        },
+        "Editor": {
+          "targetEntity": "Editor",
+          "referentialConstraints": {
+            "Editor#Claims": {
+              "referencedProperty": "Claims"
+            }
+          }
+        },
+        "{ContentType}": {
+          "targetEntity": "4651e8f2-38c9-4ad0-8def-41f743f76f30",
+          "referentialConstraints": {
+            "{ContentType}#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        }
+      },
+      "x-ms-displayFormat": {
+        "propertiesDisplayOrder": [
+          "DateCreated",
+          "TimeIn",
+          "ExtrusionOperator",
+          "Material",
+          "MaterialType",
+          "OtherMaterial",
+          "Line_x0023_",
+          "NTQ",
+          "Part_x0023_",
+          "PartDescription",
+          "Comments",
+          "MechanicalDefects",
+          "DimensionalDefects",
+          "VisualDefects",
+          "FootageScrapped",
+          "BuyoffAccepted_x0028_Mechanical_",
+          "QCTech",
+          "TimeOut",
+          "BuyoffAccepted_x0028_Dimensional",
+          "QCTech_x0028_Dimensional_x0029_",
+          "TimeOut_x0028_Dimensional_x0029_",
+          "QCComments",
+          "Title",
+          "DefectCodes",
+          "Shift",
+          "BuyoffAccepted_x0028_Visual_x002",
+          "QCTech_x0028_Visual_x0029_",
+          "TimeOut_x0028_Visual_x0029_",
+          "Line_x0020__x0023__x003a_Area",
+          "Date_x0020_Completed_x0020__x002",
+          "Date_x0020_Completed_x0020__x0020",
+          "Date_x0020_Completed_x0020__x0021",
+          "Time_x0020_Open",
+          "Deviation_x003f__x0028_Visual_x0",
+          "DeviationPending_x003f__x0028_Vi",
+          "DeviationNumber_x0028_Visual_x00",
+          "DeviationDescription_x0028_Visua",
+          "Deviation_x003f__x0028_Dimension",
+          "DeviationPending_x003f__x0028_Di",
+          "DeviationNumber_x0028_Dimensiona",
+          "DeviationDescription_x0028_Dimen",
+          "Deviation_x003f__x0028_Mechanica",
+          "DeviationPending_x003f__x0028_Me",
+          "DeviationNumber_x0028_Mechanical",
+          "DeviationDescription_x0028_Mecha",
+          "Consolidated_x0020_Deviation_x00",
+          "Plant",
+          "WorkOrder_x0023_",
+          "BatchCode_x0028_Tech_x0029_",
+          "BatchCode_x0028_QC_x0029_",
+          "BatchCode",
+          "Overall_x0020_Acceptance",
+          "{Attachments}"
+        ],
+        "propertiesCompactDisplayOrder": [
+          "Title",
+          "ID",
+          "WorkOrder_x0023_",
+          "DateCreated",
+          "TimeIn",
+          "ExtrusionOperator",
+          "Material",
+          "MaterialType",
+          "OtherMaterial",
+          "Line_x0023_",
+          "Line_x0020__x0023__x003a_Area",
+          "NTQ",
+          "BatchCode_x0028_Tech_x0029_",
+          "Part_x0023_",
+          "PartDescription",
+          "Comments",
+          "MechanicalDefects",
+          "DimensionalDefects",
+          "VisualDefects",
+          "FootageScrapped",
+          "Deviation_x003f__x0028_Visual_x0",
+          "DeviationPending_x003f__x0028_Vi",
+          "DeviationNumber_x0028_Visual_x00",
+          "DeviationDescription_x0028_Visua",
+          "Deviation_x003f__x0028_Dimension",
+          "DeviationPending_x003f__x0028_Di",
+          "DeviationNumber_x0028_Dimensiona",
+          "DeviationDescription_x0028_Dimen",
+          "Deviation_x003f__x0028_Mechanica",
+          "DeviationPending_x003f__x0028_Me",
+          "DeviationNumber_x0028_Mechanical",
+          "DeviationDescription_x0028_Mecha",
+          "BuyoffAccepted_x0028_Mechanical_",
+          "QCTech",
+          "TimeOut",
+          "BuyoffAccepted_x0028_Dimensional",
+          "QCTech_x0028_Dimensional_x0029_",
+          "TimeOut_x0028_Dimensional_x0029_",
+          "BuyoffAccepted_x0028_Visual_x002",
+          "QCTech_x0028_Visual_x0029_",
+          "TimeOut_x0028_Visual_x0029_",
+          "Shift",
+          "Plant",
+          "QCComments",
+          "Time_x0020_Open",
+          "Overall_x0020_Acceptance"
+        ],
+        "propertiesTabularDisplayOrder": [
+          "Title",
+          "ID",
+          "WorkOrder_x0023_",
+          "DateCreated",
+          "TimeIn",
+          "ExtrusionOperator",
+          "Material",
+          "MaterialType",
+          "OtherMaterial",
+          "Line_x0023_",
+          "Line_x0020__x0023__x003a_Area",
+          "NTQ",
+          "BatchCode_x0028_Tech_x0029_",
+          "Part_x0023_",
+          "PartDescription",
+          "Comments",
+          "MechanicalDefects",
+          "DimensionalDefects",
+          "VisualDefects",
+          "FootageScrapped",
+          "Deviation_x003f__x0028_Visual_x0",
+          "DeviationPending_x003f__x0028_Vi",
+          "DeviationNumber_x0028_Visual_x00",
+          "DeviationDescription_x0028_Visua",
+          "Deviation_x003f__x0028_Dimension",
+          "DeviationPending_x003f__x0028_Di",
+          "DeviationNumber_x0028_Dimensiona",
+          "DeviationDescription_x0028_Dimen",
+          "Deviation_x003f__x0028_Mechanica",
+          "DeviationPending_x003f__x0028_Me",
+          "DeviationNumber_x0028_Mechanical",
+          "DeviationDescription_x0028_Mecha",
+          "BuyoffAccepted_x0028_Mechanical_",
+          "QCTech",
+          "TimeOut",
+          "BuyoffAccepted_x0028_Dimensional",
+          "QCTech_x0028_Dimensional_x0029_",
+          "TimeOut_x0028_Dimensional_x0029_",
+          "BuyoffAccepted_x0028_Visual_x002",
+          "QCTech_x0028_Visual_x0029_",
+          "TimeOut_x0028_Visual_x0029_",
+          "Shift",
+          "Plant",
+          "QCComments",
+          "Time_x0020_Open",
+          "Overall_x0020_Acceptance"
+        ]
+      }
+    }
+  },
+  "referencedEntities": {
+    "Material": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Material",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "MaterialType": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/MaterialType",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Line_x0023_": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Line_x0023_",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Line_x0020__x0023__x003a_Area": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Line_x0020__x0023__x003a_Area",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "NTQ": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/NTQ",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "MechanicalDefects": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/MechanicalDefects",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "DimensionalDefects": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/DimensionalDefects",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "VisualDefects": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/VisualDefects",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Deviation_x003f__x0028_Visual_x0": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Deviation_x003f__x0028_Visual_x0",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "DeviationPending_x003f__x0028_Vi": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/DeviationPending_x003f__x0028_Vi",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Deviation_x003f__x0028_Dimension": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Deviation_x003f__x0028_Dimension",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "DeviationPending_x003f__x0028_Di": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/DeviationPending_x003f__x0028_Di",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Deviation_x003f__x0028_Mechanica": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Deviation_x003f__x0028_Mechanica",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "DeviationPending_x003f__x0028_Me": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/DeviationPending_x003f__x0028_Me",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "BuyoffAccepted_x0028_Mechanical_": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/BuyoffAccepted_x0028_Mechanical_",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "BuyoffAccepted_x0028_Dimensional": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/BuyoffAccepted_x0028_Dimensional",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "BuyoffAccepted_x0028_Visual_x002": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/BuyoffAccepted_x0028_Visual_x002",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Shift": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Shift",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Plant": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Plant",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "BatchCode_x0028_QC_x0029_": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/BatchCode_x0028_QC_x0029_",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "BatchCode": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/BatchCode",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Author": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Author",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Editor": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/Editor",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "4651e8f2-38c9-4ad0-8def-41f743f76f30": {
+      "lookupEndpoint": {
+        "path": "/tables/b50510e1-77a8-42e6-a1ab-946de15e7fc8/entities/%257bContentType%257d",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    }
+  },
+  "webUrl": "https://georgfischer.sharepoint.com/sites/GFPS-PAFProductionReport/Lists/Extrusion Buyoff Structure/AllItems.aspx",
+  "x-ms-connection-version": ""
+}

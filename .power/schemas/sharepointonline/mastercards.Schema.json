@@ -1,0 +1,3267 @@
+{
+  "name": "87746398-9dbf-4834-a604-b03a4190d2d2",
+  "title": "Mastercards",
+  "x-ms-permission": "read-write",
+  "x-ms-capabilities": {
+    "sortRestrictions": {
+      "sortable": true,
+      "unsortableProperties": [
+        "Change_Reason",
+        "Special_Instructions",
+        "Operator_Notes",
+        "{Identifier}",
+        "{IsFolder}",
+        "{Thumbnail}",
+        "{Link}",
+        "{Name}",
+        "{FilenameWithExtension}",
+        "{Path}",
+        "{FullPath}",
+        "{ModerationStatus}",
+        "{ModerationComment}",
+        "{ContentType}",
+        "{HasAttachments}",
+        "{Attachments}",
+        "{VersionNumber}",
+        "{TriggerWindowStartToken}",
+        "{TriggerWindowEndToken}"
+      ]
+    },
+    "filterRestrictions": {
+      "filterable": true,
+      "nonFilterableProperties": [
+        "Change_Reason",
+        "Special_Instructions",
+        "Operator_Notes",
+        "{Identifier}",
+        "{IsFolder}",
+        "{Thumbnail}",
+        "{Link}",
+        "{Name}",
+        "{FilenameWithExtension}",
+        "{Path}",
+        "{FullPath}",
+        "{ModerationStatus}",
+        "{ModerationComment}",
+        "{ContentType}",
+        "{HasAttachments}",
+        "{Attachments}",
+        "{VersionNumber}",
+        "{TriggerWindowStartToken}",
+        "{TriggerWindowEndToken}"
+      ]
+    },
+    "isOnlyServerPagable": true,
+    "filterFunctionSupport": [
+      "and",
+      "or",
+      "eq",
+      "startswith",
+      "gt",
+      "ge",
+      "lt",
+      "le",
+      "ne"
+    ],
+    "serverPagingOptions": [
+      "top",
+      "skiptoken"
+    ],
+    "odataVersion": 3
+  },
+  "schema": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "required": [
+        "Part_No",
+        "Mold_Base_Number",
+        "Machine_ID",
+        "Version_No",
+        "Is_Active"
+      ],
+      "properties": {
+        "ID": {
+          "title": "ID",
+          "description": "List item id. Use this value for specifying the item to act on in other list related actions.",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-keyType": "primary",
+          "x-ms-keyOrder": 1,
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          }
+        },
+        "Title": {
+          "title": "Title",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Part_No": {
+          "title": "Part_No",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Mold_Base_Number": {
+          "title": "Mold_Base_Number",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Machine_ID#Id": {
+          "title": "Machine_ID Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Machine_ID": {
+          "title": "Machine_ID",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "375ee798-e903-4906-879a-69ac881c6a01"
+                },
+                "value-path": "Id",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Machine_ID/ID"
+                },
+                "filterFunctions": [
+                  "eq"
+                ]
+              }
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Version_No": {
+          "title": "Version_No",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Is_Active": {
+          "title": "Is_Active",
+          "type": "boolean",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "default": true
+        },
+        "Proc_Date": {
+          "title": "Proc_Date",
+          "type": "string",
+          "format": "date",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "Cavities": {
+          "title": "Cavities",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Created_By": {
+          "title": "Created_By",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Change_Reason": {
+          "title": "Change_Reason",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Special_Instructions": {
+          "title": "Special_Instructions",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Cooling_Air_Water#Id": {
+          "title": "Cooling_Air_Water Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Cooling_Air_Water": {
+          "title": "Cooling_Air_Water",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "3b9bac63-cadc-4ffe-ab51-654903626d63"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Nozzles_In": {
+          "title": "Nozzles_In",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Core_Puller#Id": {
+          "title": "Core_Puller Id",
+          "type": "integer",
+          "format": "int64",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Core_Puller": {
+          "title": "Core_Puller",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "x-ms-sp": {
+              "IsChoice": true
+            },
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Value": {
+              "title": "Value",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "5de08c35-2ecb-4932-8f61-4d6f10a91a57"
+                },
+                "value-path": "Value",
+                "value-title": "Value",
+                "value-collection": "value"
+              }
+            },
+            "Id": {
+              "title": "Id",
+              "type": "integer",
+              "format": "int64",
+              "x-ms-visibility": "internal",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Value"
+          }
+        },
+        "Mold_Size": {
+          "title": "Mold_Size",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Mold_Weight_Lbs": {
+          "title": "Mold_Weight_Lbs",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Fill_Weight_Lbs": {
+          "title": "Fill_Weight_Lbs",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Full_Weight_Of_Parts_gr": {
+          "title": "Full_Weight_Of_Parts_gr",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cold_Side_Mold_F": {
+          "title": "Cold_Side_Mold_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cold_Side_Cores_F": {
+          "title": "Cold_Side_Cores_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cold_Side_GPMs": {
+          "title": "Cold_Side_GPMs",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Hot_Side_Mold_F": {
+          "title": "Hot_Side_Mold_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Hot_Side_Cores_F": {
+          "title": "Hot_Side_Cores_F",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Hot_Side_GPMs": {
+          "title": "Hot_Side_GPMs",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Nozzle_1_F": {
+          "title": "Nozzle_1_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Nozzle_2_F": {
+          "title": "Nozzle_2_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Front_F": {
+          "title": "Front_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Center_1_F": {
+          "title": "Center_1_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Center_2_F": {
+          "title": "Center_2_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Center_3_F": {
+          "title": "Center_3_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Center_4_F": {
+          "title": "Center_4_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Rear_F": {
+          "title": "Rear_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Throat_F": {
+          "title": "Throat_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Melt_Temp_F": {
+          "title": "Melt_Temp_F",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Shot_Size_in": {
+          "title": "Shot_Size_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Screw_Speed_RPM": {
+          "title": "Screw_Speed_RPM",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Backpressure_psi": {
+          "title": "Backpressure_psi",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Screw_Return_Time_sec": {
+          "title": "Screw_Return_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Screw_Return_Delay_sec": {
+          "title": "Screw_Return_Delay_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cold_Purge_Time_sec": {
+          "title": "Cold_Purge_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cold_Purge_Speed_in_sec": {
+          "title": "Cold_Purge_Speed_in_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cooling_Time_sec": {
+          "title": "Cooling_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Transfer_in": {
+          "title": "Transfer_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Boost_Injection_Pres_psi": {
+          "title": "Boost_Injection_Pres_psi",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Boost_Injection_Time_sec": {
+          "title": "Boost_Injection_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Pack_Hold_Volume_in": {
+          "title": "Pack_Hold_Volume_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Pack_Hold_Time_sec": {
+          "title": "Pack_Hold_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Pack_Hold_Pressure_psi": {
+          "title": "Pack_Hold_Pressure_psi",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cushion_in": {
+          "title": "Cushion_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Total_Cycle_Time_sec": {
+          "title": "Total_Cycle_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Clamp_Closed_Time_sec": {
+          "title": "Clamp_Closed_Time_sec",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Clamping_Force_ton": {
+          "title": "Clamping_Force_ton",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Stage1_Speed": {
+          "title": "Stage1_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage1_Pos": {
+          "title": "Stage1_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage2_Speed": {
+          "title": "Stage2_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage2_Pos": {
+          "title": "Stage2_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage3_Speed": {
+          "title": "Stage3_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage3_Pos": {
+          "title": "Stage3_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage4_Speed": {
+          "title": "Stage4_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage4_Pos": {
+          "title": "Stage4_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage5_Speed": {
+          "title": "Stage5_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage5_Pos": {
+          "title": "Stage5_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage6_Speed": {
+          "title": "Stage6_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage6_Pos": {
+          "title": "Stage6_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage7_Speed": {
+          "title": "Stage7_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage7_Pos": {
+          "title": "Stage7_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage8_Speed": {
+          "title": "Stage8_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage8_Pos": {
+          "title": "Stage8_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage9_Speed": {
+          "title": "Stage9_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage9_Pos": {
+          "title": "Stage9_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage10_Speed": {
+          "title": "Stage10_Speed",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Stage10_Pos": {
+          "title": "Stage10_Pos",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Mold_Open_Slow_in": {
+          "title": "Mold_Open_Slow_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Mold_Open_Fast_in": {
+          "title": "Mold_Open_Fast_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Mold_Open_in": {
+          "title": "Mold_Open_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Mold_Close_Fast_in": {
+          "title": "Mold_Close_Fast_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Mold_Close_Slow_in": {
+          "title": "Mold_Close_Slow_in",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Ejector_Start_in": {
+          "title": "Ejector_Start_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Core_Pull_Start_in": {
+          "title": "Core_Pull_Start_in",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Has_Repro_Sheet": {
+          "title": "Has_Repro_Sheet",
+          "type": "boolean",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "default": true
+        },
+        "Requires_Revision": {
+          "title": "Requires_Revision",
+          "type": "boolean",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "default": false
+        },
+        "Operator_Notes": {
+          "title": "Operator_Notes",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none"
+        },
+        "Cavity_A_Fill": {
+          "title": "Cavity_A_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_A_Full": {
+          "title": "Cavity_A_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_B_Fill": {
+          "title": "Cavity_B_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_B_Full": {
+          "title": "Cavity_B_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_C_Fill": {
+          "title": "Cavity_C_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_C_Full": {
+          "title": "Cavity_C_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_D_Fill": {
+          "title": "Cavity_D_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_D_Full": {
+          "title": "Cavity_D_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_E_Fill": {
+          "title": "Cavity_E_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_E_Full": {
+          "title": "Cavity_E_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_F_Fill": {
+          "title": "Cavity_F_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_F_Full": {
+          "title": "Cavity_F_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_G_Fill": {
+          "title": "Cavity_G_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_G_Full": {
+          "title": "Cavity_G_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_H_Fill": {
+          "title": "Cavity_H_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_H_Full": {
+          "title": "Cavity_H_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_I_Fill": {
+          "title": "Cavity_I_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_I_Full": {
+          "title": "Cavity_I_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_J_Fill": {
+          "title": "Cavity_J_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_J_Full": {
+          "title": "Cavity_J_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_K_Fill": {
+          "title": "Cavity_K_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_K_Full": {
+          "title": "Cavity_K_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_L_Fill": {
+          "title": "Cavity_L_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_L_Full": {
+          "title": "Cavity_L_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_M_Fill": {
+          "title": "Cavity_M_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_M_Full": {
+          "title": "Cavity_M_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_N_Fill": {
+          "title": "Cavity_N_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_N_Full": {
+          "title": "Cavity_N_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_O_Fill": {
+          "title": "Cavity_O_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_O_Full": {
+          "title": "Cavity_O_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_P_Fill": {
+          "title": "Cavity_P_Fill",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Cavity_P_Full": {
+          "title": "Cavity_P_Full",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Material_No": {
+          "title": "Material_No",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Raw_Material": {
+          "title": "Raw_Material",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Shot_Weight_gr": {
+          "title": "Shot_Weight_gr",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "Modified": {
+          "title": "Modified",
+          "description": "When this item was last changed.",
+          "type": "string",
+          "format": "date-time",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "Created": {
+          "title": "Created",
+          "description": "When this item was created.",
+          "type": "string",
+          "format": "date-time",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          }
+        },
+        "OData__ColorTag": {
+          "title": "Color Tag",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "ComplianceAssetId": {
+          "title": "Compliance Asset Id",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Author#Claims": {
+          "title": "Created By Claims",
+          "type": "string",
+          "description": "Internal identifier for the user who created this item.",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Author": {
+          "title": "Created By",
+          "description": "The user who created this item.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Claims": {
+              "title": "Claims",
+              "type": "string",
+              "description": "Internal identifier for the user who created this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "1df5e554-ec7e-46a6-901d-d85a3881cb18"
+                },
+                "value-path": "Claims",
+                "value-title": "DisplayName",
+                "value-collection": "value"
+              }
+            },
+            "DisplayName": {
+              "title": "DisplayName",
+              "type": "string",
+              "description": "The name of the user who created this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Title"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Email": {
+              "title": "Email",
+              "type": "string",
+              "description": "Email address of the user who created this item.",
+              "format": "email",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "EMail"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Picture": {
+              "title": "Picture",
+              "type": "string",
+              "description": "Link to a picture of the user who created this item.",
+              "format": "uri",
+              "x-ms-media-kind": "image",
+              "x-ms-media-default-folder-path": "/sites/GFPS-AMGManufacturingEngineering",
+              "x-ms-media-base-url": "https://georgfischer.sharepoint.com/sites/GFPS-AMGManufacturingEngineering",
+              "x-ms-permission": "read-only"
+            },
+            "Department": {
+              "title": "Department",
+              "type": "string",
+              "description": "Department name of the user who created this item.",
+              "x-ms-permission": "read-only"
+            },
+            "JobTitle": {
+              "title": "JobTitle",
+              "type": "string",
+              "description": "Job title of the user who created this item.",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "DisplayName",
+            "subtitleProperty": "Email",
+            "thumbnailProperty": "Picture"
+          }
+        },
+        "Editor#Claims": {
+          "title": "Modified By Claims",
+          "type": "string",
+          "description": "Internal identifier for the user who last changed this item.",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "Editor": {
+          "title": "Modified By",
+          "description": "The user who last changed this item.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq"
+            ]
+          },
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Claims": {
+              "title": "Claims",
+              "type": "string",
+              "description": "Internal identifier for the user who last changed this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "d31655d1-1d5b-4511-95a1-7a09e9b75bf2"
+                },
+                "value-path": "Claims",
+                "value-title": "DisplayName",
+                "value-collection": "value"
+              }
+            },
+            "DisplayName": {
+              "title": "DisplayName",
+              "type": "string",
+              "description": "The name of the user who last changed this item.",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "Title"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Email": {
+              "title": "Email",
+              "type": "string",
+              "description": "Email address of the user who last changed this item.",
+              "format": "email",
+              "x-ms-permission": "read-only",
+              "x-ms-capabilities": {
+                "x-ms-sp": {
+                  "OdataQueryName": "EMail"
+                },
+                "filterFunctions": [
+                  "eq",
+                  "startswith"
+                ]
+              }
+            },
+            "Picture": {
+              "title": "Picture",
+              "type": "string",
+              "description": "Link to a picture of the user who last changed this item.",
+              "format": "uri",
+              "x-ms-media-kind": "image",
+              "x-ms-media-default-folder-path": "/sites/GFPS-AMGManufacturingEngineering",
+              "x-ms-media-base-url": "https://georgfischer.sharepoint.com/sites/GFPS-AMGManufacturingEngineering",
+              "x-ms-permission": "read-only"
+            },
+            "Department": {
+              "title": "Department",
+              "type": "string",
+              "description": "Department name of the user who last changed this item.",
+              "x-ms-permission": "read-only"
+            },
+            "JobTitle": {
+              "title": "JobTitle",
+              "type": "string",
+              "description": "Job title of the user who last changed this item.",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "DisplayName",
+            "subtitleProperty": "Email",
+            "thumbnailProperty": "Picture"
+          }
+        },
+        "{Identifier}": {
+          "title": "Identifier",
+          "description": "Value that can be used in file related actions for selecting a file.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{IsFolder}": {
+          "title": "IsFolder",
+          "description": "True when the item is a folder, false otherwise.",
+          "type": "boolean",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Thumbnail}": {
+          "title": "Thumbnail",
+          "description": "URL to the thumbnails of the item in 3 different sizes, if available.",
+          "type": "object",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none",
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            },
+            "Small": {
+              "title": "Small",
+              "type": "string",
+              "description": "URL to the small, highly compressed size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            },
+            "Medium": {
+              "title": "Medium",
+              "type": "string",
+              "description": "URL to the standard size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            },
+            "Large": {
+              "title": "Large",
+              "type": "string",
+              "description": "URL to the largest size thumbnail of the item, if available.",
+              "x-ms-permission": "read-only"
+            }
+          }
+        },
+        "{Link}": {
+          "title": "Link to item",
+          "description": "Link that can be used to get to the file or list item. Only people with permissions to the item will be able to open the link.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Name}": {
+          "title": "Name",
+          "description": "File name of the item in document libraries, display name of the item in lists.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{FilenameWithExtension}": {
+          "title": "File name with extension",
+          "description": "For libraries, returns file name including extension. For lists, returns the title property.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Path}": {
+          "title": "Folder path",
+          "description": "Path to the folder the item is in, relative to the site address.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{FullPath}": {
+          "title": "Full Path",
+          "description": "Full path of an item or a folder or a file",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ModerationStatus}": {
+          "title": "Content approval status",
+          "description": "The content approval status. It can be one of the following: Draft, Pending, Approved, or Rejected",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ModerationComment}": {
+          "title": "Comments associated with the content approval of this list item",
+          "description": "The comments associated with moderation of the list item.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{ContentType}#Id": {
+          "title": "Content type Id",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-visibility": "internal"
+        },
+        "{ContentType}": {
+          "title": "Content type",
+          "description": "Name of the Content type of the item.",
+          "type": "object",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "none",
+          "properties": {
+            "@odata.type": {
+              "title": "@odata.type",
+              "x-ms-visibility": "internal",
+              "type": "string",
+              "x-ms-permission": "read-write"
+            },
+            "Id": {
+              "title": "Id",
+              "type": "string",
+              "x-ms-dynamic-values": {
+                "operationId": "GetEntityValues",
+                "parameters": {
+                  "dataset": {
+                    "parameter": "dataset"
+                  },
+                  "table": {
+                    "parameter": "table"
+                  },
+                  "id": "4651e8f2-38c9-4ad0-8def-41f743f76f30"
+                },
+                "value-path": "Id",
+                "value-title": "Name",
+                "value-collection": "value"
+              }
+            },
+            "Name": {
+              "title": "Name",
+              "type": "string",
+              "x-ms-permission": "read-only"
+            }
+          },
+          "x-ms-displayFormat": {
+            "titleProperty": "Name"
+          }
+        },
+        "{HasAttachments}": {
+          "title": "Has attachments",
+          "description": "Indicates the presence of attachments in the item.",
+          "type": "boolean",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{Attachments}@odata.type": {
+          "title": "{Attachments}",
+          "type": "string",
+          "x-ms-visibility": "internal",
+          "x-ms-permission": "read-write"
+        },
+        "{Attachments}": {
+          "title": "Attachments",
+          "description": "Never returns any data. Use Attachment endpoints to access item attachments.",
+          "x-ms-permission": "read-write",
+          "targetEntity": "attachments",
+          "format": "x-ms-containedMediaEntity",
+          "x-ms-visibility": "internal",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "format": "x-ms-mediaEntity",
+            "x-ms-sort": "none",
+            "properties": {
+              "@odata.type": {
+                "title": "@odata.type",
+                "x-ms-visibility": "internal",
+                "type": "string",
+                "x-ms-permission": "read-write"
+              },
+              "Id": {
+                "title": "Id",
+                "type": "string",
+                "x-ms-keyType": "primary",
+                "x-ms-keyOrder": 1,
+                "x-ms-permission": "read-only"
+              },
+              "AbsoluteUri": {
+                "title": "AbsoluteUri",
+                "type": "string",
+                "format": "uri",
+                "x-ms-permission": "read-only"
+              },
+              "DisplayName": {
+                "title": "DisplayName",
+                "type": "string",
+                "x-ms-permission": "read-only"
+              }
+            }
+          },
+          "@odata.type": "#Collection(Microsoft.Azure.Connectors.SharePoint.SPListItemAttachment)"
+        },
+        "{VersionNumber}": {
+          "title": "Version number",
+          "description": "The version number of the file or the list item.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{TriggerWindowStartToken}": {
+          "title": "Trigger Window Start Token",
+          "description": "A token expressing the time of the last flow check. Use this if you want to check if one or more columns were modified since the last flow check.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "{TriggerWindowEndToken}": {
+          "title": "Trigger Window End Token",
+          "description": "A token expressing the time of the current flow check. Use this if you want to check if one or more columns were modified since the last flow check.",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        }
+      },
+      "x-ms-relationships": {
+        "Machine_ID": {
+          "targetEntity": "Machine_ID",
+          "referentialConstraints": {
+            "Machine_ID#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Cooling_Air_Water": {
+          "targetEntity": "Cooling_Air_Water",
+          "referentialConstraints": {
+            "Cooling_Air_Water#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Core_Puller": {
+          "targetEntity": "Core_Puller",
+          "referentialConstraints": {
+            "Core_Puller#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        },
+        "Author": {
+          "targetEntity": "Author",
+          "referentialConstraints": {
+            "Author#Claims": {
+              "referencedProperty": "Claims"
+            }
+          }
+        },
+        "Editor": {
+          "targetEntity": "Editor",
+          "referentialConstraints": {
+            "Editor#Claims": {
+              "referencedProperty": "Claims"
+            }
+          }
+        },
+        "{ContentType}": {
+          "targetEntity": "4651e8f2-38c9-4ad0-8def-41f743f76f30",
+          "referentialConstraints": {
+            "{ContentType}#Id": {
+              "referencedProperty": "Id"
+            }
+          }
+        }
+      },
+      "x-ms-displayFormat": {
+        "propertiesDisplayOrder": [
+          "Title",
+          "Part_No",
+          "Mold_Base_Number",
+          "Machine_ID",
+          "Version_No",
+          "Is_Active",
+          "Proc_Date",
+          "Cavities",
+          "Created_By",
+          "Change_Reason",
+          "Cooling_Air_Water",
+          "Nozzles_In",
+          "Core_Puller",
+          "Mold_Size",
+          "Mold_Weight_Lbs",
+          "Fill_Weight_Lbs",
+          "Full_Weight_Of_Parts_gr",
+          "Cold_Side_Mold_F",
+          "Cold_Side_Cores_F",
+          "Cold_Side_GPMs",
+          "Hot_Side_Mold_F",
+          "Hot_Side_Cores_F",
+          "Hot_Side_GPMs",
+          "Nozzle_1_F",
+          "Nozzle_2_F",
+          "Front_F",
+          "Center_1_F",
+          "Center_2_F",
+          "Center_3_F",
+          "Center_4_F",
+          "Rear_F",
+          "Throat_F",
+          "Melt_Temp_F",
+          "Shot_Size_in",
+          "Screw_Speed_RPM",
+          "Backpressure_psi",
+          "Screw_Return_Time_sec",
+          "Screw_Return_Delay_sec",
+          "Cold_Purge_Time_sec",
+          "Cold_Purge_Speed_in_sec",
+          "Cooling_Time_sec",
+          "Transfer_in",
+          "Boost_Injection_Pres_psi",
+          "Boost_Injection_Time_sec",
+          "Pack_Hold_Volume_in",
+          "Pack_Hold_Time_sec",
+          "Pack_Hold_Pressure_psi",
+          "Cushion_in",
+          "Total_Cycle_Time_sec",
+          "Clamp_Closed_Time_sec",
+          "Clamping_Force_ton",
+          "Stage1_Speed",
+          "Stage1_Pos",
+          "Stage2_Speed",
+          "Stage2_Pos",
+          "Stage3_Speed",
+          "Stage3_Pos",
+          "Stage4_Speed",
+          "Stage4_Pos",
+          "Stage5_Speed",
+          "Stage5_Pos",
+          "Stage6_Speed",
+          "Stage6_Pos",
+          "Stage7_Speed",
+          "Stage7_Pos",
+          "Stage8_Speed",
+          "Stage8_Pos",
+          "Stage9_Speed",
+          "Stage9_Pos",
+          "Stage10_Speed",
+          "Stage10_Pos",
+          "Mold_Open_Slow_in",
+          "Mold_Open_Fast_in",
+          "Mold_Open_in",
+          "Mold_Close_Fast_in",
+          "Mold_Close_Slow_in",
+          "Ejector_Start_in",
+          "Core_Pull_Start_in",
+          "Has_Repro_Sheet",
+          "Operator_Notes",
+          "Cavity_A_Fill",
+          "Cavity_A_Full",
+          "Cavity_B_Fill",
+          "Cavity_B_Full",
+          "Cavity_C_Fill",
+          "Cavity_C_Full",
+          "Cavity_D_Fill",
+          "Cavity_D_Full",
+          "Cavity_E_Fill",
+          "Cavity_E_Full",
+          "Cavity_F_Fill",
+          "Cavity_F_Full",
+          "Cavity_G_Fill",
+          "Cavity_G_Full",
+          "Cavity_H_Fill",
+          "Cavity_H_Full",
+          "Cavity_I_Fill",
+          "Cavity_I_Full",
+          "Cavity_J_Fill",
+          "Cavity_J_Full",
+          "Cavity_K_Fill",
+          "Cavity_K_Full",
+          "Cavity_L_Fill",
+          "Cavity_L_Full",
+          "Cavity_M_Fill",
+          "Cavity_M_Full",
+          "Cavity_N_Fill",
+          "Cavity_N_Full",
+          "Cavity_O_Fill",
+          "Cavity_O_Full",
+          "Cavity_P_Fill",
+          "Cavity_P_Full",
+          "Material_No",
+          "Raw_Material",
+          "Shot_Weight_gr",
+          "Special_Instructions",
+          "Requires_Revision",
+          "{Attachments}"
+        ],
+        "propertiesCompactDisplayOrder": [
+          "Title",
+          "Part_No",
+          "Mold_Base_Number",
+          "Machine_ID",
+          "Version_No",
+          "Is_Active",
+          "Proc_Date",
+          "Cavities",
+          "Created_By",
+          "Change_Reason",
+          "Special_Instructions",
+          "Cooling_Air_Water",
+          "Nozzles_In",
+          "Core_Puller",
+          "Mold_Size",
+          "Mold_Weight_Lbs",
+          "Fill_Weight_Lbs",
+          "Full_Weight_Of_Parts_gr",
+          "Cold_Side_Mold_F",
+          "Cold_Side_Cores_F",
+          "Cold_Side_GPMs",
+          "Hot_Side_Mold_F",
+          "Hot_Side_Cores_F",
+          "Hot_Side_GPMs",
+          "Nozzle_1_F",
+          "Nozzle_2_F",
+          "Front_F",
+          "Center_1_F",
+          "Center_2_F",
+          "Center_3_F",
+          "Center_4_F",
+          "Rear_F",
+          "Throat_F",
+          "Melt_Temp_F",
+          "Shot_Size_in",
+          "Screw_Speed_RPM",
+          "Backpressure_psi",
+          "Screw_Return_Time_sec",
+          "Screw_Return_Delay_sec",
+          "Cold_Purge_Time_sec",
+          "Cold_Purge_Speed_in_sec",
+          "Cooling_Time_sec",
+          "Transfer_in",
+          "Boost_Injection_Pres_psi",
+          "Boost_Injection_Time_sec",
+          "Pack_Hold_Volume_in",
+          "Pack_Hold_Time_sec",
+          "Pack_Hold_Pressure_psi",
+          "Cushion_in",
+          "Total_Cycle_Time_sec",
+          "Clamp_Closed_Time_sec",
+          "Clamping_Force_ton",
+          "Stage1_Speed",
+          "Stage1_Pos",
+          "Stage2_Speed",
+          "Stage2_Pos",
+          "Stage3_Speed",
+          "Stage3_Pos",
+          "Stage4_Speed",
+          "Stage4_Pos",
+          "Stage5_Speed",
+          "Stage5_Pos",
+          "Stage6_Speed",
+          "Stage6_Pos",
+          "Stage7_Speed",
+          "Stage7_Pos",
+          "Stage8_Speed",
+          "Stage8_Pos",
+          "Stage9_Speed",
+          "Stage9_Pos",
+          "Stage10_Speed",
+          "Stage10_Pos",
+          "Mold_Open_Slow_in",
+          "Mold_Open_Fast_in",
+          "Mold_Open_in",
+          "Mold_Close_Fast_in",
+          "Mold_Close_Slow_in",
+          "Ejector_Start_in",
+          "Core_Pull_Start_in",
+          "Has_Repro_Sheet",
+          "Requires_Revision",
+          "Operator_Notes",
+          "Cavity_A_Fill",
+          "Cavity_A_Full",
+          "Cavity_B_Fill",
+          "Cavity_B_Full",
+          "Cavity_C_Fill",
+          "Cavity_C_Full",
+          "Cavity_D_Fill",
+          "Cavity_D_Full",
+          "Cavity_E_Fill",
+          "Cavity_E_Full",
+          "Cavity_F_Fill",
+          "Cavity_F_Full",
+          "Cavity_G_Fill",
+          "Cavity_G_Full",
+          "Cavity_H_Fill",
+          "Cavity_H_Full",
+          "Cavity_I_Fill",
+          "Cavity_I_Full",
+          "Cavity_J_Fill",
+          "Cavity_J_Full",
+          "Cavity_K_Fill",
+          "Cavity_K_Full",
+          "Cavity_L_Fill",
+          "Cavity_L_Full",
+          "Cavity_M_Fill",
+          "Cavity_M_Full",
+          "Cavity_N_Fill",
+          "Cavity_N_Full",
+          "Cavity_O_Fill",
+          "Cavity_O_Full",
+          "Cavity_P_Fill",
+          "Cavity_P_Full",
+          "Material_No",
+          "Raw_Material",
+          "Shot_Weight_gr",
+          "ID",
+          "Modified",
+          "Created"
+        ],
+        "propertiesTabularDisplayOrder": [
+          "Title",
+          "Part_No",
+          "Mold_Base_Number",
+          "Machine_ID",
+          "Version_No",
+          "Is_Active",
+          "Proc_Date",
+          "Cavities",
+          "Created_By",
+          "Change_Reason",
+          "Special_Instructions",
+          "Cooling_Air_Water",
+          "Nozzles_In",
+          "Core_Puller",
+          "Mold_Size",
+          "Mold_Weight_Lbs",
+          "Fill_Weight_Lbs",
+          "Full_Weight_Of_Parts_gr",
+          "Cold_Side_Mold_F",
+          "Cold_Side_Cores_F",
+          "Cold_Side_GPMs",
+          "Hot_Side_Mold_F",
+          "Hot_Side_Cores_F",
+          "Hot_Side_GPMs",
+          "Nozzle_1_F",
+          "Nozzle_2_F",
+          "Front_F",
+          "Center_1_F",
+          "Center_2_F",
+          "Center_3_F",
+          "Center_4_F",
+          "Rear_F",
+          "Throat_F",
+          "Melt_Temp_F",
+          "Shot_Size_in",
+          "Screw_Speed_RPM",
+          "Backpressure_psi",
+          "Screw_Return_Time_sec",
+          "Screw_Return_Delay_sec",
+          "Cold_Purge_Time_sec",
+          "Cold_Purge_Speed_in_sec",
+          "Cooling_Time_sec",
+          "Transfer_in",
+          "Boost_Injection_Pres_psi",
+          "Boost_Injection_Time_sec",
+          "Pack_Hold_Volume_in",
+          "Pack_Hold_Time_sec",
+          "Pack_Hold_Pressure_psi",
+          "Cushion_in",
+          "Total_Cycle_Time_sec",
+          "Clamp_Closed_Time_sec",
+          "Clamping_Force_ton",
+          "Stage1_Speed",
+          "Stage1_Pos",
+          "Stage2_Speed",
+          "Stage2_Pos",
+          "Stage3_Speed",
+          "Stage3_Pos",
+          "Stage4_Speed",
+          "Stage4_Pos",
+          "Stage5_Speed",
+          "Stage5_Pos",
+          "Stage6_Speed",
+          "Stage6_Pos",
+          "Stage7_Speed",
+          "Stage7_Pos",
+          "Stage8_Speed",
+          "Stage8_Pos",
+          "Stage9_Speed",
+          "Stage9_Pos",
+          "Stage10_Speed",
+          "Stage10_Pos",
+          "Mold_Open_Slow_in",
+          "Mold_Open_Fast_in",
+          "Mold_Open_in",
+          "Mold_Close_Fast_in",
+          "Mold_Close_Slow_in",
+          "Ejector_Start_in",
+          "Core_Pull_Start_in",
+          "Has_Repro_Sheet",
+          "Requires_Revision",
+          "Operator_Notes",
+          "Cavity_A_Fill",
+          "Cavity_A_Full",
+          "Cavity_B_Fill",
+          "Cavity_B_Full",
+          "Cavity_C_Fill",
+          "Cavity_C_Full",
+          "Cavity_D_Fill",
+          "Cavity_D_Full",
+          "Cavity_E_Fill",
+          "Cavity_E_Full",
+          "Cavity_F_Fill",
+          "Cavity_F_Full",
+          "Cavity_G_Fill",
+          "Cavity_G_Full",
+          "Cavity_H_Fill",
+          "Cavity_H_Full",
+          "Cavity_I_Fill",
+          "Cavity_I_Full",
+          "Cavity_J_Fill",
+          "Cavity_J_Full",
+          "Cavity_K_Fill",
+          "Cavity_K_Full",
+          "Cavity_L_Fill",
+          "Cavity_L_Full",
+          "Cavity_M_Fill",
+          "Cavity_M_Full",
+          "Cavity_N_Fill",
+          "Cavity_N_Full",
+          "Cavity_O_Fill",
+          "Cavity_O_Full",
+          "Cavity_P_Fill",
+          "Cavity_P_Full",
+          "Material_No",
+          "Raw_Material",
+          "Shot_Weight_gr",
+          "ID",
+          "Modified",
+          "Created"
+        ]
+      }
+    }
+  },
+  "referencedEntities": {
+    "Machine_ID": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/Machine_ID",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Cooling_Air_Water": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/Cooling_Air_Water",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Core_Puller": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/Core_Puller",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Author": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/Author",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "Editor": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/Editor",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    },
+    "4651e8f2-38c9-4ad0-8def-41f743f76f30": {
+      "lookupEndpoint": {
+        "path": "/tables/87746398-9dbf-4834-a604-b03a4190d2d2/entities/%257bContentType%257d",
+        "capabilities": {
+          "searchable": true,
+          "requiresSearch": false
+        }
+      }
+    }
+  },
+  "webUrl": "https://georgfischer.sharepoint.com/sites/GFPS-AMGManufacturingEngineering/Lists/Mastercards/AllItems.aspx",
+  "x-ms-connection-version": ""
+}

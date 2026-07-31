@@ -3,10 +3,12 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
+const XLSX = require("xlsx");
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const PORT = Number(process.env.PORT) || 3001;
 const DATA_PATH = process.env.SHAREPOINT_EXPORT_PATH;
+const ESCALATIONS_EXPORT_PATH = process.env.ESCALATIONS_EXPORT_PATH;
 
 if (!DATA_PATH) {
   console.warn(
@@ -14,9 +16,36 @@ if (!DATA_PATH) {
   );
 }
 
+if (!ESCALATIONS_EXPORT_PATH) {
+  console.warn(
+    "[backend] ESCALATIONS_EXPORT_PATH is not set. /api/escalations will error until it's configured in backend/.env."
+  );
+}
+
 const app = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || true, credentials: false }));
 app.use(express.json());
+
+function readMoldingScrap() {
+  const filePath = process.env.TEAMS_EXCEL_PATH;
+  if (!filePath || !fs.existsSync(filePath)) throw new Error("TEAMS_EXCEL_PATH is missing or inaccessible");
+  const wb = XLSX.readFile(filePath);
+  const ws = wb.Sheets.Molding ?? wb.Sheets[wb.SheetNames[0]];
+  const numberAt = (address) => Number(String(ws[address]?.v ?? ws[address]?.w ?? 0).replace(/[^0-9.-]/g, "")) || 0;
+  const rateAt = (address) => typeof ws[address]?.v === "number"
+    ? (ws[address].v > 1 ? ws[address].v / 100 : ws[address].v)
+    : numberAt(address) / 100;
+  const textAt = (address) => String(ws[address]?.w ?? ws[address]?.v ?? "").trim();
+  return {
+    sheetName: ws === wb.Sheets.Molding ? "Molding" : wb.SheetNames[0],
+    cellTotal: { yield: numberAt("C3"), scrap: numberAt("D3"), scrapRate: rateAt("E3") },
+    weeklyScrap: [4, 5, 6, 7, 8].map((row) => ({ cell: textAt(`N${row}`), yield: numberAt(`O${row}`), scrap: numberAt(`P${row}`), scrapRate: rateAt(`Q${row}`) })).filter((item) => item.cell),
+    topProducts: [7, 8, 9, 10, 11].map((row) => ({ product: textAt(`B${row}`), yield: numberAt(`C${row}`), scrap: numberAt(`D${row}`), scrapRate: rateAt(`E${row}`) })).filter((item) => item.product),
+    topProductsTotal: { yield: numberAt("C12"), scrap: numberAt("D12"), scrapRate: rateAt("E12") },
+    topReasons: [7, 8, 9, 10, 11].map((row) => ({ reason: textAt(`H${row}`), scrap: numberAt(`I${row}`), pctOfTotal: rateAt(`J${row}`) })).filter((item) => item.reason),
+    topReasonsTotal: { scrap: numberAt("I12"), totalScrap: numberAt("J12") },
+  };
+}
 
 // ---------- Normalization helpers ----------
 
@@ -49,6 +78,12 @@ function parseDate(v) {
   if (!s) return null;
   const d = new Date(s);
   return isNaN(d.getTime()) ? null : d;
+}
+
+function toBool(v) {
+  if (typeof v === "boolean") return v;
+  const s = normalizeValue(v).toLowerCase();
+  return ["yes", "y", "true", "1"].includes(s);
 }
 
 function toYesNo(v) {
@@ -87,6 +122,89 @@ function normalizeRow(raw) {
   };
 }
 
+// ---------- Escalations / Long Term Actions ----------
+
+function normalizeEscalationType(v) {
+  const s = normalizeValue(v).toLowerCase();
+  if (s.startsWith("long")) return "LongTermAction";
+  if (s.startsWith("escal")) return "Escalation";
+  return normalizeValue(v);
+}
+
+function normalizeEscalationRow(raw) {
+  const dueDate = parseDate(pick(raw, "DueDate", "Due_x0020_Date", "Due Date"));
+  const created = parseDate(pick(raw, "Created", "DateCreated"));
+  return {
+    id: Number(pick(raw, "ID", "Id") ?? 0) || 0,
+    title: normalizeValue(pick(raw, "Title")),
+    type: normalizeEscalationType(pick(raw, "Type")),
+    status: normalizeValue(pick(raw, "Status")) || "Open",
+    owner: normalizeValue(pick(raw, "Owner")),
+    dueDate,
+    dateCreated: created ? fmtDate(created) : "",
+    details: normalizeValue(pick(raw, "Details", "Comments")),
+    manualOverdue: toBool(pick(raw, "OverdueFlag", "Overdue", "ManualOverdue")),
+  };
+}
+
+function isAutoOverdue(status, dueDate) {
+  if (!dueDate) return false;
+  if ((status || "").toLowerCase() === "completed") return false;
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+  return dueDate.getTime() < startOfToday.getTime();
+}
+
+// Overdue if the due date has passed (and it isn't Completed) OR someone
+// manually checked the OverdueFlag column in SharePoint.
+function isOverdue(status, dueDate, manualOverdue) {
+  return Boolean(manualOverdue) || isAutoOverdue(status, dueDate);
+}
+
+function readEscalationsFile() {
+  if (!ESCALATIONS_EXPORT_PATH) {
+    throw new Error("ESCALATIONS_EXPORT_PATH is not set. Configure backend/.env before calling the API.");
+  }
+  if (!fs.existsSync(ESCALATIONS_EXPORT_PATH)) {
+    throw new Error(`Escalations data file not found at ${ESCALATIONS_EXPORT_PATH}`);
+  }
+  const text = fs.readFileSync(ESCALATIONS_EXPORT_PATH, "utf8");
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch (err) {
+    throw new Error(`Failed to parse escalations JSON file: ${err.message}`);
+  }
+  const rows = Array.isArray(parsed)
+    ? parsed
+    : Array.isArray(parsed?.value)
+      ? parsed.value
+      : Array.isArray(parsed?.data)
+        ? parsed.data
+        : Array.isArray(parsed?.rows)
+          ? parsed.rows
+          : [];
+  return rows.map(normalizeEscalationRow);
+}
+
+function computeEscalationsSummary(rows) {
+  const withOverdue = rows.map((r) => ({ ...r, overdue: isOverdue(r.status, r.dueDate, r.manualOverdue) }));
+  const cleanRow = ({ dueDate, ...rest }) => ({ ...rest, dueDate: dueDate ? fmtDate(dueDate) : "" });
+
+  const items = withOverdue.map(cleanRow).sort((a, b) => (b.overdue === a.overdue ? 0 : b.overdue ? 1 : -1));
+  const escalations = withOverdue.filter((r) => r.type === "Escalation").map(cleanRow);
+  const longTermActions = withOverdue.filter((r) => r.type === "LongTermAction").map(cleanRow);
+
+  return {
+    updatedAt: new Date().toLocaleString(),
+    items,
+    escalations,
+    longTermActions,
+    openCount: withOverdue.filter((r) => r.status.toLowerCase() !== "completed").length,
+    overdueCount: withOverdue.filter((r) => r.overdue).length,
+  };
+}
+
 // ---------- File reading ----------
 
 function readDataFile() {
@@ -120,18 +238,19 @@ function readDataFile() {
 // ---------- KPI computation ----------
 
 function getProductionWindow(now = new Date()) {
-  // Last completed production day: yesterday 7:00 AM -> today 7:00 AM local.
-  // Dashboard is presented every morning ~8:25 AM and should show the day that
-  // just ended, not the shift currently in progress.
+  // Monday shows the previous calendar week. Other days show the latest
+  // completed 7:00 AM -> 7:00 AM production day.
+  const isMonday = now.getDay() === 1;
   const end = new Date(now);
-  end.setHours(7, 0, 0, 0);
-  if (now.getTime() < end.getTime()) {
-    // Before 7 AM: the window that just closed ended at 7 AM yesterday.
-    end.setDate(end.getDate() - 1);
+  if (isMonday) {
+    end.setHours(0, 0, 0, 0);
+  } else {
+    end.setHours(7, 0, 0, 0);
+    if (now < end) end.setDate(end.getDate() - 1);
   }
   const start = new Date(end);
-  start.setDate(start.getDate() - 1);
-  return { start, end };
+  start.setDate(start.getDate() - (isMonday ? 7 : 1));
+  return { start, end, isMonday };
 }
 
 function fmtTime(d) {
@@ -144,9 +263,9 @@ function fmtDate(d) {
 
 function computeSummary(rows) {
   const now = new Date();
-  const { start, end } = getProductionWindow(now);
+  const { start, end, isMonday } = getProductionWindow(now);
 
-  // Filter to the current 7 AM -> 7 AM production window.
+  // Filter to the last completed Monday -> Sunday calendar week.
   const inWindow = rows.filter((r) => {
     if (!r._ts) return false;
     return r._ts >= start.getTime() && r._ts < end.getTime();
@@ -165,41 +284,51 @@ function computeSummary(rows) {
     }
   }
   const uniqueJobs = [...byKey.values()];
+  const machinesRunning = uniqueJobs.length;
 
+  // Buy Offs = unique Machine + Part jobs where Overall Acceptance is explicitly "Yes".
+  // Blank/missing Overall Acceptance is intentionally NOT counted here.
+  const buyOffJobs = uniqueJobs.filter((r) => (r.overallAcceptance || "").toLowerCase() === "yes");
+  const buyOffCount = buyOffJobs.length;
+
+  // MasterCard breakdown, MC Available, and Compliance are all scoped to Buy Off
+  // jobs only — a job that was never accepted isn't part of these stats, so the
+  // denominator here is buyOffCount, not the total machinesRunning.
   let matching = 0;      // MasterCard === "Yes"
   let comparable = 0;    // MasterCard === "Comparable"
   let missing = 0;       // "No", blank, null, missing
 
-  for (const r of uniqueJobs) {
+  for (const r of buyOffJobs) {
     const mc = (r.masterCard || "").toLowerCase();
     if (mc === "yes") matching++;
     else if (mc.startsWith("compar")) comparable++;
     else missing++;
   }
 
-  const machinesRunning = uniqueJobs.length;
   const mcAvailableCount = matching + comparable; // MC Available = MasterCard "Yes" or "Comparable"
-  // Compliance = OverallAcceptance "Yes" among MC-available jobs.
-  const complianceCount = uniqueJobs.filter((r) => {
-    const mc = (r.masterCard || "").toLowerCase();
-    const oa = (r.overallAcceptance || "").toLowerCase();
-    return (mc === "yes" || mc.startsWith("compar")) && oa === "yes";
-  }).length;
-  const complianceDenominator = mcAvailableCount;
+  // Compliance is now the same figure as MC Available, since the base population
+  // (Buy Off jobs) is already Overall Accepted = Yes. Kept as its own stat for continuity.
+  const complianceCount = mcAvailableCount;
+  const complianceDenominator = buyOffCount;
   const compliancePercent =
     complianceDenominator === 0 ? 0 : Math.round((complianceCount / complianceDenominator) * 100);
   const pct = (n) =>
-    machinesRunning === 0 ? 0 : Math.round((n / machinesRunning) * 100);
+    buyOffCount === 0 ? 0 : Math.round((n / buyOffCount) * 100);
 
-  // Buyoff log = every unique Machine + Part job in the production window.
-  // The floor map is derived from the same list so the two views always match.
+  // Floor map = every unique Machine + Part job in the production window,
+  // regardless of Buy Off status (it reflects real-time floor activity, WIP included).
   const machineJobs = [...uniqueJobs]
     .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
     .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
-  // Latest Records = every unique Machine + Part job in the production window.
-  const latestRows = machineJobs;
 
-  const missingRows = machineJobs.filter((r) => {
+  // Latest Records and Missing MasterCard are scoped to Buy Off jobs only, so
+  // their row counts stay consistent with the buyOffCount-based stats above.
+  const buyOffJobRows = [...buyOffJobs]
+    .sort((a, b) => (b._ts - a._ts) || (b.id - a.id))
+    .map(({ _ts, dateCreatedRaw, ...rest }) => rest);
+  const latestRows = buyOffJobRows;
+
+  const missingRows = buyOffJobRows.filter((r) => {
     const mc = (r.masterCard || "").toLowerCase();
     // Mirror the count logic: anything that isn't "yes" or "comparable" is missing.
     return mc !== "yes" && !mc.startsWith("compar");
@@ -265,7 +394,10 @@ function computeSummary(rows) {
 
   return {
     updatedAt: new Date().toLocaleString(),
-    productionDate: fmtDate(start),
+    productionDate: isMonday
+      ? `${fmtDate(start)} - ${fmtDate(new Date(end.getTime() - 1))}`
+      : fmtDate(start),
+    reportingPeriod: isMonday ? "week" : "production-day",
     productionWindowStart: fmtTime(start),
     productionWindowEnd: fmtTime(end),
     latestDate,
@@ -274,11 +406,14 @@ function computeSummary(rows) {
     totalRows: inWindow.length, // raw rows in the window (before dedupe)
     machinesRunning,             // unique Machine + PartNumber pairs
 
+    // Buy Offs = unique Machine + Part jobs with Overall Acceptance === "Yes"
+    buyOffCount,
+
     // MC Available (Yes or Comparable)
     mcAvailableCount,
     mcAvailablePercent: pct(mcAvailableCount),
 
-    // Breakdown (count + percent of machinesRunning)
+    // Breakdown (count + percent of buyOffCount)
     matchingCount: matching,
     matchingPercent: pct(matching),
     comparableCount: comparable,
@@ -350,4 +485,23 @@ app.get("/api/rows", (_req, res) => {
 app.listen(PORT, () => {
   console.log(`[backend] AMG dashboard API listening on http://localhost:${PORT}`);
   console.log(`[backend] Reading: ${DATA_PATH || "(SHAREPOINT_EXPORT_PATH not set)"}`);
+});
+
+app.get("/api/t2-scrap", (_req, res) => {
+  try {
+    res.json(readMoldingScrap());
+  } catch (err) {
+    console.error("[backend] /api/t2-scrap failed:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get("/api/escalations", (_req, res) => {
+  try {
+    const rows = readEscalationsFile();
+    res.json(computeEscalationsSummary(rows));
+  } catch (err) {
+    console.error("[backend] /api/escalations failed:", err.message);
+    res.status(500).json({ error: err.message });
+  }
 });

@@ -1,0 +1,10 @@
+{
+  "projectId": "1d1934a6-567d-4ef6-9819-85a9706ea49e",
+  "shape": "package",
+  "pkg": "amg-dashboard-code-app",
+  "globalName": "AmgDashboardUI",
+  "srcDir": "src/components/ui",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": ".design-sync/compiled-tailwind.css",
+  "buildCmd": "npm run build && cp dist/assets/index-*.css .design-sync/compiled-tailwind.css"
+}

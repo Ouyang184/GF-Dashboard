@@ -20,6 +20,19 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Local Edge debug profile (created by browser automation tooling)
+.edge-debug/
+
+# Local portable development runtimes
+.tools/
+
+# design-sync (Claude Design) — staged converter, build output, and machine state
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
