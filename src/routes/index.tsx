@@ -500,7 +500,7 @@ function usHolidays(year: number): Holiday[] {
 
 export function Index() {
   const [phoneView, setPhoneView] = useState<"control" | "dashboard">("control");
-  const [iceCreamFriday, setIceCreamFriday] = useLocalState("amg:ice-cream-friday", false);
+  const [iceCreamFriday, setIceCreamFriday] = useState(false);
   const [trendsOpen, setTrendsOpen] = useState(false);
   const [trendsFocus, setTrendsFocus] = useState<Pillar["key"] | null>(null);
   const liveNow = useNow();
