@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, FileSpreadsheet, Loader2, XCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileSpreadsheet, Loader2, Printer, XCircle } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -41,8 +41,21 @@ function SearchResultsCard({ results }: { results: Mastercard[] }) {
 }
 
 function SimpleSearchResultsCard({ results }: { results: Mastercard[] }) {
+  const quickPrint = useMastercardAgentStore((s) => s.quickPrint);
   const [expanded, setExpanded] = useState(false);
+  const [printingId, setPrintingId] = useState<string | null>(null);
   const visibleResults = expanded ? results : results.slice(0, 8);
+
+  const handlePrintClick = async (mc: Mastercard, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setPrintingId(mc.id);
+    try {
+      await quickPrint(mc);
+    } finally {
+      setPrintingId(null);
+    }
+  };
+
   return (
     <div className="mt-2 space-y-2">
       {visibleResults.map((mc) => (
@@ -62,6 +75,19 @@ function SimpleSearchResultsCard({ results }: { results: Mastercard[] }) {
                 {mc.sourceFolder.split(" · ")[0]}
               </p>
             </div>
+            <button
+              type="button"
+              title="Print this Mastercard (still requires confirmation)"
+              disabled={printingId === mc.id}
+              onClick={(event) => void handlePrintClick(mc, event)}
+              className="shrink-0 rounded border border-slate-200 bg-white p-1.5 text-slate-500 hover:border-cyan-300 hover:text-cyan-700 disabled:opacity-50"
+            >
+              {printingId === mc.id ? (
+                <Loader2 className="size-3.5 animate-spin" />
+              ) : (
+                <Printer className="size-3.5" />
+              )}
+            </button>
           </div>
         </div>
       ))}

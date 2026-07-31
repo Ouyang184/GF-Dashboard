@@ -1,0 +1,6 @@
+{
+  "name": "mastercard-agent",
+  "version": "0.1.0",
+  "description": "Local Mastercard search, validation, print, and logging agent",
+  "main": "electron/main.cjs"
+}

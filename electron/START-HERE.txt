@@ -1,0 +1,16 @@
+MASTERCARD AGENT
+
+1. Keep every application file and folder together.
+2. Double-click "Start Mastercard Agent.cmd".
+3. The launcher copies the application to:
+   %LOCALAPPDATA%\MastercardAgent\App
+4. The local copy starts automatically. Do not open the EXE directly from
+   the shared I: drive.
+
+If the window still closes, send this log file to the app owner:
+
+%LOCALAPPDATA%\Mastercard Agent\logs\startup.log
+
+If no startup.log is created, Windows endpoint protection probably blocked
+the unsigned executable before it could start. Contact IT to allowlist
+"Mastercard Agent.exe" and its application folder.

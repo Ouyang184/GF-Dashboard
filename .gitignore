@@ -16,6 +16,11 @@ dist-ssr
 .nitro
 *.local
 
+# electron-builder output (built to a scratch dir normally, but this is the
+# tool's own default if that's ever overridden)
+/release/
+*.zip
+
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars

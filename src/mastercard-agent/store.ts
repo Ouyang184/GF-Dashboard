@@ -56,6 +56,7 @@ interface MastercardAgentState {
   preparePrint: (mastercard: Mastercard) => Promise<void>;
   confirmPrint: () => Promise<void>;
   cancelPrint: () => void;
+  quickPrint: (mastercard: Mastercard) => Promise<void>;
   logPrint: () => Promise<void>;
   refreshIndex: () => Promise<void>;
   markNotificationsRead: () => void;
@@ -245,6 +246,45 @@ export const useMastercardAgentStore = create<MastercardAgentState>((set, get) =
   },
 
   cancelPrint: () => set({ pendingConfirmation: null, activePrintQueueItem: null }),
+
+  // A one-click shortcut from a result card's Print button, so the user
+  // never has to type "print this" -- reuses the exact same confirmation
+  // flow (desktop-print-confirmation card, explicit confirm required) the
+  // chat-driven print path already uses. Only wired for the real Electron
+  // app; no-ops in the browser-preview mock.
+  quickPrint: async (mastercard) => {
+    if (!window.mastercardDesktop?.preparePrint) return;
+    set((state) => ({
+      conversation: pushMessage(state.conversation, {
+        id: nextId("msg"),
+        role: "event",
+        content: `PRINT · ${mastercard.partNumber}`,
+        timestamp: nowIso(),
+      }),
+    }));
+    try {
+      const result = await window.mastercardDesktop.preparePrint(mastercard);
+      set((state) => ({
+        conversation: pushMessage(state.conversation, {
+          id: nextId("msg"),
+          role: "event",
+          content: `PRINT · ${mastercard.partNumber} · Confirm`,
+          timestamp: nowIso(),
+          cards: [{ kind: "desktop-print-confirmation", action: result.printAction }],
+        }),
+      }));
+    } catch (error) {
+      set((state) => ({
+        conversation: pushMessage(state.conversation, {
+          id: nextId("msg"),
+          role: "event",
+          content: `PRINT · ${mastercard.partNumber} · Failed`,
+          timestamp: nowIso(),
+          cards: [{ kind: "error", message: error instanceof Error ? error.message : "Could not prepare print." }],
+        }),
+      }));
+    }
+  },
 
   logPrint: async () => {
     const item = get().activePrintQueueItem;

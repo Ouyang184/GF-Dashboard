@@ -12,6 +12,7 @@
     "dev:powerapps": "vite --port 3000",
     "desktop:dev": "npm.cmd run build && electron .",
     "desktop:build": "npm.cmd run build && electron-builder --win portable",
+    "agent:server": "node server/mastercard-agent-server.cjs",
     "tauri:dev": "tauri dev",
     "tauri:build": "tauri build",
     "build": "tsc --noEmit && vite build",

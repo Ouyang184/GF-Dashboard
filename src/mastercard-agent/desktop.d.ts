@@ -4,6 +4,10 @@ declare global {
   interface Window {
     mastercardDesktop?: {
       search(partNumber: string): Promise<Mastercard[]>;
+      preparePrint(record: Mastercard): Promise<{
+        printAction: { id: string; printer: string; records: Mastercard[] };
+        availablePrinters: string[];
+      }>;
       chat(message: string, onToken?: (content: string) => void): Promise<{
         content: string;
         matches: Mastercard[];
