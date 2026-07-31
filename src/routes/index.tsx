@@ -109,7 +109,7 @@ const PILLARS: Pillar[] = [
   { key: "Q", label: "Quality", kpi: "Weekly Scrap < 5%", icon: BadgeCheck },
   { key: "D", label: "Process Deviation", kpi: "≥ 3 New Process Deviations", icon: Truck },
   { key: "I", label: "Product Deviation", kpi: "0 New Product Deviations", icon: Box },
-  { key: "P", label: "Productivity", kpi: "MasterCard Availability", icon: Gauge },
+  { key: "P", label: "Productivity", kpi: "Today's MasterCard Availability", icon: Gauge },
 ];
 
 const SHIFTS = ["LD", "MD", "SD1", "SD2", "FS", "PA&F", "EXT"] as const;
@@ -310,9 +310,7 @@ function inventoryStatus(deviationsToday: number): DayStatus {
  * used as the closest live proxy for "the floor is running well today."
  */
 function productivityStatus(mcAvailablePercent: number): DayStatus {
-  if (mcAvailablePercent >= 90) return "ok";
-  if (mcAvailablePercent >= 70) return "warn";
-  return "fail";
+  return mcAvailablePercent >= 90 ? "ok" : "fail";
 }
 
 /**
@@ -2501,10 +2499,10 @@ function PillarCard({
                 { label: "Missing MasterCards", value: "—" },
               ];
   const detail = { ...PILLAR_DETAILS[pillar.key], stats: liveStats };
+  const productivityBelowTarget =
+    pillar.key === "P" && !!dashboardData && dashboardData.mcAvailablePercent < 90;
   const kpiText = pillar.key === "P" && dashboardData
-    ? (dashboardData.mcAvailablePercent < 90
-        ? "MasterCard availability — below 90% target"
-        : "MasterCard availability ≥ 90% target")
+    ? `Today's MasterCard availability: ${Math.round(dashboardData.mcAvailablePercent)}%`
     : pillar.kpi;
   const today = new Date().getDate();
   // Safety has no automatic live signal — today's status is only ever a
@@ -2584,7 +2582,10 @@ function PillarCard({
         <div className="mt-3 flex items-center gap-4">
           <PillarGauge okCount={okCount} warnCount={warnCount} failCount={failCount} />
           <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted-foreground">KPI: {kpiText}</p>
+            <p className={`text-xs ${productivityBelowTarget ? "font-semibold text-danger" : "text-muted-foreground"}`}>
+              KPI: {kpiText}
+              {productivityBelowTarget ? " — below 90% target" : ""}
+            </p>
             <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
               <Legend tone="ok" label={`${okCount} ok`} />
               <Legend tone="warn" label={`${warnCount} warn`} />
