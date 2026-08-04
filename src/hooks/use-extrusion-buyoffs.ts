@@ -32,8 +32,8 @@ function normalize(row: Coils_CollarsBuyoffStructureRead): PafBuyoff {
   };
 }
 
-async function loadExtrusionBuyoffs(period: DashboardPeriod): Promise<PafBuyoff[]> {
-  const window = dashboardWindow(period);
+async function loadExtrusionBuyoffs(period: DashboardPeriod, productionDate?: string | null): Promise<PafBuyoff[]> {
+  const window = dashboardWindow(period, new Date(), productionDate);
   const result = await ExtrusionService.getAll({
     maxPageSize: 500,
     top: period === "production-day" ? 500 : 5000,
@@ -44,11 +44,11 @@ async function loadExtrusionBuyoffs(period: DashboardPeriod): Promise<PafBuyoff[
   return (result.data ?? []).map(normalize).sort((a, b) => b.id - a.id);
 }
 
-export function useExtrusionBuyoffs(period: DashboardPeriod = "production-day") {
-  const window = dashboardWindow(period);
+export function useExtrusionBuyoffs(period: DashboardPeriod = "production-day", productionDate?: string | null) {
+  const window = dashboardWindow(period, new Date(), productionDate);
   return useQuery({
     queryKey: ["extrusion-buyoffs", period, window.productionDate],
-    queryFn: () => loadExtrusionBuyoffs(period),
+    queryFn: () => loadExtrusionBuyoffs(period, productionDate),
     refetchInterval: 60_000,
   });
 }

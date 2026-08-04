@@ -10,8 +10,6 @@ import {
   useDeviationsOnDate,
   useDeviationCountFor,
   useDeviationCountOnDate,
-  toggleDeviation,
-  clearDeviations,
   previousProductionDayKey,
   yesterdayKey,
   type PillarKey as DeviationPillarKey,
@@ -1279,8 +1277,8 @@ function AvailabilityScrapChart() {
   return <AvailabilityScrapChartImpl />;
 }
 
-function LiveDashboardSection({ period = "production-day" }: { period?: DashboardPeriod }) {
-  const { data, isLoading, error, lastFetchedAt } = useDashboardData(period);
+function LiveDashboardSection({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
+  const { data, isLoading, error, lastFetchedAt } = useDashboardData(period, period === "production-day" ? dataDate : null);
   const [reproValues, setReproValues] = useState<Record<string, string>>({});
   const reproStorageKey = data
     ? `amg.reproComplete:${data.productionWindowStart}`
@@ -2871,7 +2869,7 @@ function PillarCard({
           )}
           {(pillar.key === "D" || pillar.key === "I") && (
             <div className="pt-2 border-t border-dashed border-border/60">
-              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} compact />
+              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} compact dataDate={dataDate} />
             </div>
           )}
           {pillar.key === "S" && (
@@ -2901,6 +2899,7 @@ function PillarCard({
           onCycleSafetyArea={cycleAreaStatus}
           areaNotes={areaNotes}
           calendarLabel={calendarLabel}
+          dataDate={dataDate}
           safetyIncidentCount={pillar.key === "S" ? liveMetric ?? 0 : 0}
           onSafetyIncidentsChange={onSafetyIncidentsChange}
           isSavingSafetyIncidents={isSavingSafetyIncidents}
@@ -3088,8 +3087,8 @@ function FloorMap({
   );
 }
 
-function IntouchFloor() {
-  const { data, lastFetchedAt } = useDashboardData();
+function IntouchFloor({ dataDate }: { dataDate?: string }) {
+  const { data, lastFetchedAt } = useDashboardData("production-day", dataDate);
   return (
     <div>
       <FloorMap floorMap={data?.floorMap} />
@@ -3125,16 +3124,18 @@ function FloorMapLegend() {
   );
 }
 
-function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
+function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey; dataDate?: string }) {
   const [viewMode, setViewMode] = useState<"today" | "previous">("today");
-  const manualDeviationsToday = useDeviationMapToday(pillarKey);
-  const { data: deviationDashboardData } = useDashboardData();
+  const { data: deviationDashboardData } = useDashboardData("production-day", dataDate);
   const { data: deviationData = { processParts: [], processMachines: [], productParts: [], rows: [] } } = useProcessDeviationList();
   const { data: productDeviationData = { productParts: [], rows: [] } } = useProductDeviations();
   // "Previous" is intentionally independent of the buyoff snapshot's
   // productionDate. That snapshot can already be today's date, which made
   // both tabs display the same deviations. Monday looks back to Friday.
-  const previousDate = previousProductionDayKey();
+  const selectedDate = dataDate ?? deviationDashboardData?.productionDate ?? dateKey(new Date());
+  const [selectedYear, selectedMonth, selectedDay] = selectedDate.split("-").map(Number);
+  const previousDate = previousProductionDayKey(new Date(selectedYear, selectedMonth - 1, selectedDay, 12));
+  const selectedManualIds = useDeviationsOnDate(pillarKey, selectedDate);
   const previousManualIds = useDeviationsOnDate(pillarKey, previousDate);
 
   // Excel rows -> floor-tile IDs. The Machine column is directly populated
@@ -3168,7 +3169,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
     return ids;
   };
 
-  const todayStr = dateKey(new Date());
+  const todayStr = selectedDate;
   const automaticTodayIds = deriveMachineIds(
     (row) => !row.closed && row.dateRequested === todayStr,
   );
@@ -3189,7 +3190,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
       (pillarKey !== "D" || !!row.machine) &&
       row.dateRequested === previousDate,
   ).length;
-  const hasTodayData = todayRecordCount > 0 || Object.keys(manualDeviationsToday).length > 0;
+  const hasTodayData = todayRecordCount > 0 || selectedManualIds.length > 0;
   const previousManualIdsForPillar = pillarKey === "D" ? [] : previousManualIds;
   const hasPreviousData = previousRecordCount > 0 || previousManualIdsForPillar.length > 0;
   useEffect(() => {
@@ -3200,7 +3201,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
   const deviations = isToday
     ? {
         ...Object.fromEntries([...automaticTodayIds].map((machine) => [machine, todayStr])),
-        ...manualDeviationsToday,
+        ...Object.fromEntries(selectedManualIds.map((id) => [id, selectedDate])),
       }
     : {
         ...Object.fromEntries([...automaticPreviousIds].map((machine) => [machine, previousDate])),
@@ -3208,7 +3209,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
       };
   const machineCount = Object.keys(deviations).length;
   const deviationCount = isToday
-    ? todayRecordCount + Object.keys(manualDeviationsToday).length
+    ? todayRecordCount + selectedManualIds.length
     : previousRecordCount + previousManualIdsForPillar.length;
   const displayId = (id: string) => id.replace(/(IM|EM|AM)\d*$/i, "");
 
@@ -3223,15 +3224,12 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
     return (
       <button
         type="button"
-        disabled={!isToday}
-        onClick={() => toggleDeviation(pillarKey, id)}
+        disabled
         title={
-          isToday
-            ? `${id} — click to ${flagged ? "clear" : "flag"} deviation`
-            : `${id} — ${flagged ? "flagged" : "no deviation"} on ${previousDate}`
+          `${id} — ${flagged ? "flagged" : "no deviation"} on ${isToday ? selectedDate : previousDate}`
         }
         className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 transition text-sm sm:text-base ${
-          isToday ? "cursor-pointer hover:brightness-110" : "cursor-default"
+          "cursor-default"
         } ${
           flagged
             ? "bg-danger/80 border-danger text-background"
@@ -3279,9 +3277,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
             {label} — Deviation Map
           </h3>
           <p className="text-xs text-muted-foreground mt-1">
-            {isToday
-              ? <>Manual input. Click a machine to flag / clear a deviation. {rule}.</>
-              : `Read-only — SharePoint deviations from the previous production date (${previousDate}).`}
+            {`Read-only — SharePoint deviations for ${isToday ? selectedDate : previousDate}. ${rule}.`}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -3291,7 +3287,7 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
               onClick={() => setViewMode("today")}
               className={`px-2 py-1 transition ${isToday ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary"}`}
             >
-              Today
+              Selected ({selectedDate})
             </button>
             <button
               type="button"
@@ -3304,16 +3300,6 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
           <span className="rounded-md border border-border/60 bg-card px-2 py-1 text-xs font-semibold">
             {deviationCount} deviations · {machineCount} machines
           </span>
-          {isToday && (
-            <button
-              type="button"
-              onClick={() => clearDeviations(pillarKey)}
-              disabled={Object.keys(manualDeviationsToday).length === 0}
-              className="rounded-md border border-border/60 bg-card px-2 py-1 text-xs font-semibold hover:bg-secondary transition disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              Clear all
-            </button>
-          )}
         </div>
       </div>
       <div className="w-full overflow-x-auto -mx-2 px-2">
@@ -3345,8 +3331,8 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
   );
 }
 
-function ProductivityDetailStats({ period }: { period: DashboardPeriod }) {
-  const { data, isLoading } = useDashboardData(period);
+function ProductivityDetailStats({ period, dataDate }: { period: DashboardPeriod; dataDate?: string }) {
+  const { data, isLoading } = useDashboardData(period, period === "production-day" ? dataDate : null);
   const stats = data
     ? [
         { label: "MasterCard availability", value: `${Math.round(data.mcAvailablePercent)}%` },
@@ -3380,6 +3366,7 @@ function PillarDetailOverlay({
   onCycleSafetyArea,
   areaNotes,
   calendarLabel,
+  dataDate,
   safetyIncidentCount,
   onSafetyIncidentsChange,
   isSavingSafetyIncidents,
@@ -3399,6 +3386,7 @@ function PillarDetailOverlay({
   onCycleSafetyArea: (area: (typeof SHIFTS)[number]) => void;
   areaNotes: Record<string, string>;
   calendarLabel: string;
+  dataDate: string;
   safetyIncidentCount: number;
   onSafetyIncidentsChange?: (count: number) => Promise<unknown>;
   isSavingSafetyIncidents?: boolean;
@@ -3407,6 +3395,7 @@ function PillarDetailOverlay({
 }) {
   const Icon = pillar.icon;
   const [productivityPeriod, setProductivityPeriod] = useState<DashboardPeriod>("production-day");
+  useEffect(() => setProductivityPeriod("production-day"), [dataDate]);
   const [safetyIncidentDraft, setSafetyIncidentDraft] = useState(String(safetyIncidentCount));
   useEffect(() => setSafetyIncidentDraft(String(safetyIncidentCount)), [safetyIncidentCount]);
   useEffect(() => {
@@ -3445,6 +3434,7 @@ function PillarDetailOverlay({
                 <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Pillar Detail</div>
                 <h2 className="text-3xl font-bold tracking-tight">{pillar.label}</h2>
                 <p className="text-sm text-muted-foreground mt-1">KPI: {kpiText}</p>
+                <p className="mt-1 text-xs font-semibold text-primary">Showing production date: {dataDate}</p>
                 {pillar.key === "P" && <p className="mt-1 text-xs font-semibold text-primary">Scroll down for live buyoff tables ↓</p>}
               </div>
             </div>
@@ -3518,7 +3508,7 @@ function PillarDetailOverlay({
               </div>
             </div>
             {pillar.key === "P" ? (
-              <ProductivityDetailStats period={productivityPeriod} />
+              <ProductivityDetailStats period={productivityPeriod} dataDate={dataDate} />
             ) : detail.stats.map((s) => (
               <div
                 key={s.label}
@@ -3533,7 +3523,7 @@ function PillarDetailOverlay({
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {(pillar.key === "D" || pillar.key === "I") && (
               <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                <DeviationFloor pillarKey={pillar.key as DeviationPillarKey} />
+                <DeviationFloor pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} />
               </section>
             )}
 
@@ -3551,19 +3541,19 @@ function PillarDetailOverlay({
                   />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <LiveDashboardSection period={productivityPeriod} />
+                  <LiveDashboardSection period={productivityPeriod} dataDate={dataDate} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <PafBuyoffTable period={productivityPeriod} />
+                  <PafBuyoffTable period={productivityPeriod} dataDate={dataDate} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <ExtrusionBuyoffTable period={productivityPeriod} />
+                  <ExtrusionBuyoffTable period={productivityPeriod} dataDate={dataDate} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
                   <MastercardsProductionChart />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <IntouchFloor />
+                  <IntouchFloor dataDate={dataDate} />
                 </section>
               </>
             )}
@@ -3674,7 +3664,7 @@ function PillarDetailOverlay({
 
             {pillar.key === "Q" && qualityScrap && <QualityTopIssuesCard data={qualityScrap} />}
             {(pillar.key === "D" || pillar.key === "I") && (
-              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} />
+              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} />
             )}
             {pillar.key === "S" && (
               <TopIssuesCard
@@ -3691,8 +3681,8 @@ function PillarDetailOverlay({
   );
 }
 
-function PafBuyoffTable({ period = "production-day" }: { period?: DashboardPeriod }) {
-  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs(period);
+function PafBuyoffTable({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
+  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs(period, period === "production-day" ? dataDate : null);
   const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Current production-day";
   return (
     <BuyoffLogTable
@@ -3707,8 +3697,8 @@ function PafBuyoffTable({ period = "production-day" }: { period?: DashboardPerio
   );
 }
 
-function ExtrusionBuyoffTable({ period = "production-day" }: { period?: DashboardPeriod }) {
-  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs(period);
+function ExtrusionBuyoffTable({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
+  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs(period, period === "production-day" ? dataDate : null);
   const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Latest";
   return (
     <BuyoffLogTable
@@ -3866,11 +3856,13 @@ function QualityTopIssuesCard({ data, compact = false }: { data: MoldingScrapDat
 function DeviationTopFiveCard({
   pillarKey,
   compact = false,
+  dataDate,
 }: {
   pillarKey: DeviationPillarKey;
   compact?: boolean;
+  dataDate?: string;
 }) {
-  const { data: dashboardData } = useDashboardData();
+  const { data: dashboardData } = useDashboardData("production-day", dataDate);
   const { data: processData = { processParts: [], processMachines: [], productParts: [], rows: [] } } =
     useProcessDeviationList();
   const { data: productData = { productParts: [], rows: [] } } = useProductDeviations();

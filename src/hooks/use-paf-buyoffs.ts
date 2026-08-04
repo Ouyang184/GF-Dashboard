@@ -41,8 +41,8 @@ function normalize(row: Coils_CollarsBuyoffStructureRead): PafBuyoff {
   };
 }
 
-async function loadPafBuyoffs(period: DashboardPeriod): Promise<PafBuyoff[]> {
-  const window = dashboardWindow(period);
+async function loadPafBuyoffs(period: DashboardPeriod, productionDate?: string | null): Promise<PafBuyoff[]> {
+  const window = dashboardWindow(period, new Date(), productionDate);
   const result = await Coils_CollarsBuyoffStructureService.getAll({
     maxPageSize: 500,
     top: period === "production-day" ? 500 : 5000,
@@ -53,11 +53,11 @@ async function loadPafBuyoffs(period: DashboardPeriod): Promise<PafBuyoff[]> {
   return (result.data ?? []).map(normalize).sort((a, b) => b.id - a.id);
 }
 
-export function usePafBuyoffs(period: DashboardPeriod = "production-day") {
-  const window = dashboardWindow(period);
+export function usePafBuyoffs(period: DashboardPeriod = "production-day", productionDate?: string | null) {
+  const window = dashboardWindow(period, new Date(), productionDate);
   return useQuery({
     queryKey: ["paf-buyoff-structure", period, window.productionDate],
-    queryFn: () => loadPafBuyoffs(period),
+    queryFn: () => loadPafBuyoffs(period, productionDate),
     refetchInterval: 60_000,
   });
 }
