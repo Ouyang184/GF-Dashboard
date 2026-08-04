@@ -2306,76 +2306,37 @@ function useCountUp(target: number, durationMs = 900): number {
   return value;
 }
 
-/**
- * Animated radial completion ring — the same ok/warn/miss day counts already
- * shown as text (see <Legend> below it), presented as a sweeping three-tone
- * arc instead of a plain number row. Sweeps in from empty on mount by
- * flipping `sweep` a frame after first paint, so the CSS transition on
- * strokeDasharray has a "from" value to animate away from.
- */
+/** Compact month-to-date activity summary shown beside the status counts. */
 function PillarGauge({
   okCount,
   warnCount,
   failCount,
-  size = 84,
 }: {
   okCount: number;
   warnCount: number;
   failCount: number;
-  size?: number;
 }) {
   const total = okCount + warnCount + failCount;
-  const pct = total ? Math.round((okCount / total) * 100) : 0;
-  const animatedPct = useCountUp(pct);
-  const [sweep, setSweep] = useState(false);
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setSweep(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-  const stroke = 8;
-  const radius = (size - stroke) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const f = sweep ? 1 : 0;
-  const okFrac = total ? okCount / total : 0;
-  const warnFrac = total ? warnCount / total : 0;
-  const failFrac = total ? failCount / total : 0;
-  const okLen = circumference * okFrac * f;
-  const warnLen = circumference * warnFrac * f;
-  const failLen = circumference * failFrac * f;
-  const center = size / 2;
   return (
-    <div className="relative shrink-0" style={{ width: size, height: size }} aria-hidden="true">
-      <svg width={size} height={size} className="-rotate-90">
-        <circle cx={center} cy={center} r={radius} fill="none" stroke="var(--secondary)" strokeWidth={stroke} />
-        {total > 0 && (
-          <>
-            <circle
-              cx={center} cy={center} r={radius} fill="none"
-              stroke="var(--success)" strokeWidth={stroke} strokeLinecap="round"
-              strokeDasharray={`${okLen} ${Math.max(0, circumference - okLen)}`}
-              style={{ transition: "stroke-dasharray 900ms cubic-bezier(0.16,1,0.3,1)" }}
-            />
-            <circle
-              cx={center} cy={center} r={radius} fill="none"
-              stroke="var(--warning)" strokeWidth={stroke} strokeLinecap="round"
-              strokeDasharray={`${warnLen} ${Math.max(0, circumference - warnLen)}`}
-              strokeDashoffset={-okLen}
-              style={{ transition: "stroke-dasharray 900ms cubic-bezier(0.16,1,0.3,1) 90ms, stroke-dashoffset 900ms cubic-bezier(0.16,1,0.3,1) 90ms" }}
-            />
-            <circle
-              cx={center} cy={center} r={radius} fill="none"
-              stroke="var(--danger)" strokeWidth={stroke} strokeLinecap="round"
-              strokeDasharray={`${failLen} ${Math.max(0, circumference - failLen)}`}
-              strokeDashoffset={-(okLen + warnLen)}
-              style={{ transition: "stroke-dasharray 900ms cubic-bezier(0.16,1,0.3,1) 180ms, stroke-dashoffset 900ms cubic-bezier(0.16,1,0.3,1) 180ms" }}
-            />
-          </>
-        )}
-      </svg>
-      <div className="absolute inset-0 grid place-items-center">
-        <div className="text-center leading-none">
-          <div className="text-lg font-extrabold tabular-nums tracking-tight">{animatedPct}%</div>
-          <div className="mt-0.5 text-[8px] font-semibold uppercase tracking-wider text-muted-foreground">OK rate</div>
+    <div
+      className="flex h-[84px] w-[96px] shrink-0 flex-col justify-between rounded-sm border border-border bg-secondary/35 p-2.5"
+      aria-label={`${total} month-to-date days tracked`}
+    >
+      <div className="flex items-center gap-1.5 text-muted-foreground">
+        <CalendarDays className="size-3.5" />
+        <span className="text-[8px] font-semibold uppercase tracking-wider">Month to date</span>
+      </div>
+      <div>
+        <div className="text-2xl font-extrabold leading-none tabular-nums text-foreground">{total}</div>
+        <div className="mt-1 text-[9px] font-medium text-muted-foreground">days tracked</div>
+        <div className="mt-1.5 flex h-1 overflow-hidden rounded-full bg-muted">
+          {total > 0 && (
+            <>
+              <span className="bg-success" style={{ width: `${(okCount / total) * 100}%` }} />
+              <span className="bg-warning" style={{ width: `${(warnCount / total) * 100}%` }} />
+              <span className="bg-danger" style={{ width: `${(failCount / total) * 100}%` }} />
+            </>
+          )}
         </div>
       </div>
     </div>
