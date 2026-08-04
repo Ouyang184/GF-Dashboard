@@ -515,6 +515,8 @@ export function Index() {
   const [selectedDataDate, setSelectedDataDate] = useState<string | null>(null);
   const [phoneView, setPhoneView] = useState<"control" | "dashboard">("control");
   const [iceCreamFriday, setIceCreamFriday] = useState(false);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const datePickerRef = useRef<HTMLDivElement | null>(null);
   const [trendsOpen, setTrendsOpen] = useState(false);
   const [trendsFocus, setTrendsFocus] = useState<Pillar["key"] | null>(null);
   const liveNow = useNow();
@@ -531,6 +533,15 @@ export function Index() {
   const todayKey = liveNow ? dateKey(liveNow) : "";
   const deliveryDeviationsToday = useDeviationCountOnDate("D", todayKey);
   const inventoryDeviationsToday = useDeviationCountOnDate("I", todayKey);
+
+  useEffect(() => {
+    if (!datePickerOpen) return;
+    const close = (event: MouseEvent) => {
+      if (!datePickerRef.current?.contains(event.target as Node)) setDatePickerOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [datePickerOpen]);
 
   useEffect(() => {
     if (!remoteCommand) return;
@@ -584,7 +595,6 @@ export function Index() {
     }
   };
 
-  const dateStr = liveNow ? liveNow.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" }) : "";
   const timeStr = liveNow ? liveNow.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--";
 
   // Per-pillar shift status (deterministic per day)
@@ -956,12 +966,16 @@ export function Index() {
       <header className="sticky top-0 z-20 border-b border-[#315b91] bg-[#073778] text-white shadow-md">
         <div className="w-full px-3 sm:px-4 lg:px-5 py-3 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div
+            <button
+              type="button"
+              onClick={() => setIceCreamFriday((enabled) => !enabled)}
+              aria-pressed={iceCreamFriday}
+              title="Show or hide the Ice Cream Friday announcement"
               className="h-9 px-2.5 rounded-sm border border-white/25 bg-white grid place-items-center font-black tracking-tight shadow-[0_2px_10px_rgba(0,0,0,0.25)]"
               aria-label="Georg Fischer"
             >
               <span className="text-base leading-none font-mono text-[#0033a0]">+GF+</span>
-            </div>
+            </button>
             <div>
               <h1 className="text-lg font-bold tracking-tight leading-none text-white">AMG Daily Process Management</h1>
               <p className="text-xs text-white/65 mt-1">Engineering Cell · Operations</p>
@@ -1019,16 +1033,50 @@ export function Index() {
 
             <WeatherBadge />
 
-            <button
-              type="button"
-              onClick={() => setIceCreamFriday((enabled) => !enabled)}
-              aria-pressed={iceCreamFriday}
-              title="Click to show or hide the Ice Cream Friday announcement"
-              className="rounded-sm px-1.5 py-1 text-right transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
-            >
-              <div className="font-mono text-xl font-semibold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
-              <div className="text-xs text-white/65" suppressHydrationWarning>{dateStr}</div>
-            </button>
+            <div ref={datePickerRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setDatePickerOpen((open) => !open)}
+                aria-expanded={datePickerOpen}
+                title="Select a dashboard production date"
+                className="rounded-sm px-1.5 py-1 text-right transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
+              >
+                <div className="font-mono text-xl font-semibold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
+                <div className="flex items-center justify-end gap-1 text-xs text-white/65">
+                  <CalendarDays className="size-3" />
+                  {deviationReportingDate}
+                </div>
+              </button>
+              {datePickerOpen && (
+                <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-sm border border-border bg-card p-3 text-foreground shadow-2xl">
+                  <div className="mb-2 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                    Select production date
+                  </div>
+                  <input
+                    type="date"
+                    value={deviationReportingDate}
+                    max={reportingWindow(now).productionDate}
+                    onChange={(event) => {
+                      const day = event.target.value;
+                      if (!day) return;
+                      setSelectedDataDate(day === reportingWindow(now).productionDate ? null : day);
+                      setDatePickerOpen(false);
+                    }}
+                    className="w-full rounded-sm border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedDataDate(null);
+                      setDatePickerOpen(false);
+                    }}
+                    className="mt-2 w-full rounded-sm border border-border px-3 py-1.5 text-xs font-semibold hover:bg-secondary"
+                  >
+                    Latest production date
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
