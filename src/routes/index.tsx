@@ -29,7 +29,6 @@ import {
 } from "@/hooks/use-dashboard-date-status";
 import {
   REPRO_COMPLETE_EVENT,
-  useDashboardDailySnapshotHistory,
   useDashboardDailySnapshotSync,
   type DashboardDailySnapshotInput,
 } from "@/hooks/use-dashboard-daily-snapshot";
@@ -786,28 +785,11 @@ export function Index() {
     isSaving: isSavingSafetyIncidents,
     error: safetyIncidentError,
   } = useSafetyIncidentEditor();
-  const { byDate: dailySnapshots } = useDashboardDailySnapshotHistory();
   const sHistory = dateStatusHistories.S;
   const qHistory = dateStatusHistories.Q;
   const dHistory = dateStatusHistories.D;
   const iHistory = dateStatusHistories.I;
   const pHistory = dateStatusHistories.P;
-  const dailyMetricHistories = useMemo(() => {
-    const values: Record<Pillar["key"], Record<string, number>> = {
-      S: { ...safetyIncidentHistory },
-      Q: {},
-      D: {},
-      I: {},
-      P: {},
-    };
-    for (const [day, snapshot] of Object.entries(dailySnapshots)) {
-      if (snapshot.WeelyScrapPercent != null) values.Q[day] = snapshot.WeelyScrapPercent;
-      if (snapshot.ProcessDeviationCount != null) values.D[day] = snapshot.ProcessDeviationCount;
-      if (snapshot.ProductDeviationCount != null) values.I[day] = snapshot.ProductDeviationCount;
-      if (snapshot.MasterCardAvailabilityPercent != null) values.P[day] = snapshot.MasterCardAvailabilityPercent;
-    }
-    return values;
-  }, [dailySnapshots, safetyIncidentHistory]);
   const liveDailyMetrics: Record<Pillar["key"], number | null> = {
     S: safetyIncidentHistory[todayKey] ?? 0,
     Q: moldingScrapData ? moldingScrapData.cellTotal.scrapRate * 100 : null,
@@ -1070,7 +1052,6 @@ export function Index() {
               history={{ S: sHistory, Q: qHistory, D: dHistory, I: iHistory, P: pHistory }[p.key]}
               liveToday={{ S: sLiveToday, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key]}
               now={now}
-              metricHistory={dailyMetricHistories[p.key]}
               liveMetric={liveDailyMetrics[p.key]}
               shifts={
                 p.key === "D"
@@ -2448,39 +2429,48 @@ function useCountUp(target: number, durationMs = 900): number {
   return value;
 }
 
-/** Clean month-to-date score strip with direct counts instead of a percentage. */
+/** Pillar-specific live KPI summary shown above the date tracker. */
 function PillarGauge({
-  okCount,
-  warnCount,
-  failCount,
+  pillar,
+  value,
 }: {
-  okCount: number;
-  warnCount: number;
-  failCount: number;
+  pillar: Pillar;
+  value: number | null;
 }) {
-  const total = okCount + warnCount + failCount;
-  const items = [
-    { label: "OK", value: okCount, tone: "bg-success", surface: "border-success/30 bg-success/10 text-success" },
-    { label: "Warning", value: warnCount, tone: "bg-warning", surface: "border-warning/30 bg-warning/10 text-warning" },
-    { label: "Miss", value: failCount, tone: "bg-danger", surface: "border-danger/30 bg-danger/10 text-danger" },
-  ];
+  const labels: Record<Pillar["key"], string> = {
+    S: "Safety incidents today",
+    Q: "Weekly scrap",
+    D: "Process deviations today",
+    I: "Product deviations today",
+    P: "MasterCard availability",
+  };
+  const formatted = value == null
+    ? "—"
+    : pillar.key === "Q" || pillar.key === "P"
+      ? `${value < 10 ? value.toFixed(1) : Math.round(value)}%`
+      : String(Math.round(value));
+  const status = value == null
+    ? "na"
+    : pillar.key === "S" || pillar.key === "I"
+      ? (value === 0 ? "ok" : "fail")
+      : pillar.key === "Q"
+        ? (value < 4 ? "ok" : value <= 5 ? "warn" : "fail")
+        : pillar.key === "D"
+          ? (value === 0 ? "ok" : value <= 3 ? "warn" : "fail")
+          : (value >= 90 ? "ok" : "fail");
   return (
-    <div
-      className="grid w-full grid-cols-3 gap-2"
-      aria-label={`${total} month-to-date days recorded`}
-    >
-      {items.map((item) => (
-        <div key={item.label} className={`relative overflow-hidden rounded-sm border px-3 py-2.5 ${item.surface}`}>
-          <span className={`absolute inset-y-0 left-0 w-1 ${item.tone}`} aria-hidden="true" />
-          <div className="flex items-end justify-between gap-2 pl-1">
-            <div>
-              <div className="text-[9px] font-bold uppercase tracking-[0.12em] opacity-75">{item.label}</div>
-              <div className="mt-1 text-2xl font-black leading-none tabular-nums">{item.value}</div>
-            </div>
-            <span className={`mb-0.5 size-2 rounded-full ${item.tone}`} aria-hidden="true" />
-          </div>
+    <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/30 px-4 py-3">
+      <span
+        className={`absolute inset-y-0 left-0 w-1 ${status === "ok" ? "bg-success" : status === "warn" ? "bg-warning" : status === "fail" ? "bg-danger" : "bg-muted"}`}
+        aria-hidden="true"
+      />
+      <div className="flex items-center justify-between gap-4 pl-1">
+        <div>
+          <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Live metric</div>
+          <div className="mt-1 text-xs font-semibold text-foreground">{labels[pillar.key]}</div>
         </div>
-      ))}
+        <div className="text-3xl font-black tabular-nums tracking-tight text-foreground">{formatted}</div>
+      </div>
     </div>
   );
 }
@@ -2490,7 +2480,6 @@ function PillarCard({
   history,
   liveToday,
   now,
-  metricHistory,
   liveMetric,
   shifts,
   qualityIssues,
@@ -2514,7 +2503,6 @@ function PillarCard({
   history: Record<string, DayStatus>;
   liveToday: DayStatus | null;
   now: Date;
-  metricHistory: Record<string, number>;
   liveMetric: number | null;
   shifts: Status[];
   qualityIssues?: QualityIssue[];
@@ -2549,18 +2537,6 @@ function PillarCard({
     month: "long",
     year: "numeric",
   });
-  const metricForDay = (day: number): number | null => {
-    const selected = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
-    const key = dateKey(selected);
-    return key === dateKey(now) && liveMetric != null ? liveMetric : metricHistory[key] ?? null;
-  };
-  const formatDailyMetric = (value: number | null): string => {
-    if (value == null) return "—";
-    if (pillar.key === "Q" || pillar.key === "P") {
-      return `${value < 10 ? value.toFixed(1) : Math.round(value)}%`;
-    }
-    return String(Math.round(value));
-  };
   const [areaStatusOverrides, setAreaStatusOverrides] = useLocalState<Record<string, Status>>(
     pillar.key === "S" ? "amg-safety-area-statuses" : `amg-area-statuses:${pillar.key}`,
     pillar.key === "S"
@@ -2717,7 +2693,7 @@ function PillarCard({
 
         <div className="mt-3">
           <p className="mb-2 text-xs text-muted-foreground">KPI: {kpiText}</p>
-          <PillarGauge okCount={okCount} warnCount={warnCount} failCount={failCount} />
+          <PillarGauge pillar={pillar} value={liveMetric} />
         </div>
 
         {/* Calendar month navigation */}
@@ -2758,17 +2734,15 @@ function PillarCard({
           {dots.map((d) => {
             const selectedDate = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), d.day);
             const editable = !d.weekend && selectedDate.getTime() <= todayStart && !isSavingDateStatus;
-            const metric = metricForDay(d.day);
             if (d.weekend) {
               return (
                 <div
                   key={d.day}
                   title={`Day ${d.day} — weekend`}
                   aria-label={`Day ${d.day}, weekend`}
-                  className="flex h-9 min-w-0 flex-col items-center justify-center rounded-sm bg-accent/25 text-foreground ring-1 ring-accent/40"
+                  className="grid size-5 place-items-center rounded-full bg-accent/25 text-[9px] font-semibold text-foreground ring-1 ring-accent/40"
                 >
-                  <span className="text-[8px] font-semibold opacity-70">{d.day}</span>
-                  <span className="text-[9px] font-bold">—</span>
+                  {d.day}
                 </div>
               );
             }
@@ -2787,17 +2761,16 @@ function PillarCard({
                 }
                 title={
                   editable
-                    ? `Day ${d.day}: ${formatDailyMetric(metric)} — click to change status`
-                    : `Day ${d.day}: ${formatDailyMetric(metric)}`
+                    ? `Day ${d.day} — click to change and save status to SharePoint`
+                    : `Day ${d.day}`
                 }
-                className={`flex h-9 min-w-0 flex-col items-center justify-center rounded-sm text-background ${
+                className={`size-5 rounded-full grid place-items-center text-[8px] font-bold text-background ${
                   d.status === "na"
                     ? "bg-secondary text-muted-foreground"
                     : statusColor(d.status)
                 } ${editable ? "cursor-pointer ring-1 ring-primary/60 hover:scale-110 transition-transform" : "cursor-default"}`}
               >
-                <span className="text-[8px] font-semibold opacity-75">{d.day}</span>
-                <span className="max-w-full truncate text-[9px] font-black tabular-nums">{formatDailyMetric(metric)}</span>
+                {d.day}
               </button>
             );
           })}
@@ -2912,7 +2885,6 @@ function PillarCard({
           onCycleSafetyArea={cycleAreaStatus}
           areaNotes={areaNotes}
           calendarLabel={calendarLabel}
-          dailyMetricLabels={Object.fromEntries(dots.map((dot) => [dot.day, formatDailyMetric(metricForDay(dot.day))]))}
           safetyIncidentCount={pillar.key === "S" ? liveMetric ?? 0 : 0}
           onSafetyIncidentsChange={onSafetyIncidentsChange}
           isSavingSafetyIncidents={isSavingSafetyIncidents}
@@ -3392,7 +3364,6 @@ function PillarDetailOverlay({
   onCycleSafetyArea,
   areaNotes,
   calendarLabel,
-  dailyMetricLabels,
   safetyIncidentCount,
   onSafetyIncidentsChange,
   isSavingSafetyIncidents,
@@ -3412,7 +3383,6 @@ function PillarDetailOverlay({
   onCycleSafetyArea: (area: (typeof SHIFTS)[number]) => void;
   areaNotes: Record<string, string>;
   calendarLabel: string;
-  dailyMetricLabels: Record<number, string>;
   safetyIncidentCount: number;
   onSafetyIncidentsChange?: (count: number) => Promise<unknown>;
   isSavingSafetyIncidents?: boolean;
@@ -3656,7 +3626,7 @@ function PillarDetailOverlay({
                     {dots.map((d) => (
                       <div
                         key={d.day}
-                        className={`flex h-11 min-w-0 flex-col items-center justify-center rounded-sm ${
+                        className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
                           d.weekend
                             ? "bg-accent/25 text-foreground ring-1 ring-accent/40"
                             : d.status === "na"
@@ -3664,8 +3634,7 @@ function PillarDetailOverlay({
                               : `text-background ${statusColor(d.status)}`
                         }`}
                       >
-                        <span className="text-[9px] font-semibold opacity-70">{d.day}</span>
-                        <span className="text-xs font-black tabular-nums">{dailyMetricLabels[d.day] ?? "—"}</span>
+                        {d.day}
                       </div>
                     ))}
                   </div>
