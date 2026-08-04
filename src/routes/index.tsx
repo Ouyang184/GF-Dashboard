@@ -260,23 +260,24 @@ function statusColor(s: Status) {
 
 /**
  * Build a pillar's month-of-dots from real recorded history only.
- * - Weekends and future days are always "na" (no shift, nothing to report).
- * - Today uses the live-computed status when available (and that same value
+ * - Weekends and dates after the dashboard's data date are always "na".
+ * - The dashboard data date uses the live-computed status when available (and that same value
  *   is what gets persisted into history — see the recordPillarDay calls in
- *   Index()), falling back to whatever was last recorded for today.
+ *   Index()), falling back to whatever was last recorded for that date.
  * - Every earlier weekday reads straight from history; if the app has no
  *   recorded status for that day, the dot is "na" — no fabricated data.
  */
 function buildMonthDotsFromHistory(
   displayedMonth: Date,
   history: Record<string, DayStatus>,
-  now: Date,
   liveToday: DayStatus | null,
+  liveDate: string,
 ) {
   const displayedYear = displayedMonth.getFullYear();
   const displayedMonthIndex = displayedMonth.getMonth();
   const daysInMonth = new Date(displayedYear, displayedMonthIndex + 1, 0).getDate();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const [liveYear, liveMonth, liveDay] = liveDate.split("-").map(Number);
+  const liveDateStart = new Date(liveYear, liveMonth - 1, liveDay).getTime();
   const dots: { day: number; status: Status; weekend: boolean }[] = [];
   for (let d = 1; d <= daysInMonth; d++) {
     const thisDate = new Date(displayedYear, displayedMonthIndex, d);
@@ -286,13 +287,13 @@ function buildMonthDotsFromHistory(
       dots.push({ day: d, status: "na", weekend: true });
       continue;
     }
-    if (thisDate.getTime() > todayStart) {
+    if (thisDate.getTime() > liveDateStart) {
       dots.push({ day: d, status: "na", weekend: false });
       continue;
     }
     const key = dateKey(thisDate);
-    const isToday = thisDate.getTime() === todayStart;
-    const status: Status = (isToday && liveToday) || history[key] || "na";
+    const isLiveDate = key === liveDate;
+    const status: Status = (isLiveDate && liveToday) || history[key] || "na";
     dots.push({ day: d, status, weekend: false });
   }
   return dots;
@@ -791,7 +792,7 @@ export function Index() {
   const iHistory = dateStatusHistories.I;
   const pHistory = dateStatusHistories.P;
   const liveDailyMetrics: Record<Pillar["key"], number | null> = {
-    S: safetyIncidentHistory[todayKey] ?? 0,
+    S: safetyIncidentHistory[deviationReportingDate] ?? 0,
     Q: moldingScrapData ? moldingScrapData.cellTotal.scrapRate * 100 : null,
     D: effectiveDeliveryDeviationsToday,
     I: effectiveInventoryDeviationsToday,
@@ -799,21 +800,21 @@ export function Index() {
   };
 
   useEffect(() => {
-    if (!todayKey || !qLiveToday) return;
-    recordPillarDay("Q", todayKey, qLiveToday);
-  }, [todayKey, qLiveToday]);
+    if (!deviationReportingDate || !qLiveToday) return;
+    recordPillarDay("Q", deviationReportingDate, qLiveToday);
+  }, [deviationReportingDate, qLiveToday]);
   useEffect(() => {
-    if (!todayKey) return;
-    recordPillarDay("D", todayKey, dLiveToday);
-  }, [todayKey, dLiveToday]);
+    if (!deviationReportingDate) return;
+    recordPillarDay("D", deviationReportingDate, dLiveToday);
+  }, [deviationReportingDate, dLiveToday]);
   useEffect(() => {
-    if (!todayKey) return;
-    recordPillarDay("I", todayKey, iLiveToday);
-  }, [todayKey, iLiveToday]);
+    if (!deviationReportingDate) return;
+    recordPillarDay("I", deviationReportingDate, iLiveToday);
+  }, [deviationReportingDate, iLiveToday]);
   useEffect(() => {
-    if (!todayKey || !pLiveToday) return;
-    recordPillarDay("P", todayKey, pLiveToday);
-  }, [todayKey, pLiveToday]);
+    if (!deviationReportingDate || !pLiveToday) return;
+    recordPillarDay("P", deviationReportingDate, pLiveToday);
+  }, [deviationReportingDate, pLiveToday]);
 
   // Backfill Productivity's real history from actual dated job records —
   // the dashboard API returns every Machine+Part job with a real
@@ -1053,6 +1054,7 @@ export function Index() {
               history={{ S: sHistory, Q: qHistory, D: dHistory, I: iHistory, P: pHistory }[p.key]}
               liveToday={{ S: sLiveToday, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key]}
               now={now}
+              dataDate={deviationReportingDate}
               liveMetric={liveDailyMetrics[p.key]}
               shifts={
                 p.key === "D"
@@ -2478,6 +2480,7 @@ function PillarCard({
   history,
   liveToday,
   now,
+  dataDate,
   liveMetric,
   shifts,
   qualityIssues,
@@ -2501,6 +2504,7 @@ function PillarCard({
   history: Record<string, DayStatus>;
   liveToday: DayStatus | null;
   now: Date;
+  dataDate: string;
   liveMetric: number | null;
   shifts: Status[];
   qualityIssues?: QualityIssue[];
@@ -2528,8 +2532,8 @@ function PillarCard({
     [calendarMonthOffset, now.getFullYear(), now.getMonth()],
   );
   const dots = useMemo(
-    () => buildMonthDotsFromHistory(displayedMonth, history, now, liveToday),
-    [displayedMonth, history, liveToday, now],
+    () => buildMonthDotsFromHistory(displayedMonth, history, liveToday, dataDate),
+    [dataDate, displayedMonth, history, liveToday],
   );
   const calendarLabel = displayedMonth.toLocaleDateString("en-US", {
     month: "long",
@@ -2570,7 +2574,7 @@ function PillarCard({
   }, [remoteCommand?.id, remoteCommand?.command, remoteCommand?.target, pillar.key]);
   const recordedDays = dots.filter((dot) => !dot.weekend && dot.status !== "na").length;
   const recordedOkDays = dots.filter((dot) => !dot.weekend && dot.status === "ok").length;
-  const currentStatus = liveToday ?? history[dateKey(now)] ?? "na";
+  const currentStatus = liveToday ?? history[dataDate] ?? "na";
   const currentStatusLabel = currentStatus === "ok" ? "OK" : currentStatus === "warn" ? "Warning" : currentStatus === "fail" ? "Miss" : "Not recorded";
   const affectedShifts =
     pillar.key === "D" || pillar.key === "I"
