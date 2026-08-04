@@ -14,6 +14,7 @@ export type DashboardDailySnapshotInput = {
   processDeviationStatus: DayStatus | null;
   productDeviationStatus: DayStatus | null;
   productivityStatus: DayStatus | null;
+  safetyIncidents: number;
   weeklyScrapPercent: number | null;
   processDeviationCount: number | null;
   processAffectedAreas: number | null;
@@ -94,6 +95,7 @@ function valuesFor(input: DashboardDailySnapshotInput): Omit<DashboardDailySnaps
     ...(choice(input.productivityStatus)
       ? { ProductivityStatus: choice(input.productivityStatus) }
       : {}),
+    SafetyIncidents: input.safetyIncidents,
     // These two spellings are the actual SharePoint internal column names.
     ...(input.weeklyScrapPercent != null
       ? { WeelyScrapPercent: round(input.weeklyScrapPercent) }
@@ -114,6 +116,7 @@ function valuesFor(input: DashboardDailySnapshotInput): Omit<DashboardDailySnaps
     MasterCardAvailabe: input.masterCardAvailable,
     MasterCardTotal: input.masterCardTotal,
     MasterCardAvailabilityPercent: round(input.masterCardAvailabilityPercent),
+    MasterCardavailability: round(input.masterCardAvailabilityPercent),
     ReproCompleted: input.reproCompleted,
     ReproPercent: round(input.reproPercent),
     ...(input.repeatedRejectionCount != null
@@ -157,24 +160,6 @@ async function upsertSnapshot(input: DashboardDailySnapshotInput): Promise<void>
 
   const created = await DashboardDailySnapshotService.create(values);
   requireSuccess(created, "Could not create Dashboard Daily Snapshot");
-
-  // SharePoint Choice values can be dropped during create by this connector.
-  // A follow-up update makes the five status fields persist reliably.
-  if (created.data?.ID != null) {
-    const choices = {
-      ...(values.SafetyStatus ? { SafetyStatus: values.SafetyStatus } : {}),
-      ...(values.QualityStatus ? { QualityStatus: values.QualityStatus } : {}),
-      ...(values.ProcessDeviationStatus
-        ? { ProcessDeviationStatus: values.ProcessDeviationStatus }
-        : {}),
-      ...(values.ProductDeviationStatus
-        ? { ProductDeviationStatus: values.ProductDeviationStatus }
-        : {}),
-      ...(values.ProductivityStatus ? { ProductivityStatus: values.ProductivityStatus } : {}),
-    };
-    const followUp = await DashboardDailySnapshotService.update(String(created.data.ID), choices);
-    requireSuccess(followUp, "Could not save Dashboard Daily Snapshot statuses");
-  }
 }
 
 function queueSnapshot(input: DashboardDailySnapshotInput): Promise<void> {

@@ -5,6 +5,1987 @@
  */
 
 export const dataSourcesInfo = {
+  "coils & collars buyoff structure": {
+    "tableId": "a3cd380d-7cdd-4259-a1cd-dcc3b8d9e4b4",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetMachine_x0023_": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Machine_x0023_",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetMachine_x0020__x0023__x003a_Area": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Machine_x0020__x0023__x003a_Area",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetMaterial": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Material",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetMaterialType": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/MaterialType",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetOData__x0023_ofCavs": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/OData__x0023_ofCavs",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDeviation_x003f__x0028_Visual_x0": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Visual_x0",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDeviationPending_x003f__x0028_Vi": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Vi",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDeviation_x003f__x0028_Dimension": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Dimension",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDeviationPending_x003f__x0028_Di": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Di",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBuyoffAccepted_x0028_Visual_x002": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Visual_x002",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBuyoffAccepted_x0028_Dimensional": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Dimensional",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetShift": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Shift",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetPlant": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Plant",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetNTQ": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/NTQ",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBuyOffAccepted_x003f_": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyOffAccepted_x003f_",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDefectDescription": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DefectDescription",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDefect_x0020_Description_x003a_D": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Defect_x0020_Description_x003a_D",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBuyoffType": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffType",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "dashboard control": {
+    "tableId": "b53a170b-ac6b-402b-b8e4-1428262c6e5a",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetCommand": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Command",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetTargetPillar": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/TargetPillar",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "dashboard daily snapshot": {
+    "tableId": "4355affd-da14-47e4-a4d4-48762483e120",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "dashboard date status": {
+    "tableId": "9dac1890-e533-45fe-8ccc-f523814ce7f7",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "dashboard task status": {
+    "tableId": "72be6dbe-b078-4ba6-ae39-677870e93340",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "dashboard weather": {
+    "tableId": "19422b0f-f227-4410-9a8c-079edc59410b",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
+  "db - deviation app": {
+    "tableId": "ac1553fb-018a-490a-a727-0831b63bb5e8",
+    "version": "",
+    "primaryKey": "ID",
+    "dataSourceType": "Connector",
+    "apis": {
+      "GetVisualf": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Visualf",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDimensional": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Dimensional",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetMechanical": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Mechanical",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBatchCode": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCode",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetDeviationAccepted_x003f_": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationAccepted_x003f_",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetAs_x002d_Is_x002f_Rework": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/As_x002d_Is_x002f_Rework",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetQualityComplete": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/QualityComplete",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetAMGComplete": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/AMGComplete",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetQualityEngineeringSigned": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/QualityEngineeringSigned",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetProductEngineeringSigned": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/ProductEngineeringSigned",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetBuyoffType": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffType",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetCurrentlyActive_x003f_": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/CurrentlyActive_x003f_",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetCancellationStatus": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/CancellationStatus",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetPlant": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Plant",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetAuthor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "GetEditor": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      },
+      "Get4651e8f238c94ad08def41f743f76f30": {
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
+        "method": "GET",
+        "parameters": [
+          {
+            "name": "connectionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "tableName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responseInfo": {
+          "200": {
+            "type": "array"
+          }
+        }
+      }
+    }
+  },
   "excelonlinebusiness": {
     "tableId": "",
     "version": "",
@@ -389,7 +2370,7 @@ export const dataSourcesInfo = {
             "name": "rows",
             "in": "body",
             "required": true,
-            "type": "object"
+            "type": "array"
           }
         ],
         "responseInfo": {
@@ -507,13 +2488,15 @@ export const dataSourcesInfo = {
             "name": "$top",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$skip",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$select",
@@ -664,13 +2647,15 @@ export const dataSourcesInfo = {
             "name": "$top",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$skip",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$select",
@@ -1994,13 +3979,15 @@ export const dataSourcesInfo = {
             "name": "$top",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$skip",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responseInfo": {
@@ -2112,13 +4099,15 @@ export const dataSourcesInfo = {
             "name": "$top",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           },
           {
             "name": "$skip",
             "in": "query",
             "required": false,
-            "type": "integer"
+            "type": "integer",
+            "format": "int32"
           }
         ],
         "responseInfo": {
@@ -2494,2162 +4483,6 @@ export const dataSourcesInfo = {
       }
     }
   },
-  "coils & collars buyoff structure": {
-    "tableId": "a3cd380d-7cdd-4259-a1cd-dcc3b8d9e4b4",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetMachine_x0023_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Machine_x0023_",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetMachine_x0020__x0023__x003a_Area": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Machine_x0020__x0023__x003a_Area",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetMaterial": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Material",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetMaterialType": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/MaterialType",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetOData__x0023_ofCavs": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/OData__x0023_ofCavs",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDeviation_x003f__x0028_Visual_x0": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Deviation_x003f__x0028_Visual_x0",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDeviationPending_x003f__x0028_Vi": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/DeviationPending_x003f__x0028_Vi",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDeviation_x003f__x0028_Dimension": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Deviation_x003f__x0028_Dimension",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDeviationPending_x003f__x0028_Di": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/DeviationPending_x003f__x0028_Di",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBuyoffAccepted_x0028_Visual_x002": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/BuyoffAccepted_x0028_Visual_x002",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBuyoffAccepted_x0028_Dimensional": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/BuyoffAccepted_x0028_Dimensional",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetShift": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Shift",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetPlant": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Plant",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetNTQ": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/NTQ",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBuyOffAccepted_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/BuyOffAccepted_x003f_",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDefectDescription": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/DefectDescription",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDefect_x0020_Description_x003a_D": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Defect_x0020_Description_x003a_D",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBuyoffType": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/BuyoffType",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/a3cd380d7cdd4259a1cddcc3b8d9e4b4/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "dashboard control": {
-    "tableId": "b53a170b-ac6b-402b-b8e4-1428262c6e5a",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetCommand": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b53a170bac6b402bb8e41428262c6e5a/entities/Command",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetTargetPillar": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b53a170bac6b402bb8e41428262c6e5a/entities/TargetPillar",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b53a170bac6b402bb8e41428262c6e5a/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b53a170bac6b402bb8e41428262c6e5a/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b53a170bac6b402bb8e41428262c6e5a/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "dashboard daily snapshot": {
-    "tableId": "4355affd-da14-47e4-a4d4-48762483e120",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetSafetyStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/SafetyStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetQualityStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/QualityStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetProcessDeviationStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/ProcessDeviationStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetProductDeviationStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/ProductDeviationStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetProductivityStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/ProductivityStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/4355affdda1447e4a4d448762483e120/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "dashboard date status": {
-    "tableId": "9dac1890-e533-45fe-8ccc-f523814ce7f7",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/9dac1890e53345fe8cccf523814ce7f7/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/9dac1890e53345fe8cccf523814ce7f7/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/9dac1890e53345fe8cccf523814ce7f7/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "dashboard task status": {
-    "tableId": "72be6dbe-b078-4ba6-ae39-677870e93340",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/72be6dbeb0784ba6ae39677870e93340/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/72be6dbeb0784ba6ae39677870e93340/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/72be6dbeb0784ba6ae39677870e93340/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "dashboard weather": {
-    "tableId": "19422b0f-f227-4410-9a8c-079edc59410b",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/19422b0ff22744109a8c079edc59410b/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/19422b0ff22744109a8c079edc59410b/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/19422b0ff22744109a8c079edc59410b/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
-  "db - deviation app": {
-    "tableId": "ac1553fb-018a-490a-a727-0831b63bb5e8",
-    "version": "",
-    "primaryKey": "ID",
-    "dataSourceType": "Connector",
-    "apis": {
-      "GetVisualf": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Visualf",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDimensional": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Dimensional",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetMechanical": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Mechanical",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBatchCode": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/BatchCode",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetDeviationAccepted_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/DeviationAccepted_x003f_",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAs_x002d_Is_x002f_Rework": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/As_x002d_Is_x002f_Rework",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetQualityComplete": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/QualityComplete",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAMGComplete": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/AMGComplete",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetQualityEngineeringSigned": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/QualityEngineeringSigned",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetProductEngineeringSigned": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/ProductEngineeringSigned",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetBuyoffType": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/BuyoffType",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetCurrentlyActive_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/CurrentlyActive_x003f_",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetCancellationStatus": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/CancellationStatus",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetPlant": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Plant",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Author",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/Editor",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      },
-      "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/ac1553fb018a490aa7270831b63bb5e8/entities/4651e8f238c94ad08def41f743f76f30",
-        "method": "GET",
-        "parameters": [
-          {
-            "name": "connectionId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "dataset",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "table",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "search",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          }
-        ],
-        "responseInfo": {
-          "200": {
-            "type": "array"
-          }
-        }
-      }
-    }
-  },
   "extrusion buyoff structure": {
     "tableId": "b50510e1-77a8-42e6-a1ab-946de15e7fc8",
     "version": "",
@@ -4657,7 +4490,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetMaterial": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Material",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Material",
         "method": "GET",
         "parameters": [
           {
@@ -4673,7 +4506,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4692,7 +4525,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMaterialType": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/MaterialType",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/MaterialType",
         "method": "GET",
         "parameters": [
           {
@@ -4708,7 +4541,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4727,7 +4560,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLine_x0023_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Line_x0023_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Line_x0023_",
         "method": "GET",
         "parameters": [
           {
@@ -4743,7 +4576,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4762,7 +4595,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLine_x0020__x0023__x003a_Area": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Line_x0020__x0023__x003a_Area",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Line_x0020__x0023__x003a_Area",
         "method": "GET",
         "parameters": [
           {
@@ -4778,7 +4611,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4797,7 +4630,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetNTQ": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/NTQ",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/NTQ",
         "method": "GET",
         "parameters": [
           {
@@ -4813,7 +4646,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4832,7 +4665,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMechanicalDefects": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/MechanicalDefects",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/MechanicalDefects",
         "method": "GET",
         "parameters": [
           {
@@ -4848,7 +4681,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4867,7 +4700,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDimensionalDefects": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/DimensionalDefects",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DimensionalDefects",
         "method": "GET",
         "parameters": [
           {
@@ -4883,7 +4716,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4902,7 +4735,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetVisualDefects": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/VisualDefects",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/VisualDefects",
         "method": "GET",
         "parameters": [
           {
@@ -4918,7 +4751,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4937,7 +4770,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Visual_x0": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Deviation_x003f__x0028_Visual_x0",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Visual_x0",
         "method": "GET",
         "parameters": [
           {
@@ -4953,7 +4786,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -4972,7 +4805,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Vi": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/DeviationPending_x003f__x0028_Vi",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Vi",
         "method": "GET",
         "parameters": [
           {
@@ -4988,7 +4821,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5007,7 +4840,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Dimension": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Deviation_x003f__x0028_Dimension",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Dimension",
         "method": "GET",
         "parameters": [
           {
@@ -5023,7 +4856,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5042,7 +4875,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Di": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/DeviationPending_x003f__x0028_Di",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Di",
         "method": "GET",
         "parameters": [
           {
@@ -5058,7 +4891,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5077,7 +4910,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Mechanica": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Deviation_x003f__x0028_Mechanica",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Mechanica",
         "method": "GET",
         "parameters": [
           {
@@ -5093,7 +4926,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5112,7 +4945,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Me": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/DeviationPending_x003f__x0028_Me",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Me",
         "method": "GET",
         "parameters": [
           {
@@ -5128,7 +4961,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5147,7 +4980,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Mechanical_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/BuyoffAccepted_x0028_Mechanical_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Mechanical_",
         "method": "GET",
         "parameters": [
           {
@@ -5163,7 +4996,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5182,7 +5015,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Dimensional": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/BuyoffAccepted_x0028_Dimensional",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Dimensional",
         "method": "GET",
         "parameters": [
           {
@@ -5198,7 +5031,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5217,7 +5050,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Visual_x002": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/BuyoffAccepted_x0028_Visual_x002",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Visual_x002",
         "method": "GET",
         "parameters": [
           {
@@ -5233,7 +5066,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5252,7 +5085,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetShift": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Shift",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Shift",
         "method": "GET",
         "parameters": [
           {
@@ -5268,7 +5101,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5287,7 +5120,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetPlant": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Plant",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Plant",
         "method": "GET",
         "parameters": [
           {
@@ -5303,7 +5136,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5322,7 +5155,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBatchCode_x0028_QC_x0029_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/BatchCode_x0028_QC_x0029_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCode_x0028_QC_x0029_",
         "method": "GET",
         "parameters": [
           {
@@ -5338,7 +5171,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5357,7 +5190,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBatchCode": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/BatchCode",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCode",
         "method": "GET",
         "parameters": [
           {
@@ -5373,7 +5206,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5392,7 +5225,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -5408,7 +5241,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5427,7 +5260,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -5443,7 +5276,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5462,7 +5295,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b50510e177a842e6a1ab946de15e7fc8/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -5478,7 +5311,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5505,7 +5338,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetRobot": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/Robot",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Robot",
         "method": "GET",
         "parameters": [
           {
@@ -5521,7 +5354,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5540,7 +5373,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLRM": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/LRM",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/LRM",
         "method": "GET",
         "parameters": [
           {
@@ -5556,7 +5389,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5575,7 +5408,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLRM_x003a__x0020_Machine_x0020_m": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/LRM_x003a__x0020_Machine_x0020_m",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/LRM_x003a__x0020_Machine_x0020_m",
         "method": "GET",
         "parameters": [
           {
@@ -5591,7 +5424,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5610,7 +5443,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLRM_x003a__x0020_Tonnage": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/LRM_x003a__x0020_Tonnage",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/LRM_x003a__x0020_Tonnage",
         "method": "GET",
         "parameters": [
           {
@@ -5626,7 +5459,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5645,7 +5478,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLRM_x003a__x0020_Srew_x0020__x00": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/LRM_x003a__x0020_Srew_x0020__x00",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/LRM_x003a__x0020_Srew_x0020__x00",
         "method": "GET",
         "parameters": [
           {
@@ -5661,7 +5494,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5680,7 +5513,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLRM_x003a__x0020_Intensification": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/LRM_x003a__x0020_Intensification",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/LRM_x003a__x0020_Intensification",
         "method": "GET",
         "parameters": [
           {
@@ -5696,7 +5529,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5715,7 +5548,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -5731,7 +5564,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5750,7 +5583,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -5766,7 +5599,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5785,7 +5618,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/fc0546b4df464be5871a0336792556fa/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -5801,7 +5634,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5828,7 +5661,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetMachine_ID": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/Machine_ID",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Machine_ID",
         "method": "GET",
         "parameters": [
           {
@@ -5844,7 +5677,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5863,7 +5696,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetCooling_Air_Water": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/Cooling_Air_Water",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Cooling_Air_Water",
         "method": "GET",
         "parameters": [
           {
@@ -5879,7 +5712,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5898,7 +5731,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetCore_Puller": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/Core_Puller",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Core_Puller",
         "method": "GET",
         "parameters": [
           {
@@ -5914,7 +5747,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5933,7 +5766,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -5949,7 +5782,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -5968,7 +5801,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -5984,7 +5817,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6003,7 +5836,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/877463989dbf4834a604b03a4190d2d2/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -6019,7 +5852,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6046,7 +5879,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b4faea055b8f4d4aa0fce6222abad16f/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -6062,7 +5895,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6081,7 +5914,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b4faea055b8f4d4aa0fce6222abad16f/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -6097,7 +5930,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6116,7 +5949,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/b4faea055b8f4d4aa0fce6222abad16f/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -6132,7 +5965,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6159,7 +5992,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetScrapLogged_x0028_Joe_x0029_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/ScrapLogged_x0028_Joe_x0029_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/ScrapLogged_x0028_Joe_x0029_",
         "method": "GET",
         "parameters": [
           {
@@ -6175,7 +6008,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6194,7 +6027,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBatchCodeLegible": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BatchCodeLegible",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCodeLegible",
         "method": "GET",
         "parameters": [
           {
@@ -6210,7 +6043,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6229,7 +6062,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBatchCode": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BatchCode",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCode",
         "method": "GET",
         "parameters": [
           {
@@ -6245,7 +6078,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6264,7 +6097,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMachine_x0023_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Machine_x0023_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Machine_x0023_",
         "method": "GET",
         "parameters": [
           {
@@ -6280,7 +6113,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6299,7 +6132,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMachine_x0020__x0023__x003a_Area": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Machine_x0020__x0023__x003a_Area",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Machine_x0020__x0023__x003a_Area",
         "method": "GET",
         "parameters": [
           {
@@ -6315,7 +6148,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6334,7 +6167,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetRestart_x002f_MoldChange_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Restart_x002f_MoldChange_x003f_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Restart_x002f_MoldChange_x003f_",
         "method": "GET",
         "parameters": [
           {
@@ -6350,7 +6183,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6369,7 +6202,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMaterial": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Material",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Material",
         "method": "GET",
         "parameters": [
           {
@@ -6385,7 +6218,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6404,7 +6237,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMaterialType": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/MaterialType",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/MaterialType",
         "method": "GET",
         "parameters": [
           {
@@ -6420,7 +6253,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6439,7 +6272,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetNTQ": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/NTQ",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/NTQ",
         "method": "GET",
         "parameters": [
           {
@@ -6455,7 +6288,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6474,7 +6307,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetOData__x0023_ofCavs": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/OData__x0023_ofCavs",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/OData__x0023_ofCavs",
         "method": "GET",
         "parameters": [
           {
@@ -6490,7 +6323,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6509,7 +6342,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMasterCard": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/MasterCard",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/MasterCard",
         "method": "GET",
         "parameters": [
           {
@@ -6525,7 +6358,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6544,7 +6377,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDefectDescription": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/DefectDescription",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DefectDescription",
         "method": "GET",
         "parameters": [
           {
@@ -6560,7 +6393,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6579,7 +6412,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetMechanical_x0020_Defects_x003a_D": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Mechanical_x0020_Defects_x003a_D",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Mechanical_x0020_Defects_x003a_D",
         "method": "GET",
         "parameters": [
           {
@@ -6595,7 +6428,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6614,7 +6447,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDimensionalDefects": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/DimensionalDefects",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DimensionalDefects",
         "method": "GET",
         "parameters": [
           {
@@ -6630,7 +6463,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6649,7 +6482,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDimensional_x0020_Defects_x003a_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Dimensional_x0020_Defects_x003a_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Dimensional_x0020_Defects_x003a_",
         "method": "GET",
         "parameters": [
           {
@@ -6665,7 +6498,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6684,7 +6517,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetVisualDefects": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/VisualDefects",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/VisualDefects",
         "method": "GET",
         "parameters": [
           {
@@ -6700,7 +6533,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6719,7 +6552,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetVisual_x0020_Defects_x003a_Defec": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Visual_x0020_Defects_x003a_Defec",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Visual_x0020_Defects_x003a_Defec",
         "method": "GET",
         "parameters": [
           {
@@ -6735,7 +6568,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6754,7 +6587,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Visual_x00": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Deviation_x003f__x0028_Visual_x00",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Visual_x00",
         "method": "GET",
         "parameters": [
           {
@@ -6770,7 +6603,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6789,7 +6622,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Vi": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/DeviationPending_x003f__x0028_Vi",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Vi",
         "method": "GET",
         "parameters": [
           {
@@ -6805,7 +6638,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6824,7 +6657,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Dimension": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Deviation_x003f__x0028_Dimension",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Dimension",
         "method": "GET",
         "parameters": [
           {
@@ -6840,7 +6673,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6859,7 +6692,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Di": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/DeviationPending_x003f__x0028_Di",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Di",
         "method": "GET",
         "parameters": [
           {
@@ -6875,7 +6708,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6894,7 +6727,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviation_x003f__x0028_Mechanica": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Deviation_x003f__x0028_Mechanica",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Deviation_x003f__x0028_Mechanica",
         "method": "GET",
         "parameters": [
           {
@@ -6910,7 +6743,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6929,7 +6762,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetDeviationPending_x003f__x0028_Me": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/DeviationPending_x003f__x0028_Me",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/DeviationPending_x003f__x0028_Me",
         "method": "GET",
         "parameters": [
           {
@@ -6945,7 +6778,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6964,7 +6797,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyOffAccepted_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BuyOffAccepted_x003f_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyOffAccepted_x003f_",
         "method": "GET",
         "parameters": [
           {
@@ -6980,7 +6813,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -6999,7 +6832,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Dimensional": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BuyoffAccepted_x0028_Dimensional",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Dimensional",
         "method": "GET",
         "parameters": [
           {
@@ -7015,7 +6848,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7034,7 +6867,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Visual_x002": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BuyoffAccepted_x0028_Visual_x002",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Visual_x002",
         "method": "GET",
         "parameters": [
           {
@@ -7050,7 +6883,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7069,7 +6902,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBatchCode_x0028_QC_x0029_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BatchCode_x0028_QC_x0029_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BatchCode_x0028_QC_x0029_",
         "method": "GET",
         "parameters": [
           {
@@ -7085,7 +6918,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7104,7 +6937,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetShift_x0028_QC_x0029_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Shift_x0028_QC_x0029_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Shift_x0028_QC_x0029_",
         "method": "GET",
         "parameters": [
           {
@@ -7120,7 +6953,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7139,7 +6972,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetPlant": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Plant",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Plant",
         "method": "GET",
         "parameters": [
           {
@@ -7155,7 +6988,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7174,7 +7007,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetBuyoffAccepted_x0028_Mechanical_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/BuyoffAccepted_x0028_Mechanical_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/BuyoffAccepted_x0028_Mechanical_",
         "method": "GET",
         "parameters": [
           {
@@ -7190,7 +7023,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7209,7 +7042,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetChangeoverComplete_x003f_": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/ChangeoverComplete_x003f_",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/ChangeoverComplete_x003f_",
         "method": "GET",
         "parameters": [
           {
@@ -7225,7 +7058,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7244,7 +7077,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -7260,7 +7093,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7279,7 +7112,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -7295,7 +7128,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7314,7 +7147,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/d345460c5e324140b1f75871ccd11b46/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -7330,7 +7163,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7357,7 +7190,7 @@ export const dataSourcesInfo = {
     "dataSourceType": "Connector",
     "apis": {
       "GetMastercard_ID": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/Mastercard_ID",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Mastercard_ID",
         "method": "GET",
         "parameters": [
           {
@@ -7373,7 +7206,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7392,7 +7225,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetReview_ID": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/Review_ID",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Review_ID",
         "method": "GET",
         "parameters": [
           {
@@ -7408,7 +7241,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7427,7 +7260,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetLog_ID": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/Log_ID",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Log_ID",
         "method": "GET",
         "parameters": [
           {
@@ -7443,7 +7276,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7462,7 +7295,7 @@ export const dataSourcesInfo = {
         }
       },
       "Getfield_3": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/field_3",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/field_3",
         "method": "GET",
         "parameters": [
           {
@@ -7478,7 +7311,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7497,7 +7330,7 @@ export const dataSourcesInfo = {
         }
       },
       "Getfield_72": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/field_72",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/field_72",
         "method": "GET",
         "parameters": [
           {
@@ -7513,7 +7346,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7532,7 +7365,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetAuthor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/Author",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Author",
         "method": "GET",
         "parameters": [
           {
@@ -7548,7 +7381,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7567,7 +7400,7 @@ export const dataSourcesInfo = {
         }
       },
       "GetEditor": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/Editor",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/Editor",
         "method": "GET",
         "parameters": [
           {
@@ -7583,7 +7416,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"
@@ -7602,7 +7435,7 @@ export const dataSourcesInfo = {
         }
       },
       "Get4651e8f238c94ad08def41f743f76f30": {
-        "path": "/{connectionId}/datasets/{dataset}/tables/6efdac8d914a4bb0b85965d4b1bc5bc7/entities/4651e8f238c94ad08def41f743f76f30",
+        "path": "/{connectionId}/datasets/{dataset}/tables/{tableName}/entities/4651e8f238c94ad08def41f743f76f30",
         "method": "GET",
         "parameters": [
           {
@@ -7618,7 +7451,7 @@ export const dataSourcesInfo = {
             "type": "string"
           },
           {
-            "name": "table",
+            "name": "tableName",
             "in": "path",
             "required": true,
             "type": "string"

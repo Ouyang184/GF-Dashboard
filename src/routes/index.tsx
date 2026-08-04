@@ -868,6 +868,7 @@ export function Index() {
           ? inventoryStatus(activeProductDeviationCount)
           : null,
         productivityStatus: productivityStatus(dashboardData.mcAvailablePercent),
+        safetyIncidents: safetyIncidentHistory[dashboardData.productionDate] ?? 0,
         weeklyScrapPercent: moldingScrapData
           ? moldingScrapData.cellTotal.scrapRate * 100
           : null,

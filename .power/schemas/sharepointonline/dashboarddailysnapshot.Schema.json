@@ -114,295 +114,70 @@
             ]
           }
         },
-        "SafetyStatus#Id": {
-          "title": "SafetyStatus Id",
-          "type": "integer",
-          "format": "int64",
-          "x-ms-permission": "read-only",
-          "x-ms-visibility": "internal"
-        },
         "SafetyStatus": {
           "title": "SafetyStatus",
-          "type": "object",
+          "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
-            "x-ms-sp": {
-              "IsChoice": true
-            },
             "filterFunctions": [
-              "eq"
+              "eq",
+              "startswith"
             ]
           },
-          "properties": {
-            "@odata.type": {
-              "title": "@odata.type",
-              "x-ms-visibility": "internal",
-              "type": "string",
-              "x-ms-permission": "read-write"
-            },
-            "Value": {
-              "title": "Value",
-              "type": "string",
-              "x-ms-dynamic-values": {
-                "operationId": "GetEntityValues",
-                "parameters": {
-                  "dataset": {
-                    "parameter": "dataset"
-                  },
-                  "table": {
-                    "parameter": "table"
-                  },
-                  "id": "953f3a04-5739-49f3-beef-bb9242f8057f"
-                },
-                "value-path": "Value",
-                "value-title": "Value",
-                "value-collection": "value"
-              }
-            },
-            "Id": {
-              "title": "Id",
-              "type": "integer",
-              "format": "int64",
-              "x-ms-visibility": "internal",
-              "x-ms-permission": "read-only"
-            }
-          },
-          "x-ms-displayFormat": {
-            "titleProperty": "Value"
-          }
-        },
-        "QualityStatus#Id": {
-          "title": "QualityStatus Id",
-          "type": "integer",
-          "format": "int64",
-          "x-ms-permission": "read-only",
-          "x-ms-visibility": "internal"
+          "maxLength": 255
         },
         "QualityStatus": {
           "title": "QualityStatus",
-          "type": "object",
+          "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
-            "x-ms-sp": {
-              "IsChoice": true
-            },
             "filterFunctions": [
-              "eq"
+              "eq",
+              "startswith"
             ]
           },
-          "properties": {
-            "@odata.type": {
-              "title": "@odata.type",
-              "x-ms-visibility": "internal",
-              "type": "string",
-              "x-ms-permission": "read-write"
-            },
-            "Value": {
-              "title": "Value",
-              "type": "string",
-              "x-ms-dynamic-values": {
-                "operationId": "GetEntityValues",
-                "parameters": {
-                  "dataset": {
-                    "parameter": "dataset"
-                  },
-                  "table": {
-                    "parameter": "table"
-                  },
-                  "id": "e9c7d2fd-43f7-4b4b-82b2-6374f14fc6f4"
-                },
-                "value-path": "Value",
-                "value-title": "Value",
-                "value-collection": "value"
-              }
-            },
-            "Id": {
-              "title": "Id",
-              "type": "integer",
-              "format": "int64",
-              "x-ms-visibility": "internal",
-              "x-ms-permission": "read-only"
-            }
-          },
-          "x-ms-displayFormat": {
-            "titleProperty": "Value"
-          }
-        },
-        "ProcessDeviationStatus#Id": {
-          "title": "ProcessDeviationStatus Id",
-          "type": "integer",
-          "format": "int64",
-          "x-ms-permission": "read-only",
-          "x-ms-visibility": "internal"
+          "maxLength": 255
         },
         "ProcessDeviationStatus": {
           "title": "ProcessDeviationStatus",
-          "type": "object",
+          "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
-            "x-ms-sp": {
-              "IsChoice": true
-            },
             "filterFunctions": [
-              "eq"
+              "eq",
+              "startswith"
             ]
           },
-          "properties": {
-            "@odata.type": {
-              "title": "@odata.type",
-              "x-ms-visibility": "internal",
-              "type": "string",
-              "x-ms-permission": "read-write"
-            },
-            "Value": {
-              "title": "Value",
-              "type": "string",
-              "x-ms-dynamic-values": {
-                "operationId": "GetEntityValues",
-                "parameters": {
-                  "dataset": {
-                    "parameter": "dataset"
-                  },
-                  "table": {
-                    "parameter": "table"
-                  },
-                  "id": "dca5f89f-5c86-4e05-9283-acaf3255fa04"
-                },
-                "value-path": "Value",
-                "value-title": "Value",
-                "value-collection": "value"
-              }
-            },
-            "Id": {
-              "title": "Id",
-              "type": "integer",
-              "format": "int64",
-              "x-ms-visibility": "internal",
-              "x-ms-permission": "read-only"
-            }
-          },
-          "x-ms-displayFormat": {
-            "titleProperty": "Value"
-          }
-        },
-        "ProductDeviationStatus#Id": {
-          "title": "ProductDeviationStatus Id",
-          "type": "integer",
-          "format": "int64",
-          "x-ms-permission": "read-only",
-          "x-ms-visibility": "internal"
+          "maxLength": 255
         },
         "ProductDeviationStatus": {
           "title": "ProductDeviationStatus",
-          "type": "object",
+          "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
-            "x-ms-sp": {
-              "IsChoice": true
-            },
             "filterFunctions": [
-              "eq"
+              "eq",
+              "startswith"
             ]
           },
-          "properties": {
-            "@odata.type": {
-              "title": "@odata.type",
-              "x-ms-visibility": "internal",
-              "type": "string",
-              "x-ms-permission": "read-write"
-            },
-            "Value": {
-              "title": "Value",
-              "type": "string",
-              "x-ms-dynamic-values": {
-                "operationId": "GetEntityValues",
-                "parameters": {
-                  "dataset": {
-                    "parameter": "dataset"
-                  },
-                  "table": {
-                    "parameter": "table"
-                  },
-                  "id": "ecc3fbda-edeb-4685-818a-fe0f845db6ba"
-                },
-                "value-path": "Value",
-                "value-title": "Value",
-                "value-collection": "value"
-              }
-            },
-            "Id": {
-              "title": "Id",
-              "type": "integer",
-              "format": "int64",
-              "x-ms-visibility": "internal",
-              "x-ms-permission": "read-only"
-            }
-          },
-          "x-ms-displayFormat": {
-            "titleProperty": "Value"
-          }
-        },
-        "ProductivityStatus#Id": {
-          "title": "ProductivityStatus Id",
-          "type": "integer",
-          "format": "int64",
-          "x-ms-permission": "read-only",
-          "x-ms-visibility": "internal"
+          "maxLength": 255
         },
         "ProductivityStatus": {
           "title": "ProductivityStatus",
-          "type": "object",
+          "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
-            "x-ms-sp": {
-              "IsChoice": true
-            },
             "filterFunctions": [
-              "eq"
+              "eq",
+              "startswith"
             ]
           },
-          "properties": {
-            "@odata.type": {
-              "title": "@odata.type",
-              "x-ms-visibility": "internal",
-              "type": "string",
-              "x-ms-permission": "read-write"
-            },
-            "Value": {
-              "title": "Value",
-              "type": "string",
-              "x-ms-dynamic-values": {
-                "operationId": "GetEntityValues",
-                "parameters": {
-                  "dataset": {
-                    "parameter": "dataset"
-                  },
-                  "table": {
-                    "parameter": "table"
-                  },
-                  "id": "72b9cfb7-c763-4095-abe8-62680fd30c0e"
-                },
-                "value-path": "Value",
-                "value-title": "Value",
-                "value-collection": "value"
-              }
-            },
-            "Id": {
-              "title": "Id",
-              "type": "integer",
-              "format": "int64",
-              "x-ms-visibility": "internal",
-              "x-ms-permission": "read-only"
-            }
-          },
-          "x-ms-displayFormat": {
-            "titleProperty": "Value"
-          }
+          "maxLength": 255
         },
         "WeelyScrapPercent": {
           "title": "WeelyScrapPercent",
@@ -686,6 +461,44 @@
               "ne"
             ]
           }
+        },
+        "SafetyIncidents": {
+          "title": "SafetyIncidents",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
+        },
+        "MasterCardavailability": {
+          "title": "MasterCard availability",
+          "type": "number",
+          "format": "double",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "gt",
+              "ge",
+              "lt",
+              "le",
+              "ne"
+            ]
+          },
+          "maximum": 1.7976931348623157e+308,
+          "minimum": -1.7976931348623157e+308
         },
         "OData__ColorTag": {
           "title": "Color Tag",
@@ -1182,46 +995,6 @@
         }
       },
       "x-ms-relationships": {
-        "SafetyStatus": {
-          "targetEntity": "SafetyStatus",
-          "referentialConstraints": {
-            "SafetyStatus#Id": {
-              "referencedProperty": "Id"
-            }
-          }
-        },
-        "QualityStatus": {
-          "targetEntity": "QualityStatus",
-          "referentialConstraints": {
-            "QualityStatus#Id": {
-              "referencedProperty": "Id"
-            }
-          }
-        },
-        "ProcessDeviationStatus": {
-          "targetEntity": "ProcessDeviationStatus",
-          "referentialConstraints": {
-            "ProcessDeviationStatus#Id": {
-              "referencedProperty": "Id"
-            }
-          }
-        },
-        "ProductDeviationStatus": {
-          "targetEntity": "ProductDeviationStatus",
-          "referentialConstraints": {
-            "ProductDeviationStatus#Id": {
-              "referencedProperty": "Id"
-            }
-          }
-        },
-        "ProductivityStatus": {
-          "targetEntity": "ProductivityStatus",
-          "referentialConstraints": {
-            "ProductivityStatus#Id": {
-              "referencedProperty": "Id"
-            }
-          }
-        },
         "Author": {
           "targetEntity": "Author",
           "referentialConstraints": {
@@ -1271,6 +1044,8 @@
           "OpenEscalationCount",
           "LongTermActionCount",
           "LastCalculated",
+          "SafetyIncidents",
+          "MasterCardavailability",
           "{Attachments}"
         ],
         "propertiesCompactDisplayOrder": [
@@ -1295,7 +1070,9 @@
           "RepeatedRejectionCount",
           "OpenEscalationCount",
           "LongTermActionCount",
-          "LastCalculated"
+          "LastCalculated",
+          "SafetyIncidents",
+          "MasterCardavailability"
         ],
         "propertiesTabularDisplayOrder": [
           "Title",
@@ -1319,57 +1096,14 @@
           "RepeatedRejectionCount",
           "OpenEscalationCount",
           "LongTermActionCount",
-          "LastCalculated"
+          "LastCalculated",
+          "SafetyIncidents",
+          "MasterCardavailability"
         ]
       }
     }
   },
   "referencedEntities": {
-    "SafetyStatus": {
-      "lookupEndpoint": {
-        "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/SafetyStatus",
-        "capabilities": {
-          "searchable": true,
-          "requiresSearch": false
-        }
-      }
-    },
-    "QualityStatus": {
-      "lookupEndpoint": {
-        "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/QualityStatus",
-        "capabilities": {
-          "searchable": true,
-          "requiresSearch": false
-        }
-      }
-    },
-    "ProcessDeviationStatus": {
-      "lookupEndpoint": {
-        "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/ProcessDeviationStatus",
-        "capabilities": {
-          "searchable": true,
-          "requiresSearch": false
-        }
-      }
-    },
-    "ProductDeviationStatus": {
-      "lookupEndpoint": {
-        "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/ProductDeviationStatus",
-        "capabilities": {
-          "searchable": true,
-          "requiresSearch": false
-        }
-      }
-    },
-    "ProductivityStatus": {
-      "lookupEndpoint": {
-        "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/ProductivityStatus",
-        "capabilities": {
-          "searchable": true,
-          "requiresSearch": false
-        }
-      }
-    },
     "Author": {
       "lookupEndpoint": {
         "path": "/tables/4355affd-da14-47e4-a4d4-48762483e120/entities/Author",
