@@ -2306,7 +2306,7 @@ function useCountUp(target: number, durationMs = 900): number {
   return value;
 }
 
-/** Compact month-to-date activity summary shown beside the status counts. */
+/** Clean month-to-date score strip with direct counts instead of a percentage. */
 function PillarGauge({
   okCount,
   warnCount,
@@ -2317,28 +2317,28 @@ function PillarGauge({
   failCount: number;
 }) {
   const total = okCount + warnCount + failCount;
+  const items = [
+    { label: "OK", value: okCount, tone: "bg-success", surface: "border-success/30 bg-success/10 text-success" },
+    { label: "Warning", value: warnCount, tone: "bg-warning", surface: "border-warning/30 bg-warning/10 text-warning" },
+    { label: "Miss", value: failCount, tone: "bg-danger", surface: "border-danger/30 bg-danger/10 text-danger" },
+  ];
   return (
     <div
-      className="flex h-[84px] w-[96px] shrink-0 flex-col justify-between rounded-sm border border-border bg-secondary/35 p-2.5"
-      aria-label={`${total} month-to-date days tracked`}
+      className="grid w-full grid-cols-3 gap-2"
+      aria-label={`${total} month-to-date days recorded`}
     >
-      <div className="flex items-center gap-1.5 text-muted-foreground">
-        <CalendarDays className="size-3.5" />
-        <span className="text-[8px] font-semibold uppercase tracking-wider">Month to date</span>
-      </div>
-      <div>
-        <div className="text-2xl font-extrabold leading-none tabular-nums text-foreground">{total}</div>
-        <div className="mt-1 text-[9px] font-medium text-muted-foreground">days tracked</div>
-        <div className="mt-1.5 flex h-1 overflow-hidden rounded-full bg-muted">
-          {total > 0 && (
-            <>
-              <span className="bg-success" style={{ width: `${(okCount / total) * 100}%` }} />
-              <span className="bg-warning" style={{ width: `${(warnCount / total) * 100}%` }} />
-              <span className="bg-danger" style={{ width: `${(failCount / total) * 100}%` }} />
-            </>
-          )}
+      {items.map((item) => (
+        <div key={item.label} className={`relative overflow-hidden rounded-sm border px-3 py-2.5 ${item.surface}`}>
+          <span className={`absolute inset-y-0 left-0 w-1 ${item.tone}`} aria-hidden="true" />
+          <div className="flex items-end justify-between gap-2 pl-1">
+            <div>
+              <div className="text-[9px] font-bold uppercase tracking-[0.12em] opacity-75">{item.label}</div>
+              <div className="mt-1 text-2xl font-black leading-none tabular-nums">{item.value}</div>
+            </div>
+            <span className={`mb-0.5 size-2 rounded-full ${item.tone}`} aria-hidden="true" />
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
@@ -2536,16 +2536,9 @@ function PillarCard({
           </div>
         </button>
 
-        <div className="mt-3 flex items-center gap-4">
+        <div className="mt-3">
+          <p className="mb-2 text-xs text-muted-foreground">KPI: {kpiText}</p>
           <PillarGauge okCount={okCount} warnCount={warnCount} failCount={failCount} />
-          <div className="min-w-0 flex-1">
-            <p className="text-xs text-muted-foreground">KPI: {kpiText}</p>
-            <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
-              <Legend tone="ok" label={`${okCount} ok`} />
-              <Legend tone="warn" label={`${warnCount} warn`} />
-              <Legend tone="fail" label={`${failCount} miss`} />
-            </div>
-          </div>
         </div>
 
         {/* Day dots grid */}
