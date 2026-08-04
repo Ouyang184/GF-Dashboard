@@ -23,6 +23,12 @@ const STATUS_TO_COLOR: Record<DayStatus, string> = {
   fail: "Red",
 };
 const MANUAL_DETAILS = "Manual dashboard edit";
+const SAFETY_INCIDENTS_PREFIX = "Safety incidents:";
+
+function safetyIncidentsFromDetails(details: string | undefined): number | null {
+  const match = details?.match(/Safety incidents:\s*(\d+)/i);
+  return match ? Number.parseInt(match[1], 10) : null;
+}
 
 function statusFromColor(value: string | undefined): DayStatus | null {
   switch ((value ?? "").trim().toLowerCase()) {
@@ -36,7 +42,10 @@ function statusFromColor(value: string | undefined): DayStatus | null {
 async function loadRows(): Promise<DashboardDateStatusRead[]> {
   const result = await DashboardDateStatusService.getAll({
     top: 1000,
-    orderBy: ["StatusDate asc", "ID asc"],
+    // The pillar calendars display the current and previous months. Reading
+    // newest-first ensures those dates remain in the result even as history
+    // grows beyond SharePoint's requested row limit.
+    orderBy: ["StatusDate desc", "ID desc"],
   });
   if (!result.success) {
     throw result.error ?? new Error("Could not read Dashboard Date Status from SharePoint");
@@ -70,7 +79,7 @@ export function useDashboardDateStatus(
       const status = statusFromColor(row.StatusColor);
       if (pillar && date && status) {
         next[pillar][date] = status;
-        if ((row.Details ?? "").trim().toLowerCase() === MANUAL_DETAILS.toLowerCase()) {
+        if ((row.Details ?? "").toLowerCase().includes(MANUAL_DETAILS.toLowerCase())) {
           manualOverrides.add(`${pillar}|${date}`);
         }
       }
@@ -101,7 +110,7 @@ export function useDashboardDateStatus(
       );
       if (
         existingRows.some(
-          (row) => (row.Details ?? "").trim().toLowerCase() === MANUAL_DETAILS.toLowerCase(),
+          (row) => (row.Details ?? "").toLowerCase().includes(MANUAL_DETAILS.toLowerCase()),
         )
       ) {
         continue;
@@ -178,13 +187,18 @@ export function useDashboardDateStatusEditor() {
         const dateMatches = (row.StatusDate ?? "").slice(0, 10) === day;
         return titleMatches || (pillarMatches && dateMatches);
       });
+      const savedIncidentCount = matching
+        .map((row) => safetyIncidentsFromDetails(row.Details))
+        .find((value) => value != null);
       const values = {
         Title: title,
         Pillar: PILLAR_NAMES[pillar],
         StatusDate: day,
         StatusColor: color,
         ...counts,
-        Details: MANUAL_DETAILS,
+        Details: savedIncidentCount == null
+          ? MANUAL_DETAILS
+          : `${MANUAL_DETAILS} | ${SAFETY_INCIDENTS_PREFIX} ${savedIncidentCount}`,
         LastCalculated: new Date().toISOString(),
       };
       if (matching.length) {
@@ -247,6 +261,73 @@ export function useDashboardDateStatusEditor() {
 
   return {
     setStatus: mutation.mutateAsync,
+    isSaving: mutation.isPending,
+    error: mutation.error,
+  };
+}
+
+export function useSafetyIncidentEditor() {
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: QUERY_KEY,
+    queryFn: loadRows,
+    refetchInterval: 60_000,
+    refetchOnMount: "always",
+  });
+  const history = useMemo<Record<string, number>>(() => {
+    const values: Record<string, number> = {};
+    for (const row of query.data ?? []) {
+      if ((row.Pillar ?? "").trim().toLowerCase() !== "safety") continue;
+      const day = (row.StatusDate ?? "").slice(0, 10);
+      const count = safetyIncidentsFromDetails(row.Details);
+      if (day && count != null) values[day] = count;
+    }
+    return values;
+  }, [query.data]);
+
+  const mutation = useMutation({
+    mutationFn: async ({ day, count }: { day: string; count: number }) => {
+      const rows = await loadRows();
+      const title = `Safety-${day}`;
+      const matching = rows.filter((row) => {
+        const titleMatches = (row.Title ?? "").trim().toLowerCase() === title.toLowerCase();
+        const pillarMatches = (row.Pillar ?? "").trim().toLowerCase() === "safety";
+        const dateMatches = (row.StatusDate ?? "").slice(0, 10) === day;
+        return titleMatches || (pillarMatches && dateMatches);
+      });
+      const manual = matching.some((row) =>
+        (row.Details ?? "").toLowerCase().includes(MANUAL_DETAILS.toLowerCase()),
+      );
+      const details = `${manual ? `${MANUAL_DETAILS} | ` : ""}${SAFETY_INCIDENTS_PREFIX} ${count}`;
+      if (matching.length) {
+        const results = await Promise.all(
+          matching
+            .filter((row) => row.ID != null)
+            .map((row) => DashboardDateStatusService.update(String(row.ID), { Details: details })),
+        );
+        const failed = results.find((result) => !result.success);
+        if (failed) throw failed.error ?? new Error("Could not save the Safety incident count");
+      } else {
+        const result = await DashboardDateStatusService.create({
+          Title: title,
+          Pillar: "Safety",
+          StatusDate: day,
+          StatusColor: count > 0 ? "Red" : "Green",
+          OkCount: count > 0 ? 0 : 1,
+          WarningCount: 0,
+          MissCount: count > 0 ? 1 : 0,
+          Details: details,
+          LastCalculated: new Date().toISOString(),
+        });
+        if (!result.success) throw result.error ?? new Error("Could not save the Safety incident count");
+      }
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: QUERY_KEY }),
+  });
+
+  return {
+    history,
+    setIncidents: mutation.mutateAsync,
     isSaving: mutation.isPending,
     error: mutation.error,
   };

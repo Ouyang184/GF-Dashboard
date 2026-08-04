@@ -8,6 +8,7 @@ export * as Coils_CollarsBuyoffStructureModel from './models/Coils_CollarsBuyoff
 export * as CommonModels from './models/CommonModels';
 export * as DB_DeviationAppModel from './models/DB_DeviationAppModel';
 export * as DashBoardControlModel from './models/DashBoardControlModel';
+export * as DashboardDailySnapshotModel from './models/DashboardDailySnapshotModel';
 export * as DashboardDateStatusModel from './models/DashboardDateStatusModel';
 export * as DashboardTaskStatusModel from './models/DashboardTaskStatusModel';
 export * as DashboardWeatherModel from './models/DashboardWeatherModel';
@@ -23,6 +24,7 @@ export * as PRD_ApprovalsModel from './models/PRD_ApprovalsModel';
 export * from './services/Coils_CollarsBuyoffStructureService';
 export * from './services/DB_DeviationAppService';
 export * from './services/DashBoardControlService';
+export * from './services/DashboardDailySnapshotService';
 export * from './services/DashboardDateStatusService';
 export * from './services/DashboardTaskStatusService';
 export * from './services/DashboardWeatherService';

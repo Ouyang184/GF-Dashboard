@@ -27,7 +27,8 @@
         "db - deviation app",
         "prd_approvals",
         "machines",
-        "dashboardtaskstatus"
+        "dashboardtaskstatus",
+        "dashboard daily snapshot"
       ],
       "dataSets": {
         "https://georgfischer.sharepoint.com/sites/GFPS-PAFProductionReport": {
@@ -74,6 +75,9 @@
             },
             "dashboardtaskstatus": {
               "tableName": "72be6dbe-b078-4ba6-ae39-677870e93340"
+            },
+            "dashboard daily snapshot": {
+              "tableName": "4355affd-da14-47e4-a4d4-48762483e120"
             }
           }
         }

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import type { Coils_CollarsBuyoffStructureRead } from "@/generated/models/Coils_CollarsBuyoffStructureModel";
 import { Coils_CollarsBuyoffStructureService } from "@/generated/services/Coils_CollarsBuyoffStructureService";
-import { reportingWindow } from "@/hooks/use-dashboard-data";
+import { dashboardWindow, type DashboardPeriod } from "@/hooks/use-dashboard-data";
 
 export type PafBuyoff = {
   id: number;
@@ -41,11 +41,11 @@ function normalize(row: Coils_CollarsBuyoffStructureRead): PafBuyoff {
   };
 }
 
-async function loadPafBuyoffs(): Promise<PafBuyoff[]> {
-  const window = reportingWindow();
+async function loadPafBuyoffs(period: DashboardPeriod): Promise<PafBuyoff[]> {
+  const window = dashboardWindow(period);
   const result = await Coils_CollarsBuyoffStructureService.getAll({
     maxPageSize: 500,
-    top: 500,
+    top: period === "production-day" ? 500 : 5000,
     filter: `Created ge '${window.start.toISOString()}' and Created lt '${window.end.toISOString()}'`,
     orderBy: ["Created desc"],
   });
@@ -53,10 +53,11 @@ async function loadPafBuyoffs(): Promise<PafBuyoff[]> {
   return (result.data ?? []).map(normalize).sort((a, b) => b.id - a.id);
 }
 
-export function usePafBuyoffs() {
+export function usePafBuyoffs(period: DashboardPeriod = "production-day") {
+  const window = dashboardWindow(period);
   return useQuery({
-    queryKey: ["paf-buyoff-structure"],
-    queryFn: loadPafBuyoffs,
+    queryKey: ["paf-buyoff-structure", period, window.productionDate],
+    queryFn: () => loadPafBuyoffs(period),
     refetchInterval: 60_000,
   });
 }

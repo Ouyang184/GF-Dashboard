@@ -25,10 +25,17 @@ import {
 import {
   useDashboardDateStatus,
   useDashboardDateStatusEditor,
+  useSafetyIncidentEditor,
 } from "@/hooks/use-dashboard-date-status";
+import {
+  REPRO_COMPLETE_EVENT,
+  useDashboardDailySnapshotHistory,
+  useDashboardDailySnapshotSync,
+  type DashboardDailySnapshotInput,
+} from "@/hooks/use-dashboard-daily-snapshot";
 import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
-import { useDashboardData, useMarkMasterCardCreated, type DashboardData, type FloorMapEntry } from "@/hooks/use-dashboard-data";
+import { useDashboardData, useMarkMasterCardCreated, type DashboardData, type DashboardPeriod, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { useMoldingScrap, type MoldingScrapData } from "@/hooks/use-molding-scrap";
 import { useMastercardsProduction, type MastercardProductionRow } from "@/hooks/use-mastercards-production";
 import { useDashboardTasks, type DashboardTask } from "@/hooks/use-dashboard-tasks";
@@ -47,7 +54,9 @@ import {
   BarChart3,
   Box,
   CalendarDays,
+  ChevronLeft,
   ChevronDown,
+  ChevronRight,
   Cloud,
   CloudFog,
   CloudLightning,
@@ -55,6 +64,7 @@ import {
   CloudSnow,
   CloudSun,
   Gauge,
+  Filter,
   Shield,
   BadgeCheck,
   Quote,
@@ -259,27 +269,31 @@ function statusColor(s: Status) {
  *   recorded status for that day, the dot is "na" — no fabricated data.
  */
 function buildMonthDotsFromHistory(
-  daysInMonth: number,
+  displayedMonth: Date,
   history: Record<string, DayStatus>,
   now: Date,
   liveToday: DayStatus | null,
 ) {
-  const todayNum = now.getDate();
+  const displayedYear = displayedMonth.getFullYear();
+  const displayedMonthIndex = displayedMonth.getMonth();
+  const daysInMonth = new Date(displayedYear, displayedMonthIndex + 1, 0).getDate();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   const dots: { day: number; status: Status; weekend: boolean }[] = [];
   for (let d = 1; d <= daysInMonth; d++) {
-    const thisDate = new Date(now.getFullYear(), now.getMonth(), d);
+    const thisDate = new Date(displayedYear, displayedMonthIndex, d);
     const dow = thisDate.getDay();
     const weekend = dow === 0 || dow === 6;
     if (weekend) {
       dots.push({ day: d, status: "na", weekend: true });
       continue;
     }
-    if (d > todayNum) {
+    if (thisDate.getTime() > todayStart) {
       dots.push({ day: d, status: "na", weekend: false });
       continue;
     }
     const key = dateKey(thisDate);
-    const status: Status = (d === todayNum && liveToday) || history[key] || "na";
+    const isToday = thisDate.getTime() === todayStart;
+    const status: Status = (isToday && liveToday) || history[key] || "na";
     dots.push({ day: d, status, weekend: false });
   }
   return dots;
@@ -570,7 +584,6 @@ export function Index() {
     }
   };
 
-  const daysInMonth = liveNow ? new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() : 30;
   const dateStr = liveNow ? liveNow.toLocaleDateString(undefined, { weekday: "long", month: "short", day: "numeric", year: "numeric" }) : "";
   const timeStr = liveNow ? liveNow.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" }) : "--:--:--";
 
@@ -581,14 +594,41 @@ export function Index() {
   });
 
   const { data: dashboardData } = useDashboardData();
-  const { data: processDeviationData = { processParts: [], processMachines: [], productParts: [], rows: [] } } = useProcessDeviationList();
-  const { data: productDeviationData = { productParts: [], rows: [] } } = useProductDeviations();
+  const processDeviationQuery = useProcessDeviationList();
+  const processDeviationData = processDeviationQuery.data ?? { processParts: [], processMachines: [], productParts: [], rows: [] };
+  const productDeviationQuery = useProductDeviations();
+  const productDeviationData = productDeviationQuery.data ?? { productParts: [], rows: [] };
   const { data: moldingScrapData } = useMoldingScrap();
   const {
     data: buyoffAlerts = [],
     error: buyoffAlertError,
     isLoading: buyoffAlertLoading,
+    isSuccess: buyoffAlertSuccess,
   } = useBuyoffRejectionAlerts();
+  const {
+    tasks: snapshotTasks,
+    isLoading: snapshotTasksLoading,
+    error: snapshotTasksError,
+  } = useDashboardTasks();
+  const snapshotReproStorageKey = dashboardData
+    ? `amg.reproComplete:${dashboardData.productionWindowStart}`
+    : "";
+  const [snapshotReproCompleted, setSnapshotReproCompleted] = useState(0);
+  useEffect(() => {
+    const read = () => {
+      const raw = snapshotReproStorageKey
+        ? window.localStorage.getItem(snapshotReproStorageKey)
+        : null;
+      setSnapshotReproCompleted(Math.max(0, Number.parseInt(raw ?? "", 10) || 0));
+    };
+    read();
+    const onReproChange = (event: Event) => {
+      const detail = (event as CustomEvent<{ key?: string; value?: string }>).detail;
+      if (detail?.key === snapshotReproStorageKey) read();
+    };
+    window.addEventListener(REPRO_COMPLETE_EVENT, onReproChange);
+    return () => window.removeEventListener(REPRO_COMPLETE_EVENT, onReproChange);
+  }, [snapshotReproStorageKey]);
   const qualityIssues = useQualityIssues(dashboardData);
   const localSafetyHistory = usePillarDayHistory("S");
 
@@ -740,11 +780,41 @@ export function Index() {
     isSaving: isSavingDateStatus,
     error: dateStatusSaveError,
   } = useDashboardDateStatusEditor();
+  const {
+    history: safetyIncidentHistory,
+    setIncidents: setSafetyIncidents,
+    isSaving: isSavingSafetyIncidents,
+    error: safetyIncidentError,
+  } = useSafetyIncidentEditor();
+  const { byDate: dailySnapshots } = useDashboardDailySnapshotHistory();
   const sHistory = dateStatusHistories.S;
   const qHistory = dateStatusHistories.Q;
   const dHistory = dateStatusHistories.D;
   const iHistory = dateStatusHistories.I;
   const pHistory = dateStatusHistories.P;
+  const dailyMetricHistories = useMemo(() => {
+    const values: Record<Pillar["key"], Record<string, number>> = {
+      S: { ...safetyIncidentHistory },
+      Q: {},
+      D: {},
+      I: {},
+      P: {},
+    };
+    for (const [day, snapshot] of Object.entries(dailySnapshots)) {
+      if (snapshot.WeelyScrapPercent != null) values.Q[day] = snapshot.WeelyScrapPercent;
+      if (snapshot.ProcessDeviationCount != null) values.D[day] = snapshot.ProcessDeviationCount;
+      if (snapshot.ProductDeviationCount != null) values.I[day] = snapshot.ProductDeviationCount;
+      if (snapshot.MasterCardAvailabilityPercent != null) values.P[day] = snapshot.MasterCardAvailabilityPercent;
+    }
+    return values;
+  }, [dailySnapshots, safetyIncidentHistory]);
+  const liveDailyMetrics: Record<Pillar["key"], number | null> = {
+    S: safetyIncidentHistory[todayKey] ?? 0,
+    Q: moldingScrapData ? moldingScrapData.cellTotal.scrapRate * 100 : null,
+    D: effectiveDeliveryDeviationsToday,
+    I: effectiveInventoryDeviationsToday,
+    P: dashboardData?.mcAvailablePercent ?? null,
+  };
 
   useEffect(() => {
     if (!todayKey || !qLiveToday) return;
@@ -789,6 +859,64 @@ export function Index() {
       recordPillarDay("P", day, productivityStatus(pct));
     }
   }, [dashboardData?.machineJobs]);
+
+  const snapshotProcessAffectedAreas = computeDeviationShiftStatuses(
+    effectiveDeliveryDeviations,
+  ).filter((status) => status === "fail").length;
+  const snapshotProductAffectedAreas = computeDeviationShiftStatuses(
+    effectiveInventoryDeviations,
+  ).filter((status) => status === "fail").length;
+  const openEscalationCount = snapshotTasks.filter(
+    (task) => task.taskType === "Escalation" && task.status !== "Complete",
+  ).length;
+  const longTermActionCount = snapshotTasks.filter(
+    (task) => task.taskType === "LongTermAction" && task.status !== "Complete",
+  ).length;
+  const snapshotInput: DashboardDailySnapshotInput | null = dashboardData
+    ? {
+        productionDate: dashboardData.productionDate,
+        safetyStatus:
+          sHistory[dashboardData.productionDate] ??
+          (dashboardData.productionDate === todayKey ? sLiveToday : null),
+        qualityStatus: qLiveToday,
+        processDeviationStatus: processDeviationQuery.isSuccess
+          ? deliveryStatus(activeProcessDeviationCount)
+          : null,
+        productDeviationStatus: productDeviationQuery.isSuccess
+          ? inventoryStatus(activeProductDeviationCount)
+          : null,
+        productivityStatus: productivityStatus(dashboardData.mcAvailablePercent),
+        weeklyScrapPercent: moldingScrapData
+          ? moldingScrapData.cellTotal.scrapRate * 100
+          : null,
+        processDeviationCount: processDeviationQuery.isSuccess
+          ? activeProcessDeviationCount
+          : null,
+        processAffectedAreas: processDeviationQuery.isSuccess
+          ? snapshotProcessAffectedAreas
+          : null,
+        productDeviationCount: productDeviationQuery.isSuccess
+          ? activeProductDeviationCount
+          : null,
+        productAffectedAreas: productDeviationQuery.isSuccess
+          ? snapshotProductAffectedAreas
+          : null,
+        buyoffCount: dashboardData.buyOffCount,
+        masterCardAvailable: dashboardData.mcAvailableCount,
+        masterCardTotal: dashboardData.buyOffCount,
+        masterCardAvailabilityPercent: dashboardData.mcAvailablePercent,
+        reproCompleted: snapshotReproCompleted,
+        reproPercent: dashboardData.buyOffCount
+          ? (snapshotReproCompleted / dashboardData.buyOffCount) * 100
+          : 0,
+        repeatedRejectionCount: buyoffAlertSuccess ? buyoffAlerts.length : null,
+        openEscalationCount:
+          !snapshotTasksLoading && !snapshotTasksError ? openEscalationCount : null,
+        longTermActionCount:
+          !snapshotTasksLoading && !snapshotTasksError ? longTermActionCount : null,
+      }
+    : null;
+  const { error: dailySnapshotError } = useDashboardDailySnapshotSync(snapshotInput);
 
   const isPhoneController = window.matchMedia("(max-width: 700px)").matches;
   if ((isPhoneController && phoneView === "control") || (!isPhoneController && new URLSearchParams(window.location.search).get("control") === "1")) {
@@ -939,16 +1067,11 @@ export function Index() {
             <PillarCard
               key={p.key}
               pillar={p}
-              dots={
-                liveNow
-                  ? buildMonthDotsFromHistory(
-                      daysInMonth,
-                      { S: sHistory, Q: qHistory, D: dHistory, I: iHistory, P: pHistory }[p.key],
-                      now,
-                      { S: null, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key],
-                    )
-                  : []
-              }
+              history={{ S: sHistory, Q: qHistory, D: dHistory, I: iHistory, P: pHistory }[p.key]}
+              liveToday={{ S: sLiveToday, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key]}
+              now={now}
+              metricHistory={dailyMetricHistories[p.key]}
+              liveMetric={liveDailyMetrics[p.key]}
               shifts={
                 p.key === "D"
                   ? computeDeviationShiftStatuses(effectiveDeliveryDeviations)
@@ -972,6 +1095,10 @@ export function Index() {
               onDateStatusChange={(day, status) =>
                 setDashboardDateStatus({ pillar: p.key, day, status })
               }
+              onSafetyIncidentsChange={p.key === "S"
+                ? (count) => setSafetyIncidents({ day: todayKey, count })
+                : undefined}
+              isSavingSafetyIncidents={p.key === "S" && isSavingSafetyIncidents}
               isSavingDateStatus={isSavingDateStatus}
               onOpenTrends={() => {
                 setTrendsFocus(p.key);
@@ -985,6 +1112,16 @@ export function Index() {
             <p className="mt-2 text-xs text-danger">
               Could not save the date status to SharePoint:{" "}
               {dateStatusSaveError instanceof Error ? dateStatusSaveError.message : "Unknown error"}
+            </p>
+          )}
+          {safetyIncidentError && (
+            <p className="mt-2 text-xs text-danger">
+              Could not save the Safety incident count: {safetyIncidentError.message}
+            </p>
+          )}
+          {dailySnapshotError && (
+            <p className="mt-2 text-xs text-danger">
+              Could not save the Dashboard Daily Snapshot: {dailySnapshotError.message}
             </p>
           )}
         </section>
@@ -1154,8 +1291,8 @@ function AvailabilityScrapChart() {
   return <AvailabilityScrapChartImpl />;
 }
 
-function LiveDashboardSection() {
-  const { data, isLoading, error, lastFetchedAt } = useDashboardData();
+function LiveDashboardSection({ period = "production-day" }: { period?: DashboardPeriod }) {
+  const { data, isLoading, error, lastFetchedAt } = useDashboardData(period);
   const [reproValues, setReproValues] = useState<Record<string, string>>({});
   const reproStorageKey = data
     ? `amg.reproComplete:${data.productionWindowStart}`
@@ -1167,18 +1304,23 @@ function LiveDashboardSection() {
     if (!reproStorageKey) return;
     window.localStorage.setItem(reproStorageKey, value);
     setReproValues((current) => ({ ...current, [reproStorageKey]: value }));
+    window.dispatchEvent(
+      new CustomEvent(REPRO_COMPLETE_EVENT, {
+        detail: { key: reproStorageKey, value },
+      }),
+    );
   };
   return (
     <section className="space-y-4">
       {error && (
         <div className="rounded-sm border border-danger/50 bg-danger/10 text-danger px-4 py-3 text-sm">
-          Cannot reach dashboard API ({error}). Make sure the local backend is running at{" "}
+          Cannot load {period !== "production-day" ? "monthly" : "production-day"} Productivity data ({error}). Make sure the SharePoint connection or local backend is available at{" "}
           <code className="font-mono">{(import.meta as unknown as { env?: Record<string, string | undefined> }).env?.VITE_API_BASE_URL ?? "http://localhost:3001"}</code>.
         </div>
       )}
       {isLoading && !data && (
         <div className="rounded-sm border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
-          Loading live dashboard data…
+          Loading {period === "previous-month" ? "last month" : period === "month" ? "this month" : "live dashboard data"}…
         </div>
       )}
       {data && (
@@ -1213,11 +1355,11 @@ function LiveKpiRow({
       <div className="rounded-sm border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold flex flex-wrap items-center gap-x-4 gap-y-1">
         <span className="flex items-center gap-1.5">
           <CalendarDays className="size-4 text-primary" />
-          {data.reportingPeriod === "week" ? "Last Completed Week" : "Production Window"}: {data.productionWindowStart || "—"} – {data.productionWindowEnd || "—"}
+          {data.reportingPeriod === "month" ? "Calendar Month" : data.reportingPeriod === "week" ? "Last Completed Week" : "Production Window"}: {data.productionWindowStart || "—"} – {data.productionWindowEnd || "—"}
         </span>
         {data.productionDate && (
           <span className="text-xs font-normal text-muted-foreground">
-            {data.reportingPeriod === "week" ? "Reporting period" : "Production date"}: {data.productionDate}
+            {data.reportingPeriod === "month" ? "Reporting month" : data.reportingPeriod === "week" ? "Reporting period" : "Production date"}: {data.productionDate}
           </span>
         )}
       </div>
@@ -1305,7 +1447,7 @@ function KpiTree({
               <BadgeCheck className="size-5 text-primary" />
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium italic text-muted-foreground">Manual total for this reporting week</p>
+          <p className="mt-3 text-xs font-medium italic text-muted-foreground">Manual total for this reporting period</p>
         </div>
 
         <div className="relative col-span-6 overflow-hidden rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:col-span-2">
@@ -1396,7 +1538,7 @@ function MissingMcList({ data }: { data: DashboardData }) {
       </div>
       {jobs.length === 0 ? (
         <div className="px-4 py-6 text-center text-xs text-muted-foreground">
-          No missing MasterCards in the last completed week.
+          No missing MasterCards in the selected reporting period.
         </div>
       ) : (
       <>
@@ -2345,7 +2487,11 @@ function PillarGauge({
 
 function PillarCard({
   pillar,
-  dots,
+  history,
+  liveToday,
+  now,
+  metricHistory,
+  liveMetric,
   shifts,
   qualityIssues,
   qualityScrap,
@@ -2358,12 +2504,18 @@ function PillarCard({
   buyoffAlertError,
   buyoffAlertLoading,
   onDateStatusChange,
+  onSafetyIncidentsChange,
+  isSavingSafetyIncidents,
   isSavingDateStatus,
   onOpenTrends,
   index = 0,
 }: {
   pillar: Pillar;
-  dots: { day: number; status: Status; weekend?: boolean }[];
+  history: Record<string, DayStatus>;
+  liveToday: DayStatus | null;
+  now: Date;
+  metricHistory: Record<string, number>;
+  liveMetric: number | null;
   shifts: Status[];
   qualityIssues?: QualityIssue[];
   qualityScrap?: MoldingScrapData | null;
@@ -2376,12 +2528,39 @@ function PillarCard({
   buyoffAlertError?: Error | null;
   buyoffAlertLoading?: boolean;
   onDateStatusChange: (day: string, status: DayStatus) => Promise<unknown>;
+  onSafetyIncidentsChange?: (count: number) => Promise<unknown>;
+  isSavingSafetyIncidents?: boolean;
   isSavingDateStatus?: boolean;
   onOpenTrends?: () => void;
   index?: number;
 }) {
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
+  const [calendarMonthOffset, setCalendarMonthOffset] = useState<0 | -1>(0);
+  const displayedMonth = useMemo(
+    () => new Date(now.getFullYear(), now.getMonth() + calendarMonthOffset, 1),
+    [calendarMonthOffset, now.getFullYear(), now.getMonth()],
+  );
+  const dots = useMemo(
+    () => buildMonthDotsFromHistory(displayedMonth, history, now, liveToday),
+    [displayedMonth, history, liveToday, now],
+  );
+  const calendarLabel = displayedMonth.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+  const metricForDay = (day: number): number | null => {
+    const selected = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
+    const key = dateKey(selected);
+    return key === dateKey(now) && liveMetric != null ? liveMetric : metricHistory[key] ?? null;
+  };
+  const formatDailyMetric = (value: number | null): string => {
+    if (value == null) return "—";
+    if (pillar.key === "Q" || pillar.key === "P") {
+      return `${value < 10 ? value.toFixed(1) : Math.round(value)}%`;
+    }
+    return String(Math.round(value));
+  };
   const [areaStatusOverrides, setAreaStatusOverrides] = useLocalState<Record<string, Status>>(
     pillar.key === "S" ? "amg-safety-area-statuses" : `amg-area-statuses:${pillar.key}`,
     pillar.key === "S"
@@ -2417,7 +2596,7 @@ function PillarCard({
   }, [remoteCommand?.id, remoteCommand?.command, remoteCommand?.target, pillar.key]);
   const recordedDays = dots.filter((dot) => !dot.weekend && dot.status !== "na").length;
   const recordedOkDays = dots.filter((dot) => !dot.weekend && dot.status === "ok").length;
-  const currentStatus = dots.find((dot) => dot.day === new Date().getDate())?.status ?? "na";
+  const currentStatus = liveToday ?? history[dateKey(now)] ?? "na";
   const currentStatusLabel = currentStatus === "ok" ? "OK" : currentStatus === "warn" ? "Warning" : currentStatus === "fail" ? "Miss" : "Not recorded";
   const affectedShifts =
     pillar.key === "D" || pillar.key === "I"
@@ -2461,14 +2640,14 @@ function PillarCard({
               ];
   const detail = { ...PILLAR_DETAILS[pillar.key], stats: liveStats };
   const kpiText = pillar.kpi;
-  const today = new Date().getDate();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
   // Safety has no automatic live signal — today's status is only ever a
   // real, manual entry, recorded straight into the same day-history store
   // the other pillars write to (see use-pillar-day-history.ts).
   const cycleDateStatus = (day: number, current: Status) => {
     const order: DayStatus[] = ["ok", "warn", "fail"];
     const next = order[(order.indexOf(current as DayStatus) + 1) % order.length];
-    const selected = new Date(new Date().getFullYear(), new Date().getMonth(), day);
+    const selected = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), day);
     const selectedDay = dateKey(selected);
     recordPillarDay(pillar.key, selectedDay, next);
     void onDateStatusChange(selectedDay, next);
@@ -2541,19 +2720,55 @@ function PillarCard({
           <PillarGauge okCount={okCount} warnCount={warnCount} failCount={failCount} />
         </div>
 
+        {/* Calendar month navigation */}
+        <div className="mt-4 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            disabled={calendarMonthOffset === -1}
+            onClick={(event) => {
+              event.stopPropagation();
+              setCalendarMonthOffset(-1);
+            }}
+            title="Show last month's date balls"
+            aria-label={`Show previous month for ${pillar.label}`}
+            className="grid size-7 place-items-center rounded-sm border border-border text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:cursor-default disabled:opacity-35"
+          >
+            <ChevronLeft className="size-4" />
+          </button>
+          <div className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            {calendarLabel}
+          </div>
+          <button
+            type="button"
+            disabled={calendarMonthOffset === 0}
+            onClick={(event) => {
+              event.stopPropagation();
+              setCalendarMonthOffset(0);
+            }}
+            title="Return to the current month's date balls"
+            aria-label={`Show current month for ${pillar.label}`}
+            className="grid size-7 place-items-center rounded-sm border border-border text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:cursor-default disabled:opacity-35"
+          >
+            <ChevronRight className="size-4" />
+          </button>
+        </div>
+
         {/* Day dots grid */}
-        <div className="mt-4 grid grid-cols-7 gap-1.5">
+        <div className="mt-2 grid grid-cols-7 gap-1.5">
           {dots.map((d) => {
-            const editable = !d.weekend && d.day <= today && !isSavingDateStatus;
+            const selectedDate = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), d.day);
+            const editable = !d.weekend && selectedDate.getTime() <= todayStart && !isSavingDateStatus;
+            const metric = metricForDay(d.day);
             if (d.weekend) {
               return (
                 <div
                   key={d.day}
                   title={`Day ${d.day} — weekend`}
                   aria-label={`Day ${d.day}, weekend`}
-                  className="grid size-5 place-items-center rounded-full bg-accent/25 text-[9px] font-semibold text-foreground ring-1 ring-accent/40"
+                  className="flex h-9 min-w-0 flex-col items-center justify-center rounded-sm bg-accent/25 text-foreground ring-1 ring-accent/40"
                 >
-                  {d.day}
+                  <span className="text-[8px] font-semibold opacity-70">{d.day}</span>
+                  <span className="text-[9px] font-bold">—</span>
                 </div>
               );
             }
@@ -2572,16 +2787,17 @@ function PillarCard({
                 }
                 title={
                   editable
-                    ? `Day ${d.day} — click to change and save status to SharePoint`
-                    : `Day ${d.day}`
+                    ? `Day ${d.day}: ${formatDailyMetric(metric)} — click to change status`
+                    : `Day ${d.day}: ${formatDailyMetric(metric)}`
                 }
-                className={`size-5 rounded-full grid place-items-center text-[8px] font-bold text-background ${
+                className={`flex h-9 min-w-0 flex-col items-center justify-center rounded-sm text-background ${
                   d.status === "na"
                     ? "bg-secondary text-muted-foreground"
                     : statusColor(d.status)
                 } ${editable ? "cursor-pointer ring-1 ring-primary/60 hover:scale-110 transition-transform" : "cursor-default"}`}
               >
-                {d.day}
+                <span className="text-[8px] font-semibold opacity-75">{d.day}</span>
+                <span className="max-w-full truncate text-[9px] font-black tabular-nums">{formatDailyMetric(metric)}</span>
               </button>
             );
           })}
@@ -2695,6 +2911,11 @@ function PillarCard({
           buyoffAlertLoading={buyoffAlertLoading}
           onCycleSafetyArea={cycleAreaStatus}
           areaNotes={areaNotes}
+          calendarLabel={calendarLabel}
+          dailyMetricLabels={Object.fromEntries(dots.map((dot) => [dot.day, formatDailyMetric(metricForDay(dot.day))]))}
+          safetyIncidentCount={pillar.key === "S" ? liveMetric ?? 0 : 0}
+          onSafetyIncidentsChange={onSafetyIncidentsChange}
+          isSavingSafetyIncidents={isSavingSafetyIncidents}
           onAreaNoteChange={(area, note) =>
             setAreaNotes((current) => ({ ...current, [area]: note }))
           }
@@ -3136,6 +3357,27 @@ function DeviationFloor({ pillarKey }: { pillarKey: DeviationPillarKey }) {
   );
 }
 
+function ProductivityDetailStats({ period }: { period: DashboardPeriod }) {
+  const { data, isLoading } = useDashboardData(period);
+  const stats = data
+    ? [
+        { label: "MasterCard availability", value: `${Math.round(data.mcAvailablePercent)}%` },
+        { label: period !== "production-day" ? "Monthly buyoffs" : "Machines Running", value: fmtInt(data.buyOffCount) },
+        { label: "Missing MasterCards", value: fmtInt(data.missingCount) },
+      ]
+    : [
+        { label: "MasterCard availability", value: isLoading ? "Loading…" : "Unavailable" },
+        { label: period !== "production-day" ? "Monthly buyoffs" : "Machines Running", value: "—" },
+        { label: "Missing MasterCards", value: "—" },
+      ];
+  return stats.map((stat) => (
+    <div key={stat.label} className="rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)]">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{stat.label}</div>
+      <div className="mt-1 text-2xl font-bold tabular-nums text-primary">{stat.value}</div>
+    </div>
+  ));
+}
+
 function PillarDetailOverlay({
   pillar,
   detail,
@@ -3149,6 +3391,11 @@ function PillarDetailOverlay({
   buyoffAlertLoading,
   onCycleSafetyArea,
   areaNotes,
+  calendarLabel,
+  dailyMetricLabels,
+  safetyIncidentCount,
+  onSafetyIncidentsChange,
+  isSavingSafetyIncidents,
   onAreaNoteChange,
   onClose,
 }: {
@@ -3164,10 +3411,18 @@ function PillarDetailOverlay({
   buyoffAlertLoading?: boolean;
   onCycleSafetyArea: (area: (typeof SHIFTS)[number]) => void;
   areaNotes: Record<string, string>;
+  calendarLabel: string;
+  dailyMetricLabels: Record<number, string>;
+  safetyIncidentCount: number;
+  onSafetyIncidentsChange?: (count: number) => Promise<unknown>;
+  isSavingSafetyIncidents?: boolean;
   onAreaNoteChange: (area: (typeof SHIFTS)[number], note: string) => void;
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
+  const [productivityPeriod, setProductivityPeriod] = useState<DashboardPeriod>("production-day");
+  const [safetyIncidentDraft, setSafetyIncidentDraft] = useState(String(safetyIncidentCount));
+  useEffect(() => setSafetyIncidentDraft(String(safetyIncidentCount)), [safetyIncidentCount]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -3217,6 +3472,56 @@ function PillarDetailOverlay({
             </button>
           </div>
 
+          {pillar.key === "P" && (
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-sm border border-border bg-card px-4 py-3 shadow-[var(--shadow-card)]">
+              <div className="flex items-center gap-2">
+                <Filter className="size-4 text-primary" />
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Productivity filter</h3>
+                  <p className="text-[10px] text-muted-foreground">Change the KPI summary and buyoff tables together.</p>
+                </div>
+              </div>
+              <div className="inline-flex overflow-hidden rounded-sm border border-border" role="group" aria-label="Productivity reporting period">
+                <button
+                  type="button"
+                  onClick={() => setProductivityPeriod("production-day")}
+                  aria-pressed={productivityPeriod === "production-day"}
+                  className={`px-3 py-1.5 text-xs font-semibold transition ${
+                    productivityPeriod === "production-day"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-secondary"
+                  }`}
+                >
+                  Production Day
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProductivityPeriod("month")}
+                  aria-pressed={productivityPeriod === "month"}
+                  className={`border-l border-border px-3 py-1.5 text-xs font-semibold transition ${
+                    productivityPeriod === "month"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-secondary"
+                  }`}
+                >
+                  This Month
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProductivityPeriod("previous-month")}
+                  aria-pressed={productivityPeriod === "previous-month"}
+                  className={`border-l border-border px-3 py-1.5 text-xs font-semibold transition ${
+                    productivityPeriod === "previous-month"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-secondary"
+                  }`}
+                >
+                  Last Month
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)]">
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Month Score</div>
@@ -3226,7 +3531,9 @@ function PillarDetailOverlay({
                 <span className="text-danger font-bold">{failCount} miss</span>
               </div>
             </div>
-            {detail.stats.map((s) => (
+            {pillar.key === "P" ? (
+              <ProductivityDetailStats period={productivityPeriod} />
+            ) : detail.stats.map((s) => (
               <div
                 key={s.label}
                 className="rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)]"
@@ -3258,13 +3565,13 @@ function PillarDetailOverlay({
                   />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <LiveDashboardSection />
+                  <LiveDashboardSection period={productivityPeriod} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <PafBuyoffTable />
+                  <PafBuyoffTable period={productivityPeriod} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <ExtrusionBuyoffTable />
+                  <ExtrusionBuyoffTable period={productivityPeriod} />
                 </section>
                 <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
                   <MastercardsProductionChart />
@@ -3288,6 +3595,34 @@ function PillarDetailOverlay({
 
             {pillar.key === "S" && (
               <>
+                <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
+                  <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                      <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Today's Safety Incidents</h3>
+                      <p className="mt-1 text-xs text-muted-foreground">Enter the confirmed incident count for today's date tracker.</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        step="1"
+                        inputMode="numeric"
+                        value={safetyIncidentDraft}
+                        onChange={(event) => setSafetyIncidentDraft(event.target.value.replace(/[^0-9]/g, ""))}
+                        aria-label="Today's Safety incident count"
+                        className="h-10 w-24 rounded-sm border border-border bg-background px-3 text-center text-lg font-bold tabular-nums outline-none focus:border-primary"
+                      />
+                      <button
+                        type="button"
+                        disabled={!onSafetyIncidentsChange || isSavingSafetyIncidents || safetyIncidentDraft === ""}
+                        onClick={() => void onSafetyIncidentsChange?.(Math.max(0, Number.parseInt(safetyIncidentDraft, 10) || 0))}
+                        className="h-10 rounded-sm bg-primary px-4 text-xs font-bold text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+                      >
+                        {isSavingSafetyIncidents ? "Saving…" : "Save incidents"}
+                      </button>
+                    </div>
+                  </div>
+                </section>
                 <section className="rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Production Areas</h3>
                   <div className="space-y-3">
@@ -3315,12 +3650,13 @@ function PillarDetailOverlay({
                   </div>
                 </section>
                 <section className="lg:col-span-2 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">Monthly Status</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-1">Monthly Status</h3>
+                  <p className="mb-4 text-xs font-semibold text-primary">{calendarLabel}</p>
                   <div className="grid grid-cols-7 gap-2">
                     {dots.map((d) => (
                       <div
                         key={d.day}
-                        className={`size-8 rounded-full grid place-items-center text-[10px] font-semibold ${
+                        className={`flex h-11 min-w-0 flex-col items-center justify-center rounded-sm ${
                           d.weekend
                             ? "bg-accent/25 text-foreground ring-1 ring-accent/40"
                             : d.status === "na"
@@ -3328,7 +3664,8 @@ function PillarDetailOverlay({
                               : `text-background ${statusColor(d.status)}`
                         }`}
                       >
-                        {d.day}
+                        <span className="text-[9px] font-semibold opacity-70">{d.day}</span>
+                        <span className="text-xs font-black tabular-nums">{dailyMetricLabels[d.day] ?? "—"}</span>
                       </div>
                     ))}
                   </div>
@@ -3369,12 +3706,13 @@ function PillarDetailOverlay({
   );
 }
 
-function PafBuyoffTable() {
-  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs();
+function PafBuyoffTable({ period = "production-day" }: { period?: DashboardPeriod }) {
+  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs(period);
+  const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Current production-day";
   return (
     <BuyoffLogTable
       title="Coils & Collars Buyoff Log"
-      description="Latest records from the PAF Buyoff Structure SharePoint list"
+      description={`${periodLabel} records from the PAF Buyoff Structure SharePoint list`}
       emptyLabel="No Coils & Collars buyoff records found."
       data={data}
       isLoading={isLoading}
@@ -3384,12 +3722,13 @@ function PafBuyoffTable() {
   );
 }
 
-function ExtrusionBuyoffTable() {
-  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs();
+function ExtrusionBuyoffTable({ period = "production-day" }: { period?: DashboardPeriod }) {
+  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs(period);
+  const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Latest";
   return (
     <BuyoffLogTable
       title="Extrusion Buyoff Log"
-      description="Latest records from the Extrusion SharePoint list · 7 AM–7 AM reporting day"
+      description={period === "production-day" ? "Latest records from the Extrusion SharePoint list · 7 AM–7 AM reporting day" : `${periodLabel} records from the Extrusion SharePoint list`}
       emptyLabel="No Extrusion buyoff records found."
       data={data}
       isLoading={isLoading}
