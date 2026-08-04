@@ -146,8 +146,18 @@ export function reportingWindow(now = new Date()): WindowInfo {
 export function dashboardWindow(
   period: DashboardPeriod = "production-day",
   now = new Date(),
+  productionDate?: string | null,
 ): WindowInfo {
-  if (period === "production-day") return reportingWindow(now);
+  if (period === "production-day") {
+    if (productionDate?.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = productionDate.split("-").map(Number);
+      const start = new Date(year, month - 1, day, 7, 0, 0, 0);
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+      return { start, end, productionDate, reportingPeriod: "production-day" };
+    }
+    return reportingWindow(now);
+  }
   const monthOffset = period === "previous-month" ? -1 : 0;
   const start = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1, 0, 0, 0, 0);
   const end = new Date(start.getFullYear(), start.getMonth() + 1, 1, 0, 0, 0, 0);
@@ -199,8 +209,9 @@ function normalizeRow(row: MoldingBuyoffStructureRead): NormalizedRow | null {
 function buildDashboard(
   records: MoldingBuyoffStructureRead[],
   period: DashboardPeriod = "production-day",
+  productionDate?: string | null,
 ): DashboardData {
-  const window = dashboardWindow(period);
+  const window = dashboardWindow(period, new Date(), productionDate);
   // Record 4372 is an invalid placeholder row (machine "NANANAN",
   // Fastlock Insert) and must not affect Productivity KPIs or tables.
   const excludedRecordIds = new Set([4372]);
@@ -329,8 +340,8 @@ async function loadLocalApi(signal: AbortSignal): Promise<DashboardData> {
   return response.json() as Promise<DashboardData>;
 }
 
-async function loadSharePoint(period: DashboardPeriod): Promise<DashboardData> {
-  const window = dashboardWindow(period);
+async function loadSharePoint(period: DashboardPeriod, productionDate?: string | null): Promise<DashboardData> {
+  const window = dashboardWindow(period, new Date(), productionDate);
   const result = await MoldingBuyoffStructureService.getAll({
     maxPageSize: 500,
     top: period === "production-day" ? 1000 : 5000,
@@ -354,12 +365,12 @@ async function loadSharePoint(period: DashboardPeriod): Promise<DashboardData> {
   if (!result.success) {
     throw result.error ?? new Error("SharePoint returned an unsuccessful response");
   }
-  return buildDashboard(result.data ?? [], period);
+  return buildDashboard(result.data ?? [], period, productionDate);
 }
 
-async function loadDashboard(signal: AbortSignal, period: DashboardPeriod): Promise<DashboardData> {
+async function loadDashboard(signal: AbortSignal, period: DashboardPeriod, productionDate?: string | null): Promise<DashboardData> {
   try {
-    return await loadSharePoint(period);
+    return await loadSharePoint(period, productionDate);
   } catch (connectorError) {
     if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
       throw connectorError;
@@ -369,11 +380,11 @@ async function loadDashboard(signal: AbortSignal, period: DashboardPeriod): Prom
   }
 }
 
-export function useDashboardData(period: DashboardPeriod = "production-day"): DashboardState {
-  const window = dashboardWindow(period);
+export function useDashboardData(period: DashboardPeriod = "production-day", productionDate?: string | null): DashboardState {
+  const window = dashboardWindow(period, new Date(), productionDate);
   const query = useQuery({
     queryKey: ["molding-buyoff-dashboard", period, window.productionDate],
-    queryFn: ({ signal }) => loadDashboard(signal, period),
+    queryFn: ({ signal }) => loadDashboard(signal, period, productionDate),
     refetchInterval: REFRESH_MS,
     refetchIntervalInBackground: false,
   });

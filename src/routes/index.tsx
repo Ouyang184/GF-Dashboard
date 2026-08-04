@@ -34,7 +34,7 @@ import {
 } from "@/hooks/use-dashboard-daily-snapshot";
 import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
-import { useDashboardData, useMarkMasterCardCreated, type DashboardData, type DashboardPeriod, type FloorMapEntry } from "@/hooks/use-dashboard-data";
+import { reportingWindow, useDashboardData, useMarkMasterCardCreated, type DashboardData, type DashboardPeriod, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { useMoldingScrap, type MoldingScrapData } from "@/hooks/use-molding-scrap";
 import { useMastercardsProduction, type MastercardProductionRow } from "@/hooks/use-mastercards-production";
 import { useDashboardTasks, type DashboardTask } from "@/hooks/use-dashboard-tasks";
@@ -272,12 +272,13 @@ function buildMonthDotsFromHistory(
   history: Record<string, DayStatus>,
   liveToday: DayStatus | null,
   liveDate: string,
+  availableThroughDate: string,
 ) {
   const displayedYear = displayedMonth.getFullYear();
   const displayedMonthIndex = displayedMonth.getMonth();
   const daysInMonth = new Date(displayedYear, displayedMonthIndex + 1, 0).getDate();
-  const [liveYear, liveMonth, liveDay] = liveDate.split("-").map(Number);
-  const liveDateStart = new Date(liveYear, liveMonth - 1, liveDay).getTime();
+  const [cutoffYear, cutoffMonth, cutoffDay] = availableThroughDate.split("-").map(Number);
+  const availableThrough = new Date(cutoffYear, cutoffMonth - 1, cutoffDay).getTime();
   const dots: { day: number; status: Status; weekend: boolean }[] = [];
   for (let d = 1; d <= daysInMonth; d++) {
     const thisDate = new Date(displayedYear, displayedMonthIndex, d);
@@ -287,7 +288,7 @@ function buildMonthDotsFromHistory(
       dots.push({ day: d, status: "na", weekend: true });
       continue;
     }
-    if (thisDate.getTime() > liveDateStart) {
+    if (thisDate.getTime() > availableThrough) {
       dots.push({ day: d, status: "na", weekend: false });
       continue;
     }
@@ -513,6 +514,7 @@ function usHolidays(year: number): Holiday[] {
 }
 
 export function Index() {
+  const [selectedDataDate, setSelectedDataDate] = useState<string | null>(null);
   const [phoneView, setPhoneView] = useState<"control" | "dashboard">("control");
   const [iceCreamFriday, setIceCreamFriday] = useState(false);
   const [trendsOpen, setTrendsOpen] = useState(false);
@@ -593,7 +595,7 @@ export function Index() {
     return SHIFTS.map(() => pickStatus(rng));
   });
 
-  const { data: dashboardData } = useDashboardData();
+  const { data: dashboardData } = useDashboardData("production-day", selectedDataDate);
   const processDeviationQuery = useProcessDeviationList();
   const processDeviationData = processDeviationQuery.data ?? { processParts: [], processMachines: [], productParts: [], rows: [] };
   const productDeviationQuery = useProductDeviations();
@@ -800,21 +802,21 @@ export function Index() {
   };
 
   useEffect(() => {
-    if (!deviationReportingDate || !qLiveToday) return;
+    if (selectedDataDate || !deviationReportingDate || !qLiveToday) return;
     recordPillarDay("Q", deviationReportingDate, qLiveToday);
-  }, [deviationReportingDate, qLiveToday]);
+  }, [selectedDataDate, deviationReportingDate, qLiveToday]);
   useEffect(() => {
-    if (!deviationReportingDate) return;
+    if (selectedDataDate || !deviationReportingDate) return;
     recordPillarDay("D", deviationReportingDate, dLiveToday);
-  }, [deviationReportingDate, dLiveToday]);
+  }, [selectedDataDate, deviationReportingDate, dLiveToday]);
   useEffect(() => {
-    if (!deviationReportingDate) return;
+    if (selectedDataDate || !deviationReportingDate) return;
     recordPillarDay("I", deviationReportingDate, iLiveToday);
-  }, [deviationReportingDate, iLiveToday]);
+  }, [selectedDataDate, deviationReportingDate, iLiveToday]);
   useEffect(() => {
-    if (!deviationReportingDate || !pLiveToday) return;
+    if (selectedDataDate || !deviationReportingDate || !pLiveToday) return;
     recordPillarDay("P", deviationReportingDate, pLiveToday);
-  }, [deviationReportingDate, pLiveToday]);
+  }, [selectedDataDate, deviationReportingDate, pLiveToday]);
 
   // Backfill Productivity's real history from actual dated job records —
   // the dashboard API returns every Machine+Part job with a real
@@ -855,7 +857,7 @@ export function Index() {
   const longTermActionCount = snapshotTasks.filter(
     (task) => task.taskType === "LongTermAction" && task.status !== "Complete",
   ).length;
-  const snapshotInput: DashboardDailySnapshotInput | null = dashboardData
+  const snapshotInput: DashboardDailySnapshotInput | null = dashboardData && !selectedDataDate
     ? {
         productionDate: dashboardData.productionDate,
         safetyStatus:
@@ -1055,6 +1057,8 @@ export function Index() {
               liveToday={{ S: sLiveToday, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key]}
               now={now}
               dataDate={deviationReportingDate}
+              availableThroughDate={reportingWindow(now).productionDate}
+              onSelectDataDate={(day) => setSelectedDataDate(day === reportingWindow(now).productionDate ? null : day)}
               liveMetric={liveDailyMetrics[p.key]}
               shifts={
                 p.key === "D"
@@ -2481,6 +2485,8 @@ function PillarCard({
   liveToday,
   now,
   dataDate,
+  availableThroughDate,
+  onSelectDataDate,
   liveMetric,
   shifts,
   qualityIssues,
@@ -2505,6 +2511,8 @@ function PillarCard({
   liveToday: DayStatus | null;
   now: Date;
   dataDate: string;
+  availableThroughDate: string;
+  onSelectDataDate: (day: string) => void;
   liveMetric: number | null;
   shifts: Status[];
   qualityIssues?: QualityIssue[];
@@ -2532,8 +2540,8 @@ function PillarCard({
     [calendarMonthOffset, now.getFullYear(), now.getMonth()],
   );
   const dots = useMemo(
-    () => buildMonthDotsFromHistory(displayedMonth, history, liveToday, dataDate),
-    [dataDate, displayedMonth, history, liveToday],
+    () => buildMonthDotsFromHistory(displayedMonth, history, liveToday, dataDate, availableThroughDate),
+    [availableThroughDate, dataDate, displayedMonth, history, liveToday],
   );
   const calendarLabel = displayedMonth.toLocaleDateString("en-US", {
     month: "long",
@@ -2735,7 +2743,9 @@ function PillarCard({
         <div className="mt-2 grid grid-cols-7 gap-1.5">
           {dots.map((d) => {
             const selectedDate = new Date(displayedMonth.getFullYear(), displayedMonth.getMonth(), d.day);
+            const selectedDateKey = dateKey(selectedDate);
             const editable = !d.weekend && selectedDate.getTime() <= todayStart && !isSavingDateStatus;
+            const selectable = !d.weekend && selectedDateKey <= availableThroughDate;
             if (d.weekend) {
               return (
                 <div
@@ -2752,25 +2762,29 @@ function PillarCard({
               <button
                 key={d.day}
                 type="button"
-                disabled={!editable}
+                disabled={!selectable}
                 onClick={
-                  editable
+                  selectable
                     ? (e) => {
                         e.stopPropagation();
-                        cycleDateStatus(d.day, d.status);
+                        if (e.shiftKey && editable) {
+                          cycleDateStatus(d.day, d.status);
+                        } else {
+                          onSelectDataDate(selectedDateKey);
+                        }
                       }
                     : undefined
                 }
                 title={
-                  editable
-                    ? `Day ${d.day} — click to change and save status to SharePoint`
+                  selectable
+                    ? `Show dashboard data for ${selectedDateKey} (Shift+click to change its status)`
                     : `Day ${d.day}`
                 }
                 className={`size-5 rounded-full grid place-items-center text-[8px] font-bold text-background ${
                   d.status === "na"
                     ? "bg-secondary text-muted-foreground"
                     : statusColor(d.status)
-                } ${editable ? "cursor-pointer ring-1 ring-primary/60 hover:scale-110 transition-transform" : "cursor-default"}`}
+                } ${selectable ? "cursor-pointer hover:scale-110 transition-transform" : "cursor-default"} ${selectedDateKey === dataDate ? "ring-2 ring-primary ring-offset-2 ring-offset-card" : editable ? "ring-1 ring-primary/60" : ""}`}
               >
                 {d.day}
               </button>
