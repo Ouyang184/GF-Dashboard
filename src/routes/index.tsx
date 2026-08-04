@@ -2466,10 +2466,7 @@ function PillarGauge({
         aria-hidden="true"
       />
       <div className="flex items-center justify-between gap-4 pl-1">
-        <div>
-          <div className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">Live metric</div>
-          <div className="mt-1 text-xs font-semibold text-foreground">{labels[pillar.key]}</div>
-        </div>
+        <div className="text-xs font-semibold text-foreground">{labels[pillar.key]}</div>
         <div className="text-3xl font-black tabular-nums tracking-tight text-foreground">{formatted}</div>
       </div>
     </div>
