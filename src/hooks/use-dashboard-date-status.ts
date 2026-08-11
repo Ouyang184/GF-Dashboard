@@ -77,9 +77,21 @@ export function useDashboardDateStatus(
       const pillar = PILLAR_KEYS[(row.Pillar ?? "").trim().toLowerCase()];
       const date = (row.StatusDate ?? "").slice(0, 10);
       const status = statusFromColor(row.StatusColor);
+      const isManual = (row.Details ?? "").toLowerCase().includes(MANUAL_DETAILS.toLowerCase());
+      // Quality is a weekly manual input. Ignore legacy automatic Quality
+      // rows so a day does not appear colored before Monday is explicitly set.
+      if (pillar === "Q" && !isManual) continue;
+      // Automatic Process/Product/Productivity rows are final only after the
+      // complete 7 AM–7 AM production window. The `day` argument is the most
+      // recently completed date, so hide legacy premature rows after it.
+      if (
+        !isManual &&
+        (pillar === "D" || pillar === "I" || pillar === "P") &&
+        date > day
+      ) continue;
       if (pillar && date && status) {
         next[pillar][date] = status;
-        if ((row.Details ?? "").toLowerCase().includes(MANUAL_DETAILS.toLowerCase())) {
+        if (isManual) {
           manualOverrides.add(`${pillar}|${date}`);
         }
       }

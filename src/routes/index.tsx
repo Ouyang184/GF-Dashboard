@@ -27,12 +27,13 @@ import {
 } from "@/hooks/use-dashboard-date-status";
 import {
   REPRO_COMPLETE_EVENT,
+  useDashboardDailySnapshotHistory,
   useDashboardDailySnapshotSync,
   type DashboardDailySnapshotInput,
 } from "@/hooks/use-dashboard-daily-snapshot";
 import { useMastercardsUploader } from "@/hooks/use-mastercards-upload";
 import { useComplianceData, useComplianceUploader } from "@/hooks/use-compliance-upload";
-import { reportingWindow, useDashboardData, useMarkMasterCardCreated, type DashboardData, type DashboardPeriod, type FloorMapEntry } from "@/hooks/use-dashboard-data";
+import { dashboardWindow, reportingWindow, useDashboardData, useMarkMasterCardCreated, type DashboardData, type DashboardPeriod, type FloorMapEntry } from "@/hooks/use-dashboard-data";
 import { useMoldingScrap, type MoldingScrapData } from "@/hooks/use-molding-scrap";
 import { useMastercardsProduction, type MastercardProductionRow } from "@/hooks/use-mastercards-production";
 import { useDashboardTasks, type DashboardTask } from "@/hooks/use-dashboard-tasks";
@@ -96,6 +97,28 @@ export const Route = createFileRoute("/")({
 });
 
 type Status = "ok" | "warn" | "fail" | "na";
+type DashboardViewPeriod = "production-day" | "week" | "month";
+
+function localDate(value: string): Date {
+  const [year, month, day] = value.split("-").map(Number);
+  return new Date(year, month - 1, day, 12, 0, 0, 0);
+}
+
+function workWeekDateKeys(value: string): string[] {
+  const source = localDate(value);
+  source.setDate(source.getDate() - ((source.getDay() + 6) % 7));
+  return Array.from({ length: 5 }, (_, index) => {
+    const day = new Date(source);
+    day.setDate(source.getDate() + index);
+    return dateKey(day);
+  });
+}
+
+function previousWorkWeekDateKeys(reference: Date): string[] {
+  const monday = new Date(reference.getFullYear(), reference.getMonth(), reference.getDate(), 12);
+  monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7) - 7);
+  return workWeekDateKeys(dateKey(monday));
+}
 
 type QualityIssue = {
   machine: string;
@@ -286,11 +309,11 @@ function buildMonthDotsFromHistory(
       dots.push({ day: d, status: "na", weekend: true });
       continue;
     }
-    if (thisDate.getTime() > availableThrough) {
+    const key = dateKey(thisDate);
+    if (thisDate.getTime() > availableThrough && !history[key]) {
       dots.push({ day: d, status: "na", weekend: false });
       continue;
     }
-    const key = dateKey(thisDate);
     const isLiveDate = key === liveDate;
     const status: Status = (isLiveDate && liveToday) || history[key] || "na";
     dots.push({ day: d, status, weekend: false });
@@ -323,7 +346,9 @@ function inventoryStatus(deviationsToday: number): DayStatus {
  * used as the closest live proxy for "the floor is running well today."
  */
 function productivityStatus(mcAvailablePercent: number): DayStatus {
-  return mcAvailablePercent >= 90 ? "ok" : "fail";
+  if (mcAvailablePercent >= 90) return "ok";
+  if (mcAvailablePercent >= 70) return "warn";
+  return "fail";
 }
 
 /**
@@ -412,6 +437,51 @@ const DAILY_QUOTES: { text: string; author: string }[] = [
   { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
 ];
 
+type DailyQuote = (typeof DAILY_QUOTES)[number];
+const QUOTE_HISTORY_KEY = "amg-daily-quote-history:v1";
+const QUOTE_HISTORY_LIMIT = 120;
+
+function quoteIdentity(quote: DailyQuote): string {
+  return quote.text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function readQuoteHistory(): string[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(QUOTE_HISTORY_KEY) || "[]");
+    return Array.isArray(parsed)
+      ? parsed.filter((value): value is string => typeof value === "string").slice(-QUOTE_HISTORY_LIMIT)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberQuote(quote: DailyQuote): void {
+  const identity = quoteIdentity(quote);
+  const next = [...readQuoteHistory().filter((value) => value !== identity), identity]
+    .slice(-QUOTE_HISTORY_LIMIT);
+  localStorage.setItem(QUOTE_HISTORY_KEY, JSON.stringify(next));
+}
+
+function chooseNonRepeatingQuote(candidate: DailyQuote | null, today: Date): DailyQuote {
+  const history = readQuoteHistory();
+  const seen = new Set(history);
+  const last = history.at(-1);
+  if (candidate) {
+    const candidateId = quoteIdentity(candidate);
+    if (!seen.has(candidateId) && candidateId !== last) return candidate;
+  }
+
+  const start = dateSeed(today, 42) % DAILY_QUOTES.length;
+  const ordered = Array.from(
+    { length: DAILY_QUOTES.length },
+    (_, offset) => DAILY_QUOTES[(start + offset) % DAILY_QUOTES.length],
+  );
+  return ordered.find((quote) => !seen.has(quoteIdentity(quote)))
+    ?? ordered.find((quote) => quoteIdentity(quote) !== last)
+    ?? ordered[0];
+}
+
 function useDailyQuote() {
   const [quote, setQuote] = useState(() => {
     const today = new Date();
@@ -423,15 +493,21 @@ function useDailyQuote() {
     const selectQuote = async () => {
       const today = new Date();
       const quoteDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-      const storageKey = "amg-daily-quote:wikiquote:v2";
+      const storageKey = "amg-daily-quote:wikiquote:v3";
       if (quoteDate === "2026-07-23") {
-        setQuote({ text: "Quality is everyone's responsibility.", author: "W. Edwards Deming" });
+        const selected = chooseNonRepeatingQuote(
+          { text: "Quality is everyone's responsibility.", author: "W. Edwards Deming" },
+          today,
+        );
+        setQuote(selected);
+        rememberQuote(selected);
         return;
       }
       try {
         const stored = JSON.parse(localStorage.getItem(storageKey) || "null");
         if (stored?.dateKey === quoteDate && stored?.quote?.text && stored?.quote?.author) {
           setQuote(stored.quote);
+          rememberQuote(stored.quote);
           return;
         }
       } catch {
@@ -445,12 +521,15 @@ function useDailyQuote() {
         const text = String(payload.quote ?? "").trim();
         const author = String(payload.author ?? "").trim();
         if (!text || !author) throw new Error("Quote service returned an incomplete quote");
-        const selected = { text, author };
+        const selected = chooseNonRepeatingQuote({ text, author }, today);
         setQuote(selected);
+        rememberQuote(selected);
         localStorage.setItem(storageKey, JSON.stringify({ dateKey: quoteDate, quote: selected }));
       } catch {
-        const idx = dateSeed(today, 42) % DAILY_QUOTES.length;
-        setQuote(DAILY_QUOTES[idx]);
+        const selected = chooseNonRepeatingQuote(null, today);
+        setQuote(selected);
+        rememberQuote(selected);
+        localStorage.setItem(storageKey, JSON.stringify({ dateKey: quoteDate, quote: selected }));
       }
     };
 
@@ -513,6 +592,8 @@ function usHolidays(year: number): Holiday[] {
 
 export function Index() {
   const [selectedDataDate, setSelectedDataDate] = useState<string | null>(null);
+  const [dashboardPeriod, setDashboardPeriod] = useState<DashboardViewPeriod>("production-day");
+  const [datePickerDraft, setDatePickerDraft] = useState("");
   const [phoneView, setPhoneView] = useState<"control" | "dashboard">("control");
   const [iceCreamFriday, setIceCreamFriday] = useState(false);
   const [datePickerOpen, setDatePickerOpen] = useState(false);
@@ -521,6 +602,19 @@ export function Index() {
   const [trendsFocus, setTrendsFocus] = useState<Pillar["key"] | null>(null);
   const liveNow = useNow();
   const now = liveNow ?? new Date(0);
+  const latestProductionDate = reportingWindow(now).productionDate;
+  const finalizationClock = new Date(now.getTime() - 15 * 60_000);
+  const lastCompletedProductionDate = reportingWindow(finalizationClock).productionDate;
+  const selectedAnchorDate = selectedDataDate ?? latestProductionDate;
+  const selectedWindow = dashboardWindow(dashboardPeriod, now, selectedAnchorDate);
+  const selectedRangeStartKey = dateKey(selectedWindow.start);
+  const selectedRangeEndKey = dateKey(selectedWindow.end);
+  const selectedRangeEndDisplay = new Date(selectedWindow.end.getTime() - 1);
+  const selectedPeriodLabel = dashboardPeriod === "month"
+    ? selectedWindow.start.toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : dashboardPeriod === "week"
+      ? `${selectedWindow.start.toLocaleDateString("en-US", { month: "short", day: "numeric" })}–${selectedRangeEndDisplay.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`
+      : selectedWindow.start.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const holidays = [...usHolidays(now.getFullYear()), ...usHolidays(now.getFullYear() + 1)]
     .sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -536,12 +630,13 @@ export function Index() {
 
   useEffect(() => {
     if (!datePickerOpen) return;
+    setDatePickerDraft(selectedAnchorDate);
     const close = (event: MouseEvent) => {
       if (!datePickerRef.current?.contains(event.target as Node)) setDatePickerOpen(false);
     };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
-  }, [datePickerOpen]);
+  }, [datePickerOpen, selectedAnchorDate]);
 
   useEffect(() => {
     if (!remoteCommand) return;
@@ -603,7 +698,11 @@ export function Index() {
     return SHIFTS.map(() => pickStatus(rng));
   });
 
-  const { data: dashboardData } = useDashboardData("production-day", selectedDataDate);
+  const { data: dashboardData } = useDashboardData(dashboardPeriod, selectedAnchorDate);
+  const { data: completedDashboardData } = useDashboardData(
+    "production-day",
+    lastCompletedProductionDate,
+  );
   const processDeviationQuery = useProcessDeviationList();
   const processDeviationData = processDeviationQuery.data ?? { processParts: [], processMachines: [], productParts: [], rows: [] };
   const productDeviationQuery = useProductDeviations();
@@ -620,6 +719,11 @@ export function Index() {
     isLoading: snapshotTasksLoading,
     error: snapshotTasksError,
   } = useDashboardTasks();
+  const {
+    byDate: snapshotHistory,
+    isLoading: snapshotHistoryLoading,
+    error: snapshotHistoryError,
+  } = useDashboardDailySnapshotHistory();
   const snapshotReproStorageKey = dashboardData
     ? `amg.reproComplete:${dashboardData.productionWindowStart}`
     : "";
@@ -629,7 +733,11 @@ export function Index() {
       const raw = snapshotReproStorageKey
         ? window.localStorage.getItem(snapshotReproStorageKey)
         : null;
-      setSnapshotReproCompleted(Math.max(0, Number.parseInt(raw ?? "", 10) || 0));
+      const recorded = dashboardData?.productionDate
+        ? snapshotHistory[dashboardData.productionDate]?.ReproCompleted
+        : undefined;
+      const value = raw !== null ? Number.parseInt(raw, 10) : recorded;
+      setSnapshotReproCompleted(Math.max(0, Number.isFinite(value) ? Number(value) : 0));
     };
     read();
     const onReproChange = (event: Event) => {
@@ -638,7 +746,7 @@ export function Index() {
     };
     window.addEventListener(REPRO_COMPLETE_EVENT, onReproChange);
     return () => window.removeEventListener(REPRO_COMPLETE_EVENT, onReproChange);
-  }, [snapshotReproStorageKey]);
+  }, [dashboardData?.productionDate, snapshotHistory, snapshotReproStorageKey]);
   const qualityIssues = useQualityIssues(dashboardData);
   const localSafetyHistory = usePillarDayHistory("S");
 
@@ -648,13 +756,17 @@ export function Index() {
   const qLiveToday: DayStatus | null = moldingScrapData
     ? scrapStatus(moldingScrapData.cellTotal.scrapRate)
     : null;
-  const deviationReportingDate =
-    dashboardData?.productionDate?.match(/^\d{4}-\d{2}-\d{2}$/)?.[0] ?? yesterdayKey();
+  const deviationReportingDate = dashboardPeriod === "production-day"
+    ? dashboardData?.productionDate?.match(/^\d{4}-\d{2}-\d{2}$/)?.[0] ?? selectedRangeStartKey
+    : selectedRangeStartKey;
+  const isInSelectedRange = (day: string) =>
+    Boolean(day && day >= selectedRangeStartKey && day < selectedRangeEndKey);
   const reportingProcessRows = processDeviationData.rows.filter(
     (row) =>
       row.kind === "process" &&
+      !row.closed &&
       !!row.machine &&
-      row.dateRequested === deviationReportingDate,
+      isInSelectedRange(row.dateRequested),
   );
   const automaticProcessDeviations: Record<string, string> = {};
   for (const row of reportingProcessRows) {
@@ -676,37 +788,20 @@ export function Index() {
   }
   const effectiveDeliveryDeviations = automaticProcessDeviations;
   const activeProcessDeviationCount = reportingProcessRows.length;
-  const automaticProcessMachinesToday = new Set<string>();
-  for (const row of processDeviationData.rows) {
-    if (row.kind !== "process" || row.closed || row.dateRequested !== todayKey) continue;
-    if (row.machine) {
-      const floorMachine = FLOOR_LAYOUT
-        .flatMap((zone) => zone.machines)
-        .find((machine) => shiftMachineId(machine) === shiftMachineId(row.machine));
-      automaticProcessMachinesToday.add(floorMachine ?? row.machine);
-    }
-  }
+  const automaticProcessMachinesToday = new Set(Object.keys(effectiveDeliveryDeviations));
   const effectiveDeliveryDeviationsToday =
-    processDeviationData.rows.filter(
-      (row) =>
-        row.kind === "process" &&
-        !row.closed &&
-        !!row.machine &&
-        row.dateRequested === todayKey,
-    ).length +
+    reportingProcessRows.length +
     Object.entries(deliveryDeviations).filter(
-      ([machine, date]) => date === todayKey && !automaticProcessMachinesToday.has(machine),
+      ([machine, date]) => isInSelectedRange(date) && !automaticProcessMachinesToday.has(machine),
     ).length;
   const deliveryDeviationMapToday: Record<string, string> = {
+    ...effectiveDeliveryDeviations,
     ...Object.fromEntries(
-      [...automaticProcessMachinesToday].map((machine) => [machine, todayKey]),
-    ),
-    ...Object.fromEntries(
-      Object.entries(deliveryDeviations).filter(([, date]) => date === todayKey),
+      Object.entries(deliveryDeviations).filter(([, date]) => isInSelectedRange(date)),
     ),
   };
   const reportingProductRows = productDeviationData.rows.filter(
-    (row) => !row.closed && row.dateRequested === deviationReportingDate,
+    (row) => isInSelectedRange(row.dateRequested),
   );
   const automaticProductDeviations: Record<string, string> = {};
   for (const row of reportingProductRows) {
@@ -728,38 +823,16 @@ export function Index() {
   }
   const effectiveInventoryDeviations = automaticProductDeviations;
   const activeProductDeviationCount = reportingProductRows.length;
-  const automaticProductMachinesToday = new Set<string>();
-  for (const row of productDeviationData.rows) {
-    if (row.closed || row.dateRequested !== todayKey) continue;
-    if (row.machine) {
-      const floorMachine = FLOOR_LAYOUT
-        .flatMap((zone) => zone.machines)
-        .find((machine) => shiftMachineId(machine) === shiftMachineId(row.machine));
-      automaticProductMachinesToday.add(floorMachine ?? row.machine);
-      continue;
-    }
-    for (const job of dashboardData?.machineJobs ?? []) {
-      const part = job.partNumber.toUpperCase().replace(/\s+/g, "");
-      if (part !== row.part) continue;
-      const floorMachine = FLOOR_LAYOUT
-        .flatMap((zone) => zone.machines)
-        .find((machine) => shiftMachineId(machine) === shiftMachineId(job.machine));
-      automaticProductMachinesToday.add(floorMachine ?? job.machine);
-    }
-  }
+  const automaticProductMachinesToday = new Set(Object.keys(effectiveInventoryDeviations));
   const effectiveInventoryDeviationsToday =
-    productDeviationData.rows.filter(
-      (row) => !row.closed && row.dateRequested === todayKey,
-    ).length +
+    reportingProductRows.length +
     Object.entries(inventoryDeviations).filter(
-      ([machine, date]) => date === todayKey && !automaticProductMachinesToday.has(machine),
+      ([machine, date]) => isInSelectedRange(date) && !automaticProductMachinesToday.has(machine),
     ).length;
   const inventoryDeviationMapToday: Record<string, string> = {
+    ...effectiveInventoryDeviations,
     ...Object.fromEntries(
-      [...automaticProductMachinesToday].map((machine) => [machine, todayKey]),
-    ),
-    ...Object.fromEntries(
-      Object.entries(inventoryDeviations).filter(([, date]) => date === todayKey),
+      Object.entries(inventoryDeviations).filter(([, date]) => isInSelectedRange(date)),
     ),
   };
   const processAffectedAreaCount = computeDeviationShiftStatuses(
@@ -777,14 +850,34 @@ export function Index() {
   const pLiveToday: DayStatus | null = dashboardData
     ? productivityStatus(dashboardData.mcAvailablePercent ?? 0)
     : null;
+  const completedProcessDeviationCount = processDeviationData.rows.filter(
+    (row) =>
+      row.kind === "process" &&
+      !!row.machine &&
+      row.dateRequested === lastCompletedProductionDate,
+  ).length;
+  const completedProductDeviationCount = productDeviationData.rows.filter(
+    (row) => row.kind === "product" && row.dateRequested === lastCompletedProductionDate,
+  ).length;
+  const completedProcessStatus = processDeviationQuery.isSuccess
+    ? deliveryStatus(completedProcessDeviationCount)
+    : null;
+  const completedProductStatus = productDeviationQuery.isSuccess
+    ? inventoryStatus(completedProductDeviationCount)
+    : null;
+  const completedProductivityStatus = completedDashboardData && completedDashboardData.buyOffCount > 0
+    ? productivityStatus(completedDashboardData.mcAvailablePercent ?? 0)
+    : null;
   const sLiveToday = todayKey ? localSafetyHistory[todayKey] ?? null : null;
-  const dateStatusHistories = useDashboardDateStatus(todayKey, {
-    S: sLiveToday,
-    Q: qLiveToday,
-    D: dLiveToday,
-    I: iLiveToday,
-    P: pLiveToday,
-  });
+  const isLatestProductionDay = dashboardPeriod === "production-day" && !selectedDataDate;
+  const dateStatusHistories = useDashboardDateStatus(
+    lastCompletedProductionDate,
+    {
+      D: completedProcessStatus,
+      I: completedProductStatus,
+      P: completedProductivityStatus,
+    },
+  );
   const {
     setStatus: setDashboardDateStatus,
     isSaving: isSavingDateStatus,
@@ -801,57 +894,72 @@ export function Index() {
   const dHistory = dateStatusHistories.D;
   const iHistory = dateStatusHistories.I;
   const pHistory = dateStatusHistories.P;
+  const qualityWeekDays = previousWorkWeekDateKeys(now);
+  const qualityBallHistory: Record<string, DayStatus> = Object.fromEntries(
+    qualityWeekDays
+      .map((day) => [day, qHistory[day] ?? qLiveToday] as const)
+      .filter((entry): entry is readonly [string, DayStatus] => entry[1] != null),
+  );
+  const snapshotsInSelectedRange = Object.entries(snapshotHistory)
+    .filter(([day]) => isInSelectedRange(day))
+    .sort(([left], [right]) => left.localeCompare(right));
+  const latestSelectedSnapshot = snapshotsInSelectedRange.at(-1)?.[1];
+  const savedQualityPercent = latestSelectedSnapshot?.WeelyScrapPercent;
+  const selectedQualityPercent = isLatestProductionDay
+    ? moldingScrapData?.cellTotal.scrapRate != null
+      ? moldingScrapData.cellTotal.scrapRate * 100
+      : null
+    : typeof savedQualityPercent === "number"
+      ? savedQualityPercent
+      : null;
+  const selectedQualityStatus: DayStatus | null = selectedQualityPercent == null
+    ? null
+    : scrapStatus(selectedQualityPercent / 100);
+  const selectedSafetyIncidents = Object.entries(safetyIncidentHistory)
+    .filter(([day]) => isInSelectedRange(day))
+    .reduce((total, [, count]) => total + count, 0);
   const liveDailyMetrics: Record<Pillar["key"], number | null> = {
-    S: safetyIncidentHistory[deviationReportingDate] ?? 0,
-    Q: moldingScrapData ? moldingScrapData.cellTotal.scrapRate * 100 : null,
+    S: selectedSafetyIncidents,
+    Q: selectedQualityPercent,
     D: effectiveDeliveryDeviationsToday,
     I: effectiveInventoryDeviationsToday,
     P: dashboardData?.mcAvailablePercent ?? null,
   };
+  const qualityWeekSyncRef = useRef("");
+
+  const saveDateStatus = async (
+    pillar: Pillar["key"],
+    day: string,
+    status: DayStatus,
+  ) => {
+    const days = pillar === "Q" && localDate(day).getDay() === 1
+      ? workWeekDateKeys(day)
+      : [day];
+    for (const statusDay of days) {
+      recordPillarDay(pillar, statusDay, status);
+      await setDashboardDateStatus({ pillar, day: statusDay, status });
+    }
+  };
 
   useEffect(() => {
-    if (selectedDataDate || !deviationReportingDate || !qLiveToday) return;
-    recordPillarDay("Q", deviationReportingDate, qLiveToday);
-  }, [selectedDataDate, deviationReportingDate, qLiveToday]);
-  useEffect(() => {
-    if (selectedDataDate || !deviationReportingDate) return;
-    recordPillarDay("D", deviationReportingDate, dLiveToday);
-  }, [selectedDataDate, deviationReportingDate, dLiveToday]);
-  useEffect(() => {
-    if (selectedDataDate || !deviationReportingDate) return;
-    recordPillarDay("I", deviationReportingDate, iLiveToday);
-  }, [selectedDataDate, deviationReportingDate, iLiveToday]);
-  useEffect(() => {
-    if (selectedDataDate || !deviationReportingDate || !pLiveToday) return;
-    recordPillarDay("P", deviationReportingDate, pLiveToday);
-  }, [selectedDataDate, deviationReportingDate, pLiveToday]);
-
-  // Backfill Productivity's real history from actual dated job records —
-  // the dashboard API returns every Machine+Part job with a real
-  // dateCreated for whatever window it currently serves (one production
-  // day most days, the full previous week on Mondays). Group those by day
-  // and record each day's real MC-availability rate. This is the only
-  // pillar with genuine per-day historical data anywhere in the app today;
-  // Safety/Delivery/Inventory/Quality have no equivalent source, so their
-  // history can only start accumulating from today forward.
-  useEffect(() => {
-    const jobs = dashboardData?.machineJobs;
-    if (!jobs?.length) return;
-    const byDay = new Map<string, { total: number; available: number }>();
-    for (const j of jobs) {
-      const day = j.dateCreated;
-      if (!day) continue;
-      const bucket = byDay.get(day) ?? { total: 0, available: 0 };
-      bucket.total += 1;
-      const mc = (j.masterCard || "").toLowerCase();
-      if (mc === "yes" || mc.startsWith("compar")) bucket.available += 1;
-      byDay.set(day, bucket);
-    }
-    for (const [day, { total, available }] of byDay) {
-      const pct = total === 0 ? 0 : Math.round((available / total) * 100);
-      recordPillarDay("P", day, productivityStatus(pct));
-    }
-  }, [dashboardData?.machineJobs]);
+    if (!qLiveToday || !todayKey) return;
+    const days = previousWorkWeekDateKeys(localDate(todayKey));
+    if (days.every((day) => qHistory[day] === qLiveToday)) return;
+    const syncKey = `${days[0]}:${qLiveToday}`;
+    if (qualityWeekSyncRef.current === syncKey) return;
+    qualityWeekSyncRef.current = syncKey;
+    const daysToUpdate = days.filter((day) => qHistory[day] !== qLiveToday);
+    void (async () => {
+      try {
+        for (const day of daysToUpdate) {
+          recordPillarDay("Q", day, qLiveToday);
+          await setDashboardDateStatus({ pillar: "Q", day, status: qLiveToday });
+        }
+      } finally {
+        qualityWeekSyncRef.current = "";
+      }
+    })();
+  }, [qHistory, qLiveToday, setDashboardDateStatus, todayKey]);
 
   const snapshotProcessAffectedAreas = computeDeviationShiftStatuses(
     effectiveDeliveryDeviations,
@@ -865,7 +973,7 @@ export function Index() {
   const longTermActionCount = snapshotTasks.filter(
     (task) => task.taskType === "LongTermAction" && task.status !== "Complete",
   ).length;
-  const snapshotInput: DashboardDailySnapshotInput | null = dashboardData && !selectedDataDate
+  const snapshotInput: DashboardDailySnapshotInput | null = dashboardData && isLatestProductionDay && !snapshotHistoryLoading && !snapshotHistoryError
     ? {
         productionDate: dashboardData.productionDate,
         safetyStatus:
@@ -918,7 +1026,7 @@ export function Index() {
   }
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="flex min-h-dvh flex-col bg-background text-foreground">
       {isPhoneController && (
         <button type="button" onClick={() => setPhoneView("control")} className="fixed bottom-4 right-4 z-[70] rounded-full bg-primary px-4 py-3 text-xs font-semibold text-primary-foreground shadow-xl">
           Remote Control
@@ -1038,41 +1146,66 @@ export function Index() {
                 type="button"
                 onClick={() => setDatePickerOpen((open) => !open)}
                 aria-expanded={datePickerOpen}
-                title="Select a dashboard production date"
+                title="Select a dashboard day, week, or month"
                 className="rounded-sm px-1.5 py-1 text-right transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
               >
                 <div className="font-mono text-xl font-semibold tabular-nums tracking-tight" suppressHydrationWarning>{timeStr}</div>
                 <div className="flex items-center justify-end gap-1 text-xs text-white/65">
                   <CalendarDays className="size-3" />
-                  {deviationReportingDate}
+                  {dashboardPeriod === "production-day" ? "Day" : dashboardPeriod === "week" ? "Week" : "Month"}: {selectedPeriodLabel}
                 </div>
               </button>
               {datePickerOpen && (
-                <div className="absolute right-0 top-full z-50 mt-2 w-64 rounded-sm border border-border bg-card p-3 text-foreground shadow-2xl">
+                <div className="absolute right-0 top-full z-50 mt-2 w-72 rounded-sm border border-border bg-card p-3 text-foreground shadow-2xl">
                   <div className="mb-2 text-left text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                    Select production date
+                    Dashboard reporting period
                   </div>
+                  <div className="mb-3 grid grid-cols-3 overflow-hidden rounded-sm border border-border" role="group" aria-label="Dashboard reporting period">
+                    {(["production-day", "week", "month"] as DashboardViewPeriod[]).map((period) => (
+                      <button
+                        key={period}
+                        type="button"
+                        onClick={() => setDashboardPeriod(period)}
+                        aria-pressed={dashboardPeriod === period}
+                        className={`px-2 py-1.5 text-xs font-semibold transition ${dashboardPeriod === period ? "bg-primary text-primary-foreground" : "bg-card hover:bg-secondary"}`}
+                      >
+                        {period === "production-day" ? "Day" : period === "week" ? "Week" : "Month"}
+                      </button>
+                    ))}
+                  </div>
+                  <label htmlFor="dashboard-period-date" className="mb-1 block text-left text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Pick any date in the {dashboardPeriod === "production-day" ? "day" : dashboardPeriod}
+                  </label>
                   <input
+                    id="dashboard-period-date"
                     type="date"
-                    value={deviationReportingDate}
-                    max={reportingWindow(now).productionDate}
-                    onChange={(event) => {
-                      const day = event.target.value;
-                      if (!day) return;
-                      setSelectedDataDate(day === reportingWindow(now).productionDate ? null : day);
-                      setDatePickerOpen(false);
-                    }}
+                    value={datePickerDraft || selectedAnchorDate}
+                    max={latestProductionDate}
+                    onChange={(event) => setDatePickerDraft(event.target.value)}
                     className="w-full rounded-sm border border-border bg-background px-3 py-2 text-sm font-semibold text-foreground"
                   />
                   <button
                     type="button"
+                    disabled={!datePickerDraft}
                     onClick={() => {
+                      if (!datePickerDraft) return;
+                      setSelectedDataDate(dashboardPeriod === "production-day" && datePickerDraft === latestProductionDate ? null : datePickerDraft);
+                      setDatePickerOpen(false);
+                    }}
+                    className="mt-2 w-full rounded-sm bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Apply {dashboardPeriod === "production-day" ? "day" : dashboardPeriod}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDashboardPeriod("production-day");
                       setSelectedDataDate(null);
                       setDatePickerOpen(false);
                     }}
                     className="mt-2 w-full rounded-sm border border-border px-3 py-1.5 text-xs font-semibold hover:bg-secondary"
                   >
-                    Latest production date
+                    Latest production day
                   </button>
                 </div>
               )}
@@ -1091,20 +1224,34 @@ export function Index() {
         />
       )}
 
-      <main className="w-full space-y-3 px-3 py-3 sm:px-4 lg:px-5">
+      <main className="flex w-full flex-1 flex-col gap-3 px-3 py-3 sm:px-4 lg:px-5">
         {/* QDIP grid */}
-        <section>
+        <section className="shrink-0">
           <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {PILLARS.map((p, i) => (
             <PillarCard
               key={p.key}
               pillar={p}
-              history={{ S: sHistory, Q: qHistory, D: dHistory, I: iHistory, P: pHistory }[p.key]}
-              liveToday={{ S: sLiveToday, Q: qLiveToday, D: dLiveToday, I: iLiveToday, P: pLiveToday }[p.key]}
+              history={{ S: sHistory, Q: qualityBallHistory, D: dHistory, I: iHistory, P: pHistory }[p.key]}
+              liveToday={{
+                S: sLiveToday,
+                Q: qualityBallHistory[selectedRangeStartKey] ?? null,
+                D: dHistory[selectedRangeStartKey] ?? null,
+                I: iHistory[selectedRangeStartKey] ?? null,
+                P: pHistory[selectedRangeStartKey] ?? null,
+              }[p.key]}
               now={now}
-              dataDate={deviationReportingDate}
-              availableThroughDate={reportingWindow(now).productionDate}
-              onSelectDataDate={(day) => setSelectedDataDate(day === reportingWindow(now).productionDate ? null : day)}
+              dataDate={selectedRangeStartKey}
+              calendarAnchorDate={selectedAnchorDate}
+              selectedRangeStart={selectedRangeStartKey}
+              selectedRangeEnd={selectedRangeEndKey}
+              reportingPeriod={dashboardPeriod}
+              periodLabel={selectedPeriodLabel}
+              availableThroughDate={latestProductionDate}
+              onSelectDataDate={(day) => {
+                setDashboardPeriod("production-day");
+                setSelectedDataDate(day === latestProductionDate ? null : day);
+              }}
               liveMetric={liveDailyMetrics[p.key]}
               shifts={
                 p.key === "D"
@@ -1126,11 +1273,9 @@ export function Index() {
               buyoffAlerts={p.key === "P" ? buyoffAlerts : undefined}
               buyoffAlertError={p.key === "P" ? buyoffAlertError : undefined}
               buyoffAlertLoading={p.key === "P" ? buyoffAlertLoading : undefined}
-              onDateStatusChange={(day, status) =>
-                setDashboardDateStatus({ pillar: p.key, day, status })
-              }
-              onSafetyIncidentsChange={p.key === "S"
-                ? (count) => setSafetyIncidents({ day: todayKey, count })
+              onDateStatusChange={(day, status) => saveDateStatus(p.key, day, status)}
+              onSafetyIncidentsChange={p.key === "S" && dashboardPeriod === "production-day"
+                ? (count) => setSafetyIncidents({ day: selectedRangeStartKey, count })
                 : undefined}
               isSavingSafetyIncidents={p.key === "S" && isSavingSafetyIncidents}
               isSavingDateStatus={isSavingDateStatus}
@@ -1161,11 +1306,11 @@ export function Index() {
         </section>
 
         {/* Footer notes */}
-        <section>
+        <section className="flex min-h-[10rem] flex-1 flex-col">
           <div className="mb-3 border-l-4 border-primary pl-3">
             <h2 className="text-sm font-semibold uppercase tracking-[0.08em] text-primary">Actions and follow-up</h2>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid flex-1 grid-cols-1 items-stretch gap-3 lg:grid-cols-2">
           <FollowUpTasksCard title="Open Escalations" taskType="Escalation" />
           <FollowUpTasksCard title="Long-Term Actions" taskType="LongTermAction" />
           </div>
@@ -1326,14 +1471,37 @@ function AvailabilityScrapChart() {
 }
 
 function LiveDashboardSection({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
-  const { data, isLoading, error, lastFetchedAt } = useDashboardData(period, period === "production-day" ? dataDate : null);
+  const { data, isLoading, error, lastFetchedAt } = useDashboardData(period, dataDate);
+  const { byDate: dailySnapshots, isLoading: snapshotsLoading, error: snapshotsError } = useDashboardDailySnapshotHistory();
   const [reproValues, setReproValues] = useState<Record<string, string>>({});
   const reproStorageKey = data
     ? `amg.reproComplete:${data.productionWindowStart}`
     : "";
-  const reproComplete = reproStorageKey
-    ? reproValues[reproStorageKey] ?? window.localStorage.getItem(reproStorageKey) ?? ""
-    : "";
+  const latestCompletedDate = reportingWindow(new Date()).productionDate;
+  const selectedSnapshotWindow = dashboardWindow(
+    period,
+    new Date(),
+    dataDate ?? data?.productionDate,
+  );
+  const snapshotRangeStart = dateKey(selectedSnapshotWindow.start);
+  const snapshotRangeEnd = dateKey(selectedSnapshotWindow.end);
+  const snapshotsForPeriod = Object.entries(dailySnapshots)
+    .filter(([day]) => day >= snapshotRangeStart && day < snapshotRangeEnd)
+    .map(([, snapshot]) => snapshot);
+  const recordedReproValues = snapshotsForPeriod
+    .map((snapshot) => snapshot.ReproCompleted)
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  const recordedReproTotal = recordedReproValues.reduce((total, value) => total + value, 0);
+  const hasRecordedRepro = recordedReproValues.length > 0;
+  const isHistoricalRepro = period !== "production-day" || (data?.productionDate ?? dataDate) !== latestCompletedDate;
+  const currentSavedRepro = data?.productionDate
+    ? dailySnapshots[data.productionDate]?.ReproCompleted
+    : undefined;
+  const reproComplete = isHistoricalRepro
+    ? hasRecordedRepro ? String(recordedReproTotal) : ""
+    : reproStorageKey
+      ? reproValues[reproStorageKey] ?? window.localStorage.getItem(reproStorageKey) ?? (currentSavedRepro == null ? "" : String(currentSavedRepro))
+      : "";
   const setReproComplete = (value: string) => {
     if (!reproStorageKey) return;
     window.localStorage.setItem(reproStorageKey, value);
@@ -1363,6 +1531,18 @@ function LiveDashboardSection({ period = "production-day", dataDate }: { period?
           lastFetchedAt={lastFetchedAt}
           reproComplete={reproComplete}
           onReproChange={setReproComplete}
+          reproReadOnly={isHistoricalRepro}
+          reproSourceLabel={
+            snapshotsLoading
+              ? "Loading recorded snapshot…"
+              : snapshotsError
+                ? "Recorded snapshot unavailable"
+                : hasRecordedRepro
+                  ? period === "production-day"
+                    ? "Recorded in Dashboard Daily Snapshot"
+                    : `Total from ${recordedReproValues.length} daily snapshot${recordedReproValues.length === 1 ? "" : "s"}`
+                  : "No recorded Repro Complete value for this period"
+          }
         />
       )}
       {data && <LiveLatestRowsTable data={data} />}
@@ -1376,11 +1556,15 @@ function LiveKpiRow({
   lastFetchedAt,
   reproComplete,
   onReproChange,
+  reproReadOnly,
+  reproSourceLabel,
 }: {
   data: DashboardData;
   lastFetchedAt: Date | null;
   reproComplete: string;
   onReproChange: (v: string) => void;
+  reproReadOnly: boolean;
+  reproSourceLabel: string;
 }) {
   const pct = (n: number) => `${Math.round(n)}%`;
   const denom = data.buyOffCount || 0;
@@ -1424,6 +1608,8 @@ function LiveKpiRow({
           pct={pct}
           reproComplete={reproComplete}
           onReproChange={onReproChange}
+          reproReadOnly={reproReadOnly}
+          reproSourceLabel={reproSourceLabel}
         />
       </div>
     </div>
@@ -1436,12 +1622,16 @@ function KpiTree({
   pct,
   reproComplete,
   onReproChange,
+  reproReadOnly,
+  reproSourceLabel,
 }: {
   data: DashboardData;
   denom: number;
   pct: (n: number) => string;
   reproComplete: string;
   onReproChange: (v: string) => void;
+  reproReadOnly: boolean;
+  reproSourceLabel: string;
 }) {
   const reproFilledCount = Math.max(0, Number.parseInt(reproComplete, 10) || 0);
   const reproFilledPercent = denom > 0 ? (reproFilledCount / denom) * 100 : 0;
@@ -1467,21 +1657,29 @@ function KpiTree({
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Repro Complete</p>
-              <input
-                type="text"
-                inputMode="numeric"
-                value={reproComplete}
-                onChange={(e) => onReproChange(e.target.value.replace(/[^\d]/g, ""))}
-                placeholder="0"
-                className="w-full border-b border-transparent bg-transparent text-4xl font-bold tracking-tight text-primary tabular-nums outline-none focus:border-primary/40"
-                aria-label="Repro Complete (manual entry)"
-              />
+              {reproReadOnly ? (
+                <div className="text-4xl font-bold tracking-tight text-primary tabular-nums" aria-label="Recorded Repro Complete">
+                  {reproComplete || "—"}
+                </div>
+              ) : (
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={reproComplete}
+                  onChange={(e) => onReproChange(e.target.value.replace(/[^\d]/g, ""))}
+                  placeholder="0"
+                  className="w-full border-b border-transparent bg-transparent text-4xl font-bold tracking-tight text-primary tabular-nums outline-none focus:border-primary/40"
+                  aria-label="Repro Complete (manual entry)"
+                />
+              )}
             </div>
             <div className="rounded-full bg-primary/10 p-2">
               <BadgeCheck className="size-5 text-primary" />
             </div>
           </div>
-          <p className="mt-3 text-xs font-medium italic text-muted-foreground">Manual total for this reporting period</p>
+          <p className="mt-3 text-xs font-medium italic text-muted-foreground">
+            {reproReadOnly ? reproSourceLabel : "Enter the completed total for the latest production period"}
+          </p>
         </div>
 
         <div className="relative col-span-6 overflow-hidden rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] sm:col-span-2">
@@ -2486,15 +2684,17 @@ function useCountUp(target: number, durationMs = 900): number {
 function PillarGauge({
   pillar,
   value,
+  kpiText,
 }: {
   pillar: Pillar;
   value: number | null;
+  kpiText: string;
 }) {
   const labels: Record<Pillar["key"], string> = {
-    S: "Safety incidents today",
+    S: "Safety incidents",
     Q: "Weekly scrap",
-    D: "Process deviations today",
-    I: "Product deviations today",
+    D: "Process deviations",
+    I: "Product deviations",
     P: "MasterCard availability",
   };
   const formatted = value == null
@@ -2510,16 +2710,67 @@ function PillarGauge({
         ? (value < 4 ? "ok" : value <= 5 ? "warn" : "fail")
         : pillar.key === "D"
           ? (value === 0 ? "ok" : value <= 3 ? "warn" : "fail")
-          : (value >= 90 ? "ok" : "fail");
+          : (value >= 90 ? "ok" : value >= 70 ? "warn" : "fail");
+  const healthPercent = value == null
+    ? 0
+    : pillar.key === "P"
+      ? Math.max(0, Math.min(100, value))
+      : pillar.key === "Q"
+        ? Math.max(0, Math.min(100, 100 - (value / 5) * 100))
+        : pillar.key === "D"
+          ? Math.max(0, Math.min(100, 100 - value * 25))
+          : value === 0
+            ? 100
+            : 0;
+  const radius = 36;
+  const circumference = 2 * Math.PI * radius;
+  const ringOffset = circumference * (1 - healthPercent / 100);
+  const toneClass = status === "ok"
+    ? "text-success"
+    : status === "warn"
+      ? "text-warning"
+      : status === "fail"
+        ? "text-danger"
+        : "text-muted-foreground";
+  const statusLabel = status === "ok"
+    ? "On target"
+    : status === "warn"
+      ? "Warning"
+      : status === "fail"
+        ? "Miss"
+        : "No data";
   return (
-    <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/30 px-4 py-3">
-      <span
-        className={`absolute inset-y-0 left-0 w-1 ${status === "ok" ? "bg-success" : status === "warn" ? "bg-warning" : status === "fail" ? "bg-danger" : "bg-muted"}`}
-        aria-hidden="true"
-      />
-      <div className="flex items-center justify-between gap-4 pl-1">
-        <div className="text-xs font-semibold text-foreground">{labels[pillar.key]}</div>
-        <div className="text-3xl font-black tabular-nums tracking-tight text-foreground">{formatted}</div>
+    <div className="relative overflow-hidden rounded-sm border border-border bg-secondary/30 p-3">
+      <div className="grid grid-cols-[5.75rem_minmax(0,1fr)] items-center gap-3">
+        <div className={`relative grid size-[5.75rem] place-items-center ${toneClass}`}>
+          <svg viewBox="0 0 88 88" className="absolute inset-0 size-full -rotate-90" aria-hidden="true">
+            <circle cx="44" cy="44" r={radius} fill="none" stroke="currentColor" strokeOpacity="0.13" strokeWidth="8" />
+            <circle
+              cx="44"
+              cy="44"
+              r={radius}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={ringOffset}
+              className="transition-[stroke-dashoffset] duration-700 ease-out"
+            />
+          </svg>
+          <div className="relative text-center leading-none">
+            <div className="text-xl font-black tabular-nums tracking-tight text-foreground">{formatted}</div>
+            <div className="mt-1 text-[8px] font-bold uppercase tracking-wide text-muted-foreground">Current</div>
+          </div>
+        </div>
+        <div className="min-w-0 border-l border-border/70 pl-3">
+          <div className="text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{labels[pillar.key]}</div>
+          <div className="mt-1 text-xs font-semibold leading-snug text-foreground">KPI: {kpiText}</div>
+          <div className={`mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide ${toneClass}`}>
+            <span className="size-2 rounded-full bg-current shadow-[0_0_8px_currentColor]" />
+            {statusLabel}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -2531,6 +2782,11 @@ function PillarCard({
   liveToday,
   now,
   dataDate,
+  calendarAnchorDate,
+  selectedRangeStart,
+  selectedRangeEnd,
+  reportingPeriod,
+  periodLabel,
   availableThroughDate,
   onSelectDataDate,
   liveMetric,
@@ -2557,6 +2813,11 @@ function PillarCard({
   liveToday: DayStatus | null;
   now: Date;
   dataDate: string;
+  calendarAnchorDate: string;
+  selectedRangeStart: string;
+  selectedRangeEnd: string;
+  reportingPeriod: DashboardViewPeriod;
+  periodLabel: string;
   availableThroughDate: string;
   onSelectDataDate: (day: string) => void;
   liveMetric: number | null;
@@ -2581,9 +2842,11 @@ function PillarCard({
   const Icon = pillar.icon;
   const [expanded, setExpanded] = useState(false);
   const [calendarMonthOffset, setCalendarMonthOffset] = useState<0 | -1>(0);
+  const calendarAnchor = localDate(calendarAnchorDate);
+  useEffect(() => setCalendarMonthOffset(0), [calendarAnchorDate]);
   const displayedMonth = useMemo(
-    () => new Date(now.getFullYear(), now.getMonth() + calendarMonthOffset, 1),
-    [calendarMonthOffset, now.getFullYear(), now.getMonth()],
+    () => new Date(calendarAnchor.getFullYear(), calendarAnchor.getMonth() + calendarMonthOffset, 1),
+    [calendarAnchor.getFullYear(), calendarAnchor.getMonth(), calendarMonthOffset],
   );
   const dots = useMemo(
     () => buildMonthDotsFromHistory(displayedMonth, history, liveToday, dataDate, availableThroughDate),
@@ -2748,8 +3011,7 @@ function PillarCard({
         </button>
 
         <div className="mt-3">
-          <p className="mb-2 text-xs text-muted-foreground">KPI: {kpiText}</p>
-          <PillarGauge pillar={pillar} value={liveMetric} />
+          <PillarGauge pillar={pillar} value={liveMetric} kpiText={kpiText} />
         </div>
 
         {/* Calendar month navigation */}
@@ -2792,6 +3054,7 @@ function PillarCard({
             const selectedDateKey = dateKey(selectedDate);
             const editable = !d.weekend && selectedDate.getTime() <= todayStart && !isSavingDateStatus;
             const selectable = !d.weekend && selectedDateKey <= availableThroughDate;
+            const inSelectedRange = selectedDateKey >= selectedRangeStart && selectedDateKey < selectedRangeEnd;
             if (d.weekend) {
               return (
                 <div
@@ -2830,7 +3093,7 @@ function PillarCard({
                   d.status === "na"
                     ? "bg-secondary text-muted-foreground"
                     : statusColor(d.status)
-                } ${selectable ? "cursor-pointer hover:scale-110 transition-transform" : "cursor-default"} ${selectedDateKey === dataDate ? "ring-2 ring-primary ring-offset-2 ring-offset-card" : editable ? "ring-1 ring-primary/60" : ""}`}
+                } ${selectable ? "cursor-pointer hover:scale-110 transition-transform" : "cursor-default"} ${inSelectedRange ? "ring-2 ring-primary ring-offset-2 ring-offset-card" : editable ? "ring-1 ring-primary/60" : ""}`}
               >
                 {d.day}
               </button>
@@ -2917,7 +3180,7 @@ function PillarCard({
           )}
           {(pillar.key === "D" || pillar.key === "I") && (
             <div className="pt-2 border-t border-dashed border-border/60">
-              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} compact dataDate={dataDate} />
+              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} compact dataDate={dataDate} reportingPeriod={reportingPeriod} />
             </div>
           )}
           {pillar.key === "S" && (
@@ -2948,6 +3211,8 @@ function PillarCard({
           areaNotes={areaNotes}
           calendarLabel={calendarLabel}
           dataDate={dataDate}
+          reportingPeriod={reportingPeriod}
+          periodLabel={periodLabel}
           safetyIncidentCount={pillar.key === "S" ? liveMetric ?? 0 : 0}
           onSafetyIncidentsChange={onSafetyIncidentsChange}
           isSavingSafetyIncidents={isSavingSafetyIncidents}
@@ -3172,15 +3437,18 @@ function FloorMapLegend() {
   );
 }
 
-function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey; dataDate?: string }) {
+function DeviationFloor({ pillarKey, dataDate, reportingPeriod = "production-day" }: { pillarKey: DeviationPillarKey; dataDate?: string; reportingPeriod?: DashboardViewPeriod }) {
   const [viewMode, setViewMode] = useState<"today" | "previous">("today");
-  const { data: deviationDashboardData } = useDashboardData("production-day", dataDate);
+  const { data: deviationDashboardData } = useDashboardData(reportingPeriod, dataDate);
   const { data: deviationData = { processParts: [], processMachines: [], productParts: [], rows: [] } } = useProcessDeviationList();
   const { data: productDeviationData = { productParts: [], rows: [] } } = useProductDeviations();
   // "Previous" is intentionally independent of the buyoff snapshot's
   // productionDate. That snapshot can already be today's date, which made
   // both tabs display the same deviations. Monday looks back to Friday.
   const selectedDate = dataDate ?? deviationDashboardData?.productionDate ?? dateKey(new Date());
+  const selectedWindow = dashboardWindow(reportingPeriod, new Date(), selectedDate);
+  const selectedRangeEnd = dateKey(selectedWindow.end);
+  const isRange = reportingPeriod !== "production-day";
   const [selectedYear, selectedMonth, selectedDay] = selectedDate.split("-").map(Number);
   const previousDate = previousProductionDayKey(new Date(selectedYear, selectedMonth - 1, selectedDay, 12));
   const selectedManualIds = useDeviationsOnDate(pillarKey, selectedDate);
@@ -3219,7 +3487,7 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
 
   const todayStr = selectedDate;
   const automaticTodayIds = deriveMachineIds(
-    (row) => !row.closed && row.dateRequested === todayStr,
+    (row) => !row.closed && (isRange ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd : row.dateRequested === todayStr),
   );
   const automaticPreviousIds = deriveMachineIds(
     (row) => row.dateRequested === previousDate,
@@ -3229,7 +3497,7 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
       row.kind === kindForPillar &&
       !row.closed &&
       (pillarKey !== "D" || !!row.machine) &&
-      row.dateRequested === todayStr,
+      (isRange ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd : row.dateRequested === todayStr),
   ).length;
   const previousRecordCount = sourceRows.filter(
     (row) =>
@@ -3242,8 +3510,9 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
   const previousManualIdsForPillar = pillarKey === "D" ? [] : previousManualIds;
   const hasPreviousData = previousRecordCount > 0 || previousManualIdsForPillar.length > 0;
   useEffect(() => {
-    if (!hasTodayData && hasPreviousData) setViewMode("previous");
-  }, [hasTodayData, hasPreviousData, previousDate]);
+    if (isRange) setViewMode("today");
+    else if (!hasTodayData && hasPreviousData) setViewMode("previous");
+  }, [hasTodayData, hasPreviousData, isRange, previousDate]);
 
   const isToday = viewMode === "today";
   const deviations = isToday
@@ -3274,7 +3543,7 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
         type="button"
         disabled
         title={
-          `${id} — ${flagged ? "flagged" : "no deviation"} on ${isToday ? selectedDate : previousDate}`
+          `${id} — ${flagged ? "flagged" : "no deviation"} for ${isToday && isRange ? `${selectedDate} through ${dateKey(new Date(selectedWindow.end.getTime() - 1))}` : isToday ? selectedDate : previousDate}`
         }
         className={`relative rounded-sm border px-1 py-1 font-mono font-bold leading-none flex items-center justify-center min-w-0 transition text-sm sm:text-base ${
           "cursor-default"
@@ -3325,11 +3594,11 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
             {label} — Deviation Map
           </h3>
           <p className="text-xs text-muted-foreground mt-1">
-            {`Read-only — SharePoint deviations for ${isToday ? selectedDate : previousDate}. ${rule}.`}
+            {`Read-only — SharePoint deviations for ${isToday && isRange ? `${selectedDate} through ${dateKey(new Date(selectedWindow.end.getTime() - 1))}` : isToday ? selectedDate : previousDate}. ${rule}.`}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex rounded-md border border-border/60 overflow-hidden text-xs font-semibold">
+          {!isRange && <div className="flex rounded-md border border-border/60 overflow-hidden text-xs font-semibold">
             <button
               type="button"
               onClick={() => setViewMode("today")}
@@ -3344,7 +3613,7 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
             >
               Previous
             </button>
-          </div>
+          </div>}
           <span className="rounded-md border border-border/60 bg-card px-2 py-1 text-xs font-semibold">
             {deviationCount} deviations · {machineCount} machines
           </span>
@@ -3380,16 +3649,17 @@ function DeviationFloor({ pillarKey, dataDate }: { pillarKey: DeviationPillarKey
 }
 
 function ProductivityDetailStats({ period, dataDate }: { period: DashboardPeriod; dataDate?: string }) {
-  const { data, isLoading } = useDashboardData(period, period === "production-day" ? dataDate : null);
+  const { data, isLoading } = useDashboardData(period, dataDate);
+  const buyoffLabel = period === "production-day" ? "Machines Running" : period === "week" ? "Weekly buyoffs" : "Monthly buyoffs";
   const stats = data
     ? [
         { label: "MasterCard availability", value: `${Math.round(data.mcAvailablePercent)}%` },
-        { label: period !== "production-day" ? "Monthly buyoffs" : "Machines Running", value: fmtInt(data.buyOffCount) },
+        { label: buyoffLabel, value: fmtInt(data.buyOffCount) },
         { label: "Missing MasterCards", value: fmtInt(data.missingCount) },
       ]
     : [
         { label: "MasterCard availability", value: isLoading ? "Loading…" : "Unavailable" },
-        { label: period !== "production-day" ? "Monthly buyoffs" : "Machines Running", value: "—" },
+        { label: buyoffLabel, value: "—" },
         { label: "Missing MasterCards", value: "—" },
       ];
   return stats.map((stat) => (
@@ -3415,6 +3685,8 @@ function PillarDetailOverlay({
   areaNotes,
   calendarLabel,
   dataDate,
+  reportingPeriod,
+  periodLabel,
   safetyIncidentCount,
   onSafetyIncidentsChange,
   isSavingSafetyIncidents,
@@ -3435,6 +3707,8 @@ function PillarDetailOverlay({
   areaNotes: Record<string, string>;
   calendarLabel: string;
   dataDate: string;
+  reportingPeriod: DashboardViewPeriod;
+  periodLabel: string;
   safetyIncidentCount: number;
   onSafetyIncidentsChange?: (count: number) => Promise<unknown>;
   isSavingSafetyIncidents?: boolean;
@@ -3442,8 +3716,8 @@ function PillarDetailOverlay({
   onClose: () => void;
 }) {
   const Icon = pillar.icon;
-  const [productivityPeriod, setProductivityPeriod] = useState<DashboardPeriod>("production-day");
-  useEffect(() => setProductivityPeriod("production-day"), [dataDate]);
+  const [productivityPeriod, setProductivityPeriod] = useState<DashboardPeriod>(reportingPeriod);
+  useEffect(() => setProductivityPeriod(reportingPeriod), [dataDate, reportingPeriod]);
   const [safetyIncidentDraft, setSafetyIncidentDraft] = useState(String(safetyIncidentCount));
   useEffect(() => setSafetyIncidentDraft(String(safetyIncidentCount)), [safetyIncidentCount]);
   useEffect(() => {
@@ -3482,7 +3756,7 @@ function PillarDetailOverlay({
                 <div className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Pillar Detail</div>
                 <h2 className="text-3xl font-bold tracking-tight">{pillar.label}</h2>
                 <p className="text-sm text-muted-foreground mt-1">KPI: {kpiText}</p>
-                <p className="mt-1 text-xs font-semibold text-primary">Showing production date: {dataDate}</p>
+                <p className="mt-1 text-xs font-semibold text-primary">Showing {reportingPeriod === "production-day" ? "production day" : reportingPeriod}: {periodLabel}</p>
                 {pillar.key === "P" && <p className="mt-1 text-xs font-semibold text-primary">Scroll down for live buyoff tables ↓</p>}
               </div>
             </div>
@@ -3520,6 +3794,18 @@ function PillarDetailOverlay({
                 </button>
                 <button
                   type="button"
+                  onClick={() => setProductivityPeriod("week")}
+                  aria-pressed={productivityPeriod === "week"}
+                  className={`border-l border-border px-3 py-1.5 text-xs font-semibold transition ${
+                    productivityPeriod === "week"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-card text-muted-foreground hover:bg-secondary"
+                  }`}
+                >
+                  Week
+                </button>
+                <button
+                  type="button"
                   onClick={() => setProductivityPeriod("month")}
                   aria-pressed={productivityPeriod === "month"}
                   className={`border-l border-border px-3 py-1.5 text-xs font-semibold transition ${
@@ -3528,7 +3814,7 @@ function PillarDetailOverlay({
                       : "bg-card text-muted-foreground hover:bg-secondary"
                   }`}
                 >
-                  This Month
+                  Month
                 </button>
                 <button
                   type="button"
@@ -3571,7 +3857,7 @@ function PillarDetailOverlay({
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
             {(pillar.key === "D" || pillar.key === "I") && (
               <section className="lg:col-span-3 rounded-sm border border-border bg-card p-6 shadow-[var(--shadow-card)] border-t-2 border-t-primary">
-                <DeviationFloor pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} />
+                <DeviationFloor pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} reportingPeriod={reportingPeriod} />
               </section>
             )}
 
@@ -3712,7 +3998,7 @@ function PillarDetailOverlay({
 
             {pillar.key === "Q" && qualityScrap && <QualityTopIssuesCard data={qualityScrap} />}
             {(pillar.key === "D" || pillar.key === "I") && (
-              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} />
+              <DeviationTopFiveCard pillarKey={pillar.key as DeviationPillarKey} dataDate={dataDate} reportingPeriod={reportingPeriod} />
             )}
             {pillar.key === "S" && (
               <TopIssuesCard
@@ -3730,8 +4016,8 @@ function PillarDetailOverlay({
 }
 
 function PafBuyoffTable({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
-  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs(period, period === "production-day" ? dataDate : null);
-  const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Current production-day";
+  const { data = [], isLoading, error, dataUpdatedAt } = usePafBuyoffs(period, dataDate);
+  const periodLabel = period === "week" ? "Selected-week" : period === "month" ? "Selected-month" : period === "previous-month" ? "Previous-month" : "Selected production-day";
   return (
     <BuyoffLogTable
       title="Coils & Collars Buyoff Log"
@@ -3746,8 +4032,8 @@ function PafBuyoffTable({ period = "production-day", dataDate }: { period?: Dash
 }
 
 function ExtrusionBuyoffTable({ period = "production-day", dataDate }: { period?: DashboardPeriod; dataDate?: string }) {
-  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs(period, period === "production-day" ? dataDate : null);
-  const periodLabel = period === "month" ? "Current-month" : period === "previous-month" ? "Previous-month" : "Latest";
+  const { data = [], isLoading, error, dataUpdatedAt } = useExtrusionBuyoffs(period, dataDate);
+  const periodLabel = period === "week" ? "Selected-week" : period === "month" ? "Selected-month" : period === "previous-month" ? "Previous-month" : "Selected production-day";
   return (
     <BuyoffLogTable
       title="Extrusion Buyoff Log"
@@ -3905,17 +4191,21 @@ function DeviationTopFiveCard({
   pillarKey,
   compact = false,
   dataDate,
+  reportingPeriod = "production-day",
 }: {
   pillarKey: DeviationPillarKey;
   compact?: boolean;
   dataDate?: string;
+  reportingPeriod?: DashboardViewPeriod;
 }) {
-  const { data: dashboardData } = useDashboardData("production-day", dataDate);
+  const { data: dashboardData } = useDashboardData(reportingPeriod, dataDate);
   const { data: processData = { processParts: [], processMachines: [], productParts: [], rows: [] } } =
     useProcessDeviationList();
   const { data: productData = { productParts: [], rows: [] } } = useProductDeviations();
   const reportingDate =
     dashboardData?.productionDate?.match(/^\d{4}-\d{2}-\d{2}$/)?.[0] ?? yesterdayKey();
+  const topFiveWindow = dashboardWindow(reportingPeriod, new Date(), dataDate ?? reportingDate);
+  const reportingEnd = dateKey(topFiveWindow.end);
   const [hiddenKeys, setHiddenKeys] = useLocalState<string[]>(
     `amg:hidden-top-deviations:${pillarKey}:${reportingDate}`,
     [],
@@ -3938,7 +4228,9 @@ function DeviationTopFiveCard({
     if (
       row.kind !== kind ||
       (pillarKey === "I" && row.closed) ||
-      row.dateRequested !== reportingDate
+      (reportingPeriod === "production-day"
+        ? row.dateRequested !== reportingDate
+        : row.dateRequested < reportingDate || row.dateRequested >= reportingEnd)
     ) continue;
     let machine = row.machine;
     if (!machine && pillarKey === "I") {
@@ -4332,18 +4624,26 @@ function FollowUpTasksCard({
 }) {
   const { tasks, isLoading, error, createTask, updateTask, deleteTask, uploadPartImage, isSaving } = useDashboardTasks();
   const priorityLimit = taskType === "LongTermAction" ? 10 : 5;
-  const [draft, setDraft] = useState({
+  const [draft, setDraft] = useLocalState(`amg:follow-up-draft:${taskType}`, {
     task: "",
     owner: "",
     due: "",
     priority: taskType === "LongTermAction" ? 5 : 3,
   });
   const [showAll, setShowAll] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [taskIndex, setTaskIndex] = useState(0);
   const [detailTaskId, setDetailTaskId] = useState<number | null>(null);
   const visible = tasks
     .filter((task) => task.taskType === taskType && task.status !== "Complete")
     .sort((a, b) => a.priority - b.priority || b.id - a.id);
+  const completedTasks = tasks
+    .filter((task) => task.taskType === taskType && task.status === "Complete")
+    .sort((a, b) =>
+      (b.completedDate || "").localeCompare(a.completedDate || "") || b.id - a.id,
+    );
+  const listModalOpen = showAll || showHistory;
+  const modalTasks = showHistory ? completedTasks : visible;
   const currentTask = visible.length > 0 ? visible[taskIndex % visible.length] : undefined;
   const detailTask = detailTaskId == null
     ? undefined
@@ -4360,13 +4660,16 @@ function FollowUpTasksCard({
     if (taskIndex >= visible.length) setTaskIndex(Math.max(visible.length - 1, 0));
   }, [taskIndex, visible.length]);
   useEffect(() => {
-    if (!showAll) return;
+    if (!listModalOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setShowAll(false);
+      if (event.key === "Escape") {
+        setShowAll(false);
+        setShowHistory(false);
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [showAll]);
+  }, [listModalOpen]);
   const add = async () => {
     const task = draft.task.trim();
     if (!task) return;
@@ -4382,7 +4685,7 @@ function FollowUpTasksCard({
 
   return (
     <section
-      className="rounded-sm border border-border bg-card p-4 shadow-[var(--shadow-card)] border-t-2 border-t-primary cursor-pointer"
+      className="flex h-full min-h-0 flex-col rounded-sm border border-border border-t-2 border-t-primary bg-gradient-to-b from-card to-secondary/20 p-4 shadow-[var(--shadow-card)] cursor-pointer"
       onClick={(event) => {
         if ((event.target as HTMLElement).closest("button, input, select, label")) return;
         showNextTask();
@@ -4421,10 +4724,23 @@ function FollowUpTasksCard({
           )}
           <button
             type="button"
-            onClick={() => setShowAll(true)}
+            onClick={() => {
+              setShowHistory(false);
+              setShowAll(true);
+            }}
             className="rounded-sm border border-border bg-background px-2 py-1 text-[10px] font-semibold text-primary hover:bg-secondary"
           >
             View all
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAll(false);
+              setShowHistory(true);
+            }}
+            className="rounded-sm border border-border bg-background px-2 py-1 text-[10px] font-semibold text-muted-foreground hover:bg-secondary hover:text-primary"
+          >
+            History ({completedTasks.length})
           </button>
         </div>
       </div>
@@ -4523,13 +4839,58 @@ function FollowUpTasksCard({
         </select>
         <button type="button" onClick={() => void add()} disabled={!draft.task.trim() || isSaving} className="rounded-sm bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-50">Add</button>
       </div>
-      {showAll && (
+      {(draft.task || draft.owner || draft.due) && (
+        <div className="mt-1 text-[10px] text-success">Unsubmitted draft saved on this device</div>
+      )}
+      <div className="mt-3 hidden min-h-0 flex-1 flex-col border-t border-border/70 pt-3 2xl:flex">
+        <div className="flex items-center justify-between gap-3">
+          <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+            Recent completed
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setShowAll(false);
+              setShowHistory(true);
+            }}
+            className="text-[10px] font-semibold text-primary hover:underline"
+          >
+            View full history
+          </button>
+        </div>
+        {completedTasks.length ? (
+          <div className="mt-2 grid gap-2">
+            {completedTasks.slice(0, 3).map((task) => (
+              <button
+                key={task.id}
+                type="button"
+                onClick={() => setDetailTaskId(task.id)}
+                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-sm border border-border/70 bg-card/80 px-3 py-2 text-left transition hover:border-primary/50 hover:bg-card"
+              >
+                <BadgeCheck className="size-4 text-success" />
+                <span className="min-w-0 truncate text-xs font-medium text-foreground">{task.task}</span>
+                <span className="text-[10px] tabular-nums text-muted-foreground">
+                  {task.completedDate || "Date not recorded"}
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-2 grid flex-1 place-items-center rounded-sm border border-dashed border-border/70 bg-card/40 px-4 py-3 text-xs text-muted-foreground">
+            Completed tasks will appear here.
+          </div>
+        )}
+      </div>
+      {listModalOpen && (
         <div
           className="fixed inset-0 z-[90] flex items-center justify-center bg-background/75 p-4 backdrop-blur-md animate-fade-in cursor-default"
-          onClick={() => setShowAll(false)}
+          onClick={() => {
+            setShowAll(false);
+            setShowHistory(false);
+          }}
           role="dialog"
           aria-modal="true"
-          aria-label={`All ${title}`}
+          aria-label={showHistory ? `${title} history` : `All ${title}`}
         >
           <div
             className="flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-sm border border-border bg-card shadow-2xl"
@@ -4537,14 +4898,17 @@ function FollowUpTasksCard({
           >
             <div className="flex items-center justify-between gap-4 border-b border-border bg-secondary/30 px-5 py-4">
               <div>
-                <h2 className="text-lg font-bold">{title}</h2>
+                <h2 className="text-lg font-bold">{showHistory ? `${title} History` : title}</h2>
                 <p className="text-xs text-muted-foreground">
-                  {visible.length} active SharePoint task{visible.length === 1 ? "" : "s"}
+                  {modalTasks.length} {showHistory ? "completed" : "active"} SharePoint task{modalTasks.length === 1 ? "" : "s"}
                 </p>
               </div>
               <button
                 type="button"
-                onClick={() => setShowAll(false)}
+                onClick={() => {
+                  setShowAll(false);
+                  setShowHistory(false);
+                }}
                 className="grid size-9 place-items-center rounded-sm border border-border bg-card hover:bg-secondary"
                 aria-label={`Close ${title}`}
               >
@@ -4552,13 +4916,13 @@ function FollowUpTasksCard({
               </button>
             </div>
             <div className="thin-scrollbar flex-1 overflow-y-auto p-5">
-              {visible.length === 0 ? (
+              {modalTasks.length === 0 ? (
                 <div className="rounded-sm border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-                  No active {title.toLowerCase()}.
+                  No {showHistory ? "completed" : "active"} {title.toLowerCase()}.
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {visible.map((task) => (
+                  {modalTasks.map((task) => (
                     <div
                       key={task.id}
                       className={`rounded-sm border p-4 ${
@@ -4641,28 +5005,45 @@ function FollowUpTasksCard({
                             className="mt-1 block w-full rounded-sm border border-border bg-card px-2 py-1.5 text-foreground outline-none focus:border-primary"
                           />
                         </label>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            void updateTask(task.id, {
-                              status: task.status === "OverDue" ? "Open" : "OverDue",
-                            })
-                          }
-                          className={`rounded-sm border px-3 py-1.5 text-xs font-semibold ${
-                            task.status === "OverDue"
-                              ? "border-danger bg-danger text-danger-foreground"
-                              : "border-border bg-card text-muted-foreground hover:text-danger"
-                          }`}
-                        >
-                          {task.status === "OverDue" ? "Mark Open" : "Flag overdue"}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => void deleteTask(task.id)}
-                          className="rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:border-success/50 hover:text-success"
-                        >
-                          Mark complete
-                        </button>
+                        {showHistory ? (
+                          <>
+                            <div className="rounded-sm border border-border bg-secondary/30 px-3 py-1.5 text-xs text-muted-foreground">
+                              Completed: {task.completedDate || "Not recorded"}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => void updateTask(task.id, { status: "Open", completedDate: "" })}
+                              className="rounded-sm border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary hover:text-primary-foreground"
+                            >
+                              Reopen task
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void updateTask(task.id, {
+                                  status: task.status === "OverDue" ? "Open" : "OverDue",
+                                })
+                              }
+                              className={`rounded-sm border px-3 py-1.5 text-xs font-semibold ${
+                                task.status === "OverDue"
+                                  ? "border-danger bg-danger text-danger-foreground"
+                                  : "border-border bg-card text-muted-foreground hover:text-danger"
+                              }`}
+                            >
+                              {task.status === "OverDue" ? "Mark Open" : "Flag overdue"}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void deleteTask(task.id)}
+                              className="rounded-sm border border-border bg-card px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:border-success/50 hover:text-success"
+                            >
+                              Mark complete
+                            </button>
+                          </>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -4703,11 +5084,32 @@ function TaskDetailModal({
   onSave: (patch: Partial<DashboardTask>, partImageFile?: File) => Promise<unknown>;
   onClose: () => void;
 }) {
+  const taskDraftStorageKey = `amg:task-detail-draft:${task.id}`;
   const [draft, setDraft] = useState(task);
+  const [draftHydrated, setDraftHydrated] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [imageFailed, setImageFailed] = useState(false);
   const [partImageFile, setPartImageFile] = useState<File | null>(null);
   const [partImagePreview, setPartImagePreview] = useState(task.partImage);
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(taskDraftStorageKey) || "null") as Partial<DashboardTask> | null;
+      if (stored && stored.id === task.id) setDraft((current) => ({ ...current, ...stored }));
+    } catch {
+      // Ignore an unreadable local draft and continue with the SharePoint task.
+    }
+    setDraftHydrated(true);
+  }, [task.id, taskDraftStorageKey]);
+
+  useEffect(() => {
+    if (!draftHydrated) return;
+    try {
+      localStorage.setItem(taskDraftStorageKey, JSON.stringify(draft));
+    } catch {
+      // The SharePoint save action remains available if browser storage is unavailable.
+    }
+  }, [draft, draftHydrated, taskDraftStorageKey]);
 
   useEffect(() => {
     if (!partImageFile) {
@@ -4745,6 +5147,7 @@ function TaskDetailModal({
         machine: draft.machine.trim(),
         completedDate: draft.status === "Complete" ? draft.completedDate : "",
       }, partImageFile ?? undefined);
+      localStorage.removeItem(taskDraftStorageKey);
       onClose();
     } catch (error) {
       setSaveError(error instanceof Error ? error.message : "Could not save task details");
@@ -4769,6 +5172,7 @@ function TaskDetailModal({
             <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               {task.taskType === "LongTermAction" ? "Long-Term Action" : "Open Escalation"} · Task #{task.id}
             </div>
+            <div className="mt-1 text-[10px] text-success">Draft automatically saved on this device</div>
             <input
               value={draft.task}
               onChange={(event) => setDraft((current) => ({ ...current, task: event.target.value }))}

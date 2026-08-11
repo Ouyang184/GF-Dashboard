@@ -86,7 +86,7 @@ export type DashboardState = {
   lastFetchedAt: Date | null;
 };
 
-export type DashboardPeriod = "production-day" | "month" | "previous-month";
+export type DashboardPeriod = "production-day" | "week" | "month" | "previous-month";
 
 type WindowInfo = {
   start: Date;
@@ -158,8 +158,31 @@ export function dashboardWindow(
     }
     return reportingWindow(now);
   }
+
+  const anchor = productionDate?.match(/^\d{4}-\d{2}-\d{2}$/)
+    ? (() => {
+        const [year, month, day] = productionDate.split("-").map(Number);
+        return new Date(year, month - 1, day, 12, 0, 0, 0);
+      })()
+    : new Date(now);
+
+  if (period === "week") {
+    const start = new Date(anchor);
+    const daysSinceMonday = (start.getDay() + 6) % 7;
+    start.setDate(start.getDate() - daysSinceMonday);
+    start.setHours(7, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 7);
+    return {
+      start,
+      end,
+      productionDate: dateOnly(start),
+      reportingPeriod: "week",
+    };
+  }
+
   const monthOffset = period === "previous-month" ? -1 : 0;
-  const start = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1, 0, 0, 0, 0);
+  const start = new Date(anchor.getFullYear(), anchor.getMonth() + monthOffset, 1, 0, 0, 0, 0);
   const end = new Date(start.getFullYear(), start.getMonth() + 1, 1, 0, 0, 0, 0);
   return {
     start,
