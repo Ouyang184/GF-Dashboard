@@ -3487,7 +3487,7 @@ function DeviationFloor({ pillarKey, dataDate, reportingPeriod = "production-day
 
   const todayStr = selectedDate;
   const automaticTodayIds = deriveMachineIds(
-    (row) => !row.closed && (isRange ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd : row.dateRequested === todayStr),
+    (row) => (pillarKey === "D" ? !row.closed : true) && (isRange ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd : row.dateRequested === todayStr),
   );
   const automaticPreviousIds = deriveMachineIds(
     (row) => row.dateRequested === previousDate,
@@ -3495,14 +3495,13 @@ function DeviationFloor({ pillarKey, dataDate, reportingPeriod = "production-day
   const todayRecordCount = sourceRows.filter(
     (row) =>
       row.kind === kindForPillar &&
-      !row.closed &&
+      (pillarKey === "D" ? !row.closed : true) &&
       (pillarKey !== "D" || !!row.machine) &&
       (isRange ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd : row.dateRequested === todayStr),
   ).length;
   const previousRecordCount = sourceRows.filter(
     (row) =>
       row.kind === kindForPillar &&
-      (pillarKey === "D" || !row.closed) &&
       (pillarKey !== "D" || !!row.machine) &&
       row.dateRequested === previousDate,
   ).length;
@@ -4227,7 +4226,6 @@ function DeviationTopFiveCard({
   for (const row of rows) {
     if (
       row.kind !== kind ||
-      (pillarKey === "I" && row.closed) ||
       (reportingPeriod === "production-day"
         ? row.dateRequested !== reportingDate
         : row.dateRequested < reportingDate || row.dateRequested >= reportingEnd)
@@ -4292,7 +4290,7 @@ function DeviationTopFiveCard({
           </h3>
           <p className="mt-1 text-[10px] text-muted-foreground">
             Previous production date · {reportingDate}
-            {pillarKey === "I" ? " · machine matched from buyoff data" : ""}
+            {pillarKey === "I" ? " · machine from Product Deviation list" : ""}
           </p>
         </div>
         {hiddenCurrentCount > 0 && (
