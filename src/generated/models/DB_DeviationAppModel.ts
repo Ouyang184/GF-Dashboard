@@ -112,6 +112,7 @@ export interface DB_DeviationAppBase {
   Title?: string;
   Date?: string;
   WorkOrderNumber?: string;
+  Machine_x002f_Line_x0023_?: string;
   PartNumber?: string;
   PartDescription?: string;
   "Visualf#Id"?: number[];
@@ -131,9 +132,13 @@ export interface DB_DeviationAppBase {
   TimePeriodDeviationWillCover?: string;
   RequestedBy?: string;
   QualityControlManagementApproval?: string;
+  QualityControlManagementSignatur?: string;
   QualityEngineeringApproval?: string;
+  QualityEngineeringSignatureTime?: string;
   AMGApproval?: string;
+  AMGSignatureTime?: string;
   ProductManagement_x002f_Engineer?: string;
+  ProductManagement_x002f_Engineer0?: string;
   "DeviationAccepted_x003f_#Id"?: number;
   "As_x002d_Is_x002f_Rework#Id"?: number;
   "QualityComplete#Id"?: number;
@@ -148,9 +153,12 @@ export interface DB_DeviationAppBase {
   "CancellationStatus#Id"?: number;
   CancelledBy?: string;
   CancellationDate?: string;
+  TurnaroundTime?: string;
   "Plant#Id"?: number;
   OData__ColorTag?: string;
   ComplianceAssetId?: string;
+  Process_x0020_Time?: string;
+  CreationDatetime?: string;
   Modified?: string;
   Created?: string;
   "Author#Claims"?: string;

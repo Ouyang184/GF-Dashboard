@@ -56,6 +56,7 @@ async function loadProductDeviations(): Promise<ProductDeviationData> {
       "WorkOrderNumber",
       "PartNumber",
       "PartDescription",
+      "Machine_x002f_Line_x0023_",
       "DeviationNumber",
       "ExplanationofReason_x0028_s_x002",
       "DeviationNotes",
@@ -113,7 +114,7 @@ async function loadProductDeviations(): Promise<ProductDeviationData> {
     rows.push({
       kind: "product",
       part,
-      machine: text(buyoffMatch?.Machine_x0023_),
+      machine: text(row.Machine_x002f_Line_x0023_ || buyoffMatch?.Machine_x0023_),
       workOrder,
       deviationNumber,
       description: text(row.PartDescription),

@@ -11,7 +11,10 @@
         "Dimensional",
         "Mechanical",
         "ExplanationofReason_x0028_s_x002",
+        "RootCauseofDeviance",
+        "CorrectiveActionsTaken",
         "DeviationNotes",
+        "Process_x0020_Time",
         "{Identifier}",
         "{IsFolder}",
         "{Thumbnail}",
@@ -35,7 +38,10 @@
       "nonFilterableProperties": [
         "PartDescription",
         "ExplanationofReason_x0028_s_x002",
+        "RootCauseofDeviance",
+        "CorrectiveActionsTaken",
         "DeviationNotes",
+        "Process_x0020_Time",
         "{Identifier}",
         "{IsFolder}",
         "{Thumbnail}",
@@ -125,6 +131,19 @@
         },
         "WorkOrderNumber": {
           "title": "Work Order Number",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Machine_x002f_Line_x0023_": {
+          "title": "Machine/Line #",
           "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
@@ -491,27 +510,13 @@
           "title": "Root Cause of Deviance",
           "type": "string",
           "x-ms-permission": "read-write",
-          "x-ms-sort": "asc,desc",
-          "x-ms-capabilities": {
-            "filterFunctions": [
-              "eq",
-              "startswith"
-            ]
-          },
-          "maxLength": 255
+          "x-ms-sort": "none"
         },
         "CorrectiveActionsTaken": {
           "title": "Corrective Actions Taken",
           "type": "string",
           "x-ms-permission": "read-write",
-          "x-ms-sort": "asc,desc",
-          "x-ms-capabilities": {
-            "filterFunctions": [
-              "eq",
-              "startswith"
-            ]
-          },
-          "maxLength": 255
+          "x-ms-sort": "none"
         },
         "TimePeriodDeviationWillCover": {
           "title": "Time Period Deviation Will Cover",
@@ -552,8 +557,34 @@
           },
           "maxLength": 255
         },
+        "QualityControlManagementSignatur": {
+          "title": "Quality Control Management Signature Time",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
         "QualityEngineeringApproval": {
           "title": "Quality Engineering Approval",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "QualityEngineeringSignatureTime": {
+          "title": "Quality Engineering Signature Time",
           "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
@@ -578,8 +609,34 @@
           },
           "maxLength": 255
         },
+        "AMGSignatureTime": {
+          "title": "AMG Signature Time",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
         "ProductManagement_x002f_Engineer": {
           "title": "Product Management/Engineering Approval",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "ProductManagement_x002f_Engineer0": {
+          "title": "Product Engineering Signature Time",
           "type": "string",
           "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
@@ -1189,6 +1246,19 @@
             ]
           }
         },
+        "TurnaroundTime": {
+          "title": "Turnaround Time",
+          "type": "string",
+          "x-ms-permission": "read-write",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
         "Plant#Id": {
           "title": "Plant Id",
           "type": "integer",
@@ -1264,6 +1334,25 @@
           "title": "Compliance Asset Id",
           "type": "string",
           "x-ms-permission": "read-only",
+          "x-ms-sort": "asc,desc",
+          "x-ms-capabilities": {
+            "filterFunctions": [
+              "eq",
+              "startswith"
+            ]
+          },
+          "maxLength": 255
+        },
+        "Process_x0020_Time": {
+          "title": "Process Time",
+          "type": "string",
+          "x-ms-permission": "read-only",
+          "x-ms-sort": "none"
+        },
+        "CreationDatetime": {
+          "title": "Creation Datetime",
+          "type": "string",
+          "x-ms-permission": "read-write",
           "x-ms-sort": "asc,desc",
           "x-ms-capabilities": {
             "filterFunctions": [
@@ -1918,6 +2007,14 @@
           "CancellationStatus",
           "CancelledBy",
           "CancellationDate",
+          "Machine_x002f_Line_x0023_",
+          "QualityEngineeringSignatureTime",
+          "AMGSignatureTime",
+          "ProductManagement_x002f_Engineer0",
+          "QualityControlManagementSignatur",
+          "Process_x0020_Time",
+          "CreationDatetime",
+          "TurnaroundTime",
           "{Attachments}"
         ],
         "propertiesCompactDisplayOrder": [
@@ -1925,6 +2022,7 @@
           "ID",
           "Date",
           "WorkOrderNumber",
+          "Machine_x002f_Line_x0023_",
           "PartNumber",
           "PartDescription",
           "Visualf",
@@ -1941,9 +2039,13 @@
           "TimePeriodDeviationWillCover",
           "RequestedBy",
           "QualityControlManagementApproval",
+          "QualityControlManagementSignatur",
           "QualityEngineeringApproval",
+          "QualityEngineeringSignatureTime",
           "AMGApproval",
+          "AMGSignatureTime",
           "ProductManagement_x002f_Engineer",
+          "ProductManagement_x002f_Engineer0",
           "DeviationAccepted_x003f_",
           "As_x002d_Is_x002f_Rework",
           "QualityComplete",
@@ -1957,13 +2059,15 @@
           "CloseDate",
           "CancellationStatus",
           "CancelledBy",
-          "CancellationDate"
+          "CancellationDate",
+          "TurnaroundTime"
         ],
         "propertiesTabularDisplayOrder": [
           "Title",
           "ID",
           "Date",
           "WorkOrderNumber",
+          "Machine_x002f_Line_x0023_",
           "PartNumber",
           "PartDescription",
           "Visualf",
@@ -1980,9 +2084,13 @@
           "TimePeriodDeviationWillCover",
           "RequestedBy",
           "QualityControlManagementApproval",
+          "QualityControlManagementSignatur",
           "QualityEngineeringApproval",
+          "QualityEngineeringSignatureTime",
           "AMGApproval",
+          "AMGSignatureTime",
           "ProductManagement_x002f_Engineer",
+          "ProductManagement_x002f_Engineer0",
           "DeviationAccepted_x003f_",
           "As_x002d_Is_x002f_Rework",
           "QualityComplete",
@@ -1996,7 +2104,8 @@
           "CloseDate",
           "CancellationStatus",
           "CancelledBy",
-          "CancellationDate"
+          "CancellationDate",
+          "TurnaroundTime"
         ]
       }
     }
