@@ -92,9 +92,8 @@ async function loadProductDeviations(): Promise<ProductDeviationData> {
   const activeParts = new Set<string>();
   const rows: DeviationExcelRow[] = [];
   for (const row of sourceRows) {
-    const deviationNumber = text(row.DeviationNumber || row.Title);
+    const deviationNumber = text(row.DeviationNumber || row.Title) || `SharePoint-${row.ID ?? "unknown"}`;
     const part = normalizePart(row.PartNumber);
-    if (!deviationNumber || !part) continue;
     const closed = isClosed(row);
     const workOrder = text(row.WorkOrderNumber).toUpperCase().replace(/\s+/g, "");
     const requestedDate = dateOnly(row.Date || row.Created);
@@ -124,7 +123,7 @@ async function loadProductDeviations(): Promise<ProductDeviationData> {
       dateRequested: requestedDate,
       closed,
     });
-    if (!closed) activeParts.add(part);
+    if (!closed && part) activeParts.add(part);
   }
 
   return { productParts: [...activeParts], rows };
