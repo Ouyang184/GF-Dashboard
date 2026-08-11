@@ -3534,6 +3534,26 @@ function DeviationFloor({ pillarKey, dataDate, reportingPeriod = "production-day
     pillarKey === "D"
       ? "Red when > 3 new process deviations"
       : "Red on ≥ 1 new product deviation";
+  const diagnosticRows = sourceRows
+    .filter((row) => {
+      if (row.kind !== kindForPillar) return false;
+      if (!isToday) return row.dateRequested === previousDate;
+      return isRange
+        ? row.dateRequested >= todayStr && row.dateRequested < selectedRangeEnd
+        : row.dateRequested === todayStr;
+    })
+    .map((row) => {
+      const inferredMachine = row.machine || deviationDashboardData?.machineJobs?.find(
+        (job) => job.partNumber.toUpperCase().replace(/\s+/g, "") === row.part,
+      )?.machine || "";
+      const floorMachine = inferredMachine
+        ? FLOOR_LAYOUT.flatMap((zone) => zone.machines).find(
+            (machine) => shiftMachineId(machine) === shiftMachineId(inferredMachine),
+          ) ?? ""
+        : "";
+      const included = pillarKey === "I" || (!row.closed && Boolean(row.machine));
+      return { row, inferredMachine, floorMachine, included };
+    });
 
   const Tile = ({ id }: { id: string }) => {
     const flagged = !!deviations[id];
@@ -3643,6 +3663,44 @@ function DeviationFloor({ pillarKey, dataDate, reportingPeriod = "production-day
           No deviation
         </span>
       </div>
+      <details className="mt-4 rounded-sm border border-border bg-secondary/20">
+        <summary className="cursor-pointer px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+          Deviation diagnostics ({diagnosticRows.length} SharePoint records)
+        </summary>
+        <div className="max-h-64 overflow-auto border-t border-border">
+          <table className="w-full min-w-[760px] text-left text-[11px]">
+            <thead className="sticky top-0 bg-card text-muted-foreground">
+              <tr>
+                <th className="px-3 py-2">Date</th>
+                <th className="px-3 py-2">Deviation</th>
+                <th className="px-3 py-2">Part</th>
+                <th className="px-3 py-2">SharePoint machine</th>
+                <th className="px-3 py-2">Floor mapping</th>
+                <th className="px-3 py-2">State</th>
+                <th className="px-3 py-2">Map result</th>
+              </tr>
+            </thead>
+            <tbody>
+              {diagnosticRows.map(({ row, inferredMachine, floorMachine, included }, index) => (
+                <tr key={`${row.deviationNumber}-${index}`} className="border-t border-border/60">
+                  <td className="px-3 py-2 font-mono">{row.dateRequested || "Missing"}</td>
+                  <td className="px-3 py-2">{row.deviationNumber || "Missing"}</td>
+                  <td className="px-3 py-2">{row.part || "Missing"}</td>
+                  <td className="px-3 py-2 font-semibold">{row.machine || (inferredMachine ? `${inferredMachine} (inferred)` : "Missing")}</td>
+                  <td className="px-3 py-2 font-semibold">{floorMachine || "Unmapped"}</td>
+                  <td className="px-3 py-2">{row.closed ? "Closed" : "Open"}</td>
+                  <td className={`px-3 py-2 font-bold ${included && floorMachine ? "text-success" : "text-danger"}`}>
+                    {included && floorMachine ? "Highlighted" : !included ? "Excluded by rule" : "Machine not on floor map"}
+                  </td>
+                </tr>
+              ))}
+              {!diagnosticRows.length && (
+                <tr><td colSpan={7} className="px-3 py-4 text-center text-muted-foreground">No SharePoint deviation records were found for this period.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
   );
 }
