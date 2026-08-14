@@ -4700,16 +4700,16 @@ function FollowUpTasksCard({
     );
   const listModalOpen = showAll || showHistory;
   const modalTasks = showHistory ? completedTasks : visible;
-  const currentTask = visible.length > 0 ? visible[taskIndex % visible.length] : undefined;
+  const displayedTasks = visible.slice(taskIndex, taskIndex + 2);
   const detailTask = detailTaskId == null
     ? undefined
     : tasks.find((task) => task.id === detailTaskId);
   const showNextTask = () => {
-    if (visible.length > 1) setTaskIndex((index) => (index + 1) % visible.length);
+    if (visible.length > 2) setTaskIndex((index) => index + 2 >= visible.length ? 0 : index + 2);
   };
   const showPreviousTask = () => {
-    if (visible.length > 1) {
-      setTaskIndex((index) => (index - 1 + visible.length) % visible.length);
+    if (visible.length > 2) {
+      setTaskIndex((index) => index === 0 ? Math.max(visible.length - 2, 0) : Math.max(index - 2, 0));
     }
   };
   useEffect(() => {
@@ -4755,10 +4755,10 @@ function FollowUpTasksCard({
             {isSaving
               ? "Saving…"
               : visible.length
-                ? `${(taskIndex % visible.length) + 1} / ${visible.length}`
+                ? `${taskIndex + 1}–${Math.min(taskIndex + 2, visible.length)} / ${visible.length}`
                 : "0 tasks"}
           </span>
-          {visible.length > 1 && (
+          {visible.length > 2 && (
             <div className="flex overflow-hidden rounded-sm border border-border bg-background">
               <button
                 type="button"
@@ -4803,7 +4803,7 @@ function FollowUpTasksCard({
       {error && <p className="mb-2 text-xs text-danger">{error instanceof Error ? error.message : "Tasks unavailable"}</p>}
       {isLoading && <p className="mb-2 text-xs text-muted-foreground">Loading tasks…</p>}
       <ul className="space-y-2">
-        {currentTask && (
+        {displayedTasks.map((currentTask) => (
           <li key={currentTask.id} className={`rounded-sm border p-3 ${currentTask.status === "OverDue" ? "border-danger/50 bg-danger/10" : "border-border/60 bg-secondary/30"}`}>
             <div className="flex flex-wrap items-center gap-2">
               <button
@@ -4877,7 +4877,7 @@ function FollowUpTasksCard({
               </label>
             </div>
           </li>
-        )}
+        ))}
       </ul>
       <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_8rem_9rem_6rem_auto]">
         <input value={draft.task} onChange={(e) => setDraft((d) => ({ ...d, task: e.target.value }))} placeholder={`Add ${title.toLowerCase()}…`} className="rounded-sm border border-border bg-background px-2 py-1.5 text-xs outline-none focus:border-primary" />
@@ -4898,45 +4898,6 @@ function FollowUpTasksCard({
       {(draft.task || draft.owner || draft.due) && (
         <div className="mt-1 text-[10px] text-success">Unsubmitted draft saved on this device</div>
       )}
-      <div className="mt-3 hidden min-h-0 flex-1 flex-col border-t border-border/70 pt-3 2xl:flex">
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-            Recent completed
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setShowAll(false);
-              setShowHistory(true);
-            }}
-            className="text-[10px] font-semibold text-primary hover:underline"
-          >
-            View full history
-          </button>
-        </div>
-        {completedTasks.length ? (
-          <div className="mt-2 grid gap-2">
-            {completedTasks.slice(0, 3).map((task) => (
-              <button
-                key={task.id}
-                type="button"
-                onClick={() => setDetailTaskId(task.id)}
-                className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 rounded-sm border border-border/70 bg-card/80 px-3 py-2 text-left transition hover:border-primary/50 hover:bg-card"
-              >
-                <BadgeCheck className="size-4 text-success" />
-                <span className="min-w-0 truncate text-xs font-medium text-foreground">{task.task}</span>
-                <span className="text-[10px] tabular-nums text-muted-foreground">
-                  {task.completedDate || "Date not recorded"}
-                </span>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-2 grid flex-1 place-items-center rounded-sm border border-dashed border-border/70 bg-card/40 px-4 py-3 text-xs text-muted-foreground">
-            Completed tasks will appear here.
-          </div>
-        )}
-      </div>
       {listModalOpen && (
         <div
           className="fixed inset-0 z-[90] flex items-center justify-center bg-background/75 p-4 backdrop-blur-md animate-fade-in cursor-default"
