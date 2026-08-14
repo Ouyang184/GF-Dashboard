@@ -11,13 +11,12 @@ type SharePointAttachment = {
   DisplayName?: string;
 };
 
-const attachmentDataSourcesInfo = {
-  ...dataSourcesInfo,
-  [DATA_SOURCE_NAME]: {
-    ...dataSourcesInfo[DATA_SOURCE_NAME],
-    apis: {
-      ...dataSourcesInfo[DATA_SOURCE_NAME].apis,
-      CreateAttachment: {
+// Register this operation on the shared schema before the Power Apps SDK is
+// initialized. The SDK keeps the first schema it receives, so passing a cloned
+// schema here can leave CreateAttachment undefined after another data request.
+const taskDataSource = dataSourcesInfo[DATA_SOURCE_NAME];
+Object.assign(taskDataSource.apis, {
+  CreateAttachment: {
         path: "/{connectionId}/datasets/{dataset}/tables/{tableName}/items/{itemId}/attachments",
         method: "POST",
         parameters: [
@@ -67,14 +66,9 @@ const attachmentDataSourcesInfo = {
             type: "object",
           },
         },
-      },
-    },
   },
-};
-
-const client = getClient(
-  attachmentDataSourcesInfo as Parameters<typeof getClient>[0],
-);
+});
+const client = getClient(dataSourcesInfo);
 
 function fileAsBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

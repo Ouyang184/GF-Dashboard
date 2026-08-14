@@ -5133,9 +5133,17 @@ function TaskDetailModal({
       setPartImagePreview(task.partImage);
       return;
     }
-    const objectUrl = URL.createObjectURL(partImageFile);
-    setPartImagePreview(objectUrl);
-    return () => URL.revokeObjectURL(objectUrl);
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageFailed(false);
+      setPartImagePreview(typeof reader.result === "string" ? reader.result : "");
+    };
+    reader.onerror = () => {
+      setPartImagePreview("");
+      setImageFailed(true);
+    };
+    reader.readAsDataURL(partImageFile);
+    return () => reader.abort();
   }, [partImageFile, task.partImage]);
 
   useEffect(() => {
