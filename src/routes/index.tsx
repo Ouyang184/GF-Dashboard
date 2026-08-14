@@ -69,6 +69,9 @@ import {
   Sun,
   Truck,
   X,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
 } from "lucide-react";
 import {
   Area,
@@ -5108,6 +5111,8 @@ function TaskDetailModal({
   const [imageFailed, setImageFailed] = useState(false);
   const [partImageFile, setPartImageFile] = useState<File | null>(null);
   const [partImagePreview, setPartImagePreview] = useState(task.partImage);
+  const [imageViewerOpen, setImageViewerOpen] = useState(false);
+  const [imageZoom, setImageZoom] = useState(1);
 
   useEffect(() => {
     try {
@@ -5148,11 +5153,17 @@ function TaskDetailModal({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key !== "Escape") return;
+      if (imageViewerOpen) {
+        setImageViewerOpen(false);
+        setImageZoom(1);
+      } else {
+        onClose();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
+  }, [imageViewerOpen, onClose]);
 
   const save = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -5320,12 +5331,25 @@ function TaskDetailModal({
               </label>
               <div className="overflow-hidden rounded-sm border border-border bg-secondary/20">
                 {partImagePreview && !imageFailed ? (
-                  <img
-                    src={partImagePreview}
-                    alt={draft.partDescription || `Part ${draft.affectedPartNumber}`}
-                    className="h-48 w-full object-contain bg-white"
-                    onError={() => setImageFailed(true)}
-                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImageZoom(1);
+                      setImageViewerOpen(true);
+                    }}
+                    className="group relative block w-full cursor-zoom-in bg-white"
+                    aria-label="Open larger part image"
+                  >
+                    <img
+                      src={partImagePreview}
+                      alt={draft.partDescription || `Part ${draft.affectedPartNumber}`}
+                      className="h-48 w-full object-contain"
+                      onError={() => setImageFailed(true)}
+                    />
+                    <span className="absolute bottom-2 right-2 flex items-center gap-1 rounded-sm bg-black/70 px-2 py-1 text-[10px] font-semibold text-white opacity-0 transition-opacity group-hover:opacity-100">
+                      <ZoomIn className="size-3" /> View larger
+                    </span>
+                  </button>
                 ) : (
                   <div className="grid h-32 place-items-center px-4 text-center text-xs text-muted-foreground">
                     {imageFailed ? "The saved image could not be displayed." : "Choose an image to preview it here."}
@@ -5338,6 +5362,49 @@ function TaskDetailModal({
             </div>
           </div>
         </div>
+        {imageViewerOpen && partImagePreview && (
+          <div
+            className="fixed inset-0 z-[200] flex flex-col bg-black/90 p-3 backdrop-blur-sm"
+            onClick={() => {
+              setImageViewerOpen(false);
+              setImageZoom(1);
+            }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Expanded part image"
+          >
+            <div className="mb-3 flex shrink-0 items-center justify-end gap-2" onClick={(event) => event.stopPropagation()}>
+              <button type="button" onClick={() => setImageZoom((value) => Math.max(0.5, value - 0.25))} className="grid size-10 place-items-center rounded-sm bg-white/15 text-white hover:bg-white/25" aria-label="Zoom out">
+                <ZoomOut className="size-5" />
+              </button>
+              <span className="min-w-14 text-center text-sm font-semibold text-white">{Math.round(imageZoom * 100)}%</span>
+              <button type="button" onClick={() => setImageZoom((value) => Math.min(4, value + 0.25))} className="grid size-10 place-items-center rounded-sm bg-white/15 text-white hover:bg-white/25" aria-label="Zoom in">
+                <ZoomIn className="size-5" />
+              </button>
+              <button type="button" onClick={() => setImageZoom(1)} className="grid size-10 place-items-center rounded-sm bg-white/15 text-white hover:bg-white/25" aria-label="Reset zoom">
+                <RotateCcw className="size-5" />
+              </button>
+              <button type="button" onClick={() => { setImageViewerOpen(false); setImageZoom(1); }} className="grid size-10 place-items-center rounded-sm bg-white text-black hover:bg-white/85" aria-label="Close image viewer">
+                <X className="size-5" />
+              </button>
+            </div>
+            <div
+              className="hide-scrollbar flex min-h-0 flex-1 overflow-auto"
+              onClick={(event) => event.stopPropagation()}
+              onWheel={(event) => {
+                event.preventDefault();
+                setImageZoom((value) => Math.min(4, Math.max(0.5, value + (event.deltaY < 0 ? 0.25 : -0.25))));
+              }}
+            >
+              <img
+                src={partImagePreview}
+                alt={draft.partDescription || `Part ${draft.affectedPartNumber}`}
+                className="m-auto block object-contain transition-[width] duration-150"
+                style={{ width: `${imageZoom * 100}%`, maxWidth: imageZoom <= 1 ? "100%" : "none", maxHeight: imageZoom <= 1 ? "100%" : "none" }}
+              />
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center justify-between gap-3 border-t border-border bg-secondary/20 px-5 py-4">
           <p className="text-xs text-danger">{saveError}</p>
