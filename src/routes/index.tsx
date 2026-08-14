@@ -5207,7 +5207,7 @@ function TaskDetailModal({
           </button>
         </div>
 
-        <div className="thin-scrollbar min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-5">
+        <div className="hide-scrollbar min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-5">
           <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(17rem,1fr)]">
             <div className="min-w-0 space-y-4">
               <TaskDetailTextArea
@@ -5414,15 +5414,23 @@ function TaskDetailTextArea({
   placeholder?: string;
   rows?: number;
 }) {
+  const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  useEffect(() => {
+    const element = textAreaRef.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${element.scrollHeight}px`;
+  }, [value]);
   return (
     <label className="block min-w-0 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
       {label}
       <textarea
+        ref={textAreaRef}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-1 w-full min-w-0 max-w-full resize-y overflow-x-hidden break-words rounded-sm border border-border bg-background px-3 py-2 text-sm font-normal normal-case tracking-normal text-foreground outline-none focus:border-primary"
+        className="hide-scrollbar mt-1 w-full min-w-0 max-w-full resize-none overflow-hidden break-words rounded-sm border border-border bg-background px-3 py-2 text-sm font-normal normal-case tracking-normal text-foreground outline-none focus:border-primary"
       />
     </label>
   );
