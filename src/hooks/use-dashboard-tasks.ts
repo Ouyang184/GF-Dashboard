@@ -2,7 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import type { DashboardTaskStatusRead } from "@/generated/models/DashboardTaskStatusModel";
 import { DashboardTaskStatusService } from "@/generated/services/DashboardTaskStatusService";
-import { uploadDashboardTaskPartImage } from "@/services/dashboard-task-attachments";
+import {
+  fileAsDataUrl,
+  uploadDashboardTaskPartImage,
+} from "@/services/dashboard-task-attachments";
 
 export type DashboardTask = {
   id: number;
@@ -270,10 +273,15 @@ export function useDashboardTasks() {
 
   const partImageMutation = useMutation({
     mutationFn: async ({ id, file }: { id: number; file: File }) => {
-      const attachment = await uploadDashboardTaskPartImage(id, file);
+      const [attachment, preview] = await Promise.all([
+        uploadDashboardTaskPartImage(id, file),
+        fileAsDataUrl(file),
+      ]);
       return {
         id,
-        partImage: attachment.AbsoluteUri?.trim() || "",
+        // SharePoint can omit AbsoluteUri from the create response. Retain the
+        // selected image until the attachment appears in the next list read.
+        partImage: attachment.AbsoluteUri?.trim() || preview,
       };
     },
     onSuccess: ({ id, partImage }) => {
@@ -284,7 +292,7 @@ export function useDashboardTasks() {
       }
       window.setTimeout(() => {
         void queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      }, 2_000);
+      }, 15_000);
     },
   });
 

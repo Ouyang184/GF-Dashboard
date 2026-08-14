@@ -70,21 +70,25 @@ Object.assign(taskDataSource.apis, {
 });
 const client = getClient(dataSourcesInfo);
 
-function fileAsBase64(file: File): Promise<string> {
+export function fileAsDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = () => reject(reader.error ?? new Error("Could not read the selected image"));
     reader.onload = () => {
       const value = String(reader.result ?? "");
-      const separator = value.indexOf(",");
-      if (separator < 0) {
+      if (!value.startsWith("data:")) {
         reject(new Error("Could not encode the selected image"));
         return;
       }
-      resolve(value.slice(separator + 1));
+      resolve(value);
     };
     reader.readAsDataURL(file);
   });
+}
+
+async function fileAsBase64(file: File): Promise<string> {
+  const value = await fileAsDataUrl(file);
+  return value.slice(value.indexOf(",") + 1);
 }
 
 function attachmentName(file: File): string {
