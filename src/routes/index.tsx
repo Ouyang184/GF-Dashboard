@@ -5182,7 +5182,7 @@ function TaskDetailModal({
       <form
         onSubmit={(event) => void save(event)}
         onClick={(event) => event.stopPropagation()}
-        className="flex max-h-[92dvh] w-full max-w-6xl flex-col overflow-hidden rounded-sm border border-border bg-card shadow-2xl"
+        className="flex max-h-[92dvh] w-full max-w-6xl min-w-0 flex-col overflow-hidden rounded-sm border border-border bg-card shadow-2xl"
       >
         <div className="flex items-start justify-between gap-4 border-b border-border bg-secondary/30 px-5 py-4">
           <div className="min-w-0 flex-1">
@@ -5207,9 +5207,9 @@ function TaskDetailModal({
           </button>
         </div>
 
-        <div className="thin-scrollbar flex-1 overflow-y-auto p-5">
-          <div className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(17rem,1fr)]">
-            <div className="space-y-4">
+        <div className="thin-scrollbar min-w-0 flex-1 overflow-x-hidden overflow-y-auto p-5">
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(17rem,1fr)]">
+            <div className="min-w-0 space-y-4">
               <TaskDetailTextArea
                 label="Problem Statement"
                 value={draft.problemStatement}
@@ -5237,8 +5237,8 @@ function TaskDetailModal({
               />
             </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+            <div className="min-w-0 space-y-4">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
                 <TaskDetailField
                   label="Status"
                   value={draft.status}
@@ -5268,7 +5268,7 @@ function TaskDetailModal({
                 value={draft.owner}
                 onChange={(owner) => setDraft((current) => ({ ...current, owner }))}
               />
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
                 <TaskDetailField
                   label="Due Date"
                   value={draft.due}
@@ -5375,9 +5375,9 @@ function TaskDetailField({
   options?: string[];
 }) {
   const controlClass =
-    "mt-1 w-full rounded-sm border border-border bg-background px-2.5 py-2 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50";
+    "mt-1 w-full min-w-0 max-w-full rounded-sm border border-border bg-background px-2.5 py-2 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:opacity-50";
   return (
-    <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <label className="block min-w-0 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
       {label}
       {asSelect ? (
         <select value={value} onChange={(event) => onChange(event.target.value)} className={controlClass}>
@@ -5415,14 +5415,14 @@ function TaskDetailTextArea({
   rows?: number;
 }) {
   return (
-    <label className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+    <label className="block min-w-0 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
       {label}
       <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         rows={rows}
-        className="mt-1 w-full resize-y rounded-sm border border-border bg-background px-3 py-2 text-sm font-normal normal-case tracking-normal text-foreground outline-none focus:border-primary"
+        className="mt-1 w-full min-w-0 max-w-full resize-y overflow-x-hidden break-words rounded-sm border border-border bg-background px-3 py-2 text-sm font-normal normal-case tracking-normal text-foreground outline-none focus:border-primary"
       />
     </label>
   );
